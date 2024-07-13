@@ -51,7 +51,7 @@ class _CustomCardState extends State<CustomCard>
               'WMS',
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 24.sp,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -66,6 +66,7 @@ class _CustomCardState extends State<CustomCard>
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
+                      size: 50,
                     ),
                   ),
                 ),
@@ -76,7 +77,7 @@ class _CustomCardState extends State<CustomCard>
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'Comfortaa',
-                      fontSize: 15.sp,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -134,6 +135,7 @@ class _CustomCardState extends State<CustomCard>
                     icon: Icon(
                       Icons.arrow_drop_down,
                       color: Colors.white,
+                      size: 50,
                     ),
                   ),
                 ),

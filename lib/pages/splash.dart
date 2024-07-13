@@ -24,10 +24,36 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-
     _afterSplash();
     _checkVersion();
   }
+
+  // void _checkVersion() async {
+  //   final newVersion = NewVersion(
+  //     iOSId: "com.thilogi.vn.logistics",
+  //     androidId: "com.thilogi.vn.logistics",
+  //   );
+  //   final status = await newVersion.getVersionStatus();
+  //   if (status!.localVersion != status.storeVersion) {
+  //     newVersion.showUpdateDialog(
+  //       context: context,
+  //       versionStatus: status,
+  //       dialogTitle: "CẬP NHẬT",
+  //       dismissButtonText: "Bỏ qua",
+  //       dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " +
+  //           "${status.localVersion}" +
+  //           " to " +
+  //           "${status.storeVersion}",
+  //       dismissAction: () {
+  //         SystemNavigator.pop();
+  //       },
+  //       updateButtonText: "Cập nhật",
+  //     );
+  //   }
+
+  //   print("DEVICE : " + status.localVersion);
+  //   print("STORE : " + status.storeVersion);
+  // }
 
   void _checkVersion() async {
     final newVersion = NewVersion(
@@ -35,25 +61,37 @@ class _SplashPageState extends State<SplashPage> {
       androidId: "com.thilogi.vn.logistics",
     );
     final status = await newVersion.getVersionStatus();
-    if (status!.localVersion != status.storeVersion) {
-      newVersion.showUpdateDialog(
-        context: context,
-        versionStatus: status,
-        dialogTitle: "CẬP NHẬT",
-        dismissButtonText: "Bỏ qua",
-        dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " +
-            "${status.localVersion}" +
-            " to " +
-            "${status.storeVersion}",
-        dismissAction: () {
-          SystemNavigator.pop();
-        },
-        updateButtonText: "Cập nhật",
-      );
+    if (status != null) {
+      if (_isVersionLower(status.localVersion, status.storeVersion)) {
+        newVersion.showUpdateDialog(
+          context: context,
+          versionStatus: status,
+          dialogTitle: "CẬP NHẬT",
+          dismissButtonText: "Bỏ qua",
+          dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " +
+              "${status.localVersion}" +
+              " lên " +
+              "${status.storeVersion}",
+          dismissAction: () {
+            SystemNavigator.pop();
+          },
+          updateButtonText: "Cập nhật",
+        );
+      }
+    }
+  }
+
+  bool _isVersionLower(String localVersion, String storeVersion) {
+    final localParts = localVersion.split('.').map(int.parse).toList();
+    final storeParts = storeVersion.split('.').map(int.parse).toList();
+
+    for (int i = 0; i < localParts.length; i++) {
+      if (localParts[i] < storeParts[i]) return true;
+      if (localParts[i] > storeParts[i]) return false;
     }
 
-    print("DEVICE : " + status.localVersion);
-    print("STORE : " + status.storeVersion);
+    // If we get here, all parts are equal
+    return false;
   }
 
   Future _afterSplash() async {
@@ -63,7 +101,7 @@ class _SplashPageState extends State<SplashPage> {
     Future.delayed(const Duration(seconds: 3)).then((value) async {
       _ab.getApiUrl();
       if (ub.isSignedIn) {
-        await ub.getUserData();
+        ub.getUserData();
         _ab.getData();
         _goToHomePage();
         _checkVersion();

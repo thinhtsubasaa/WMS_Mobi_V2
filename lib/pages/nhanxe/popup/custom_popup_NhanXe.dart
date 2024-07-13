@@ -367,7 +367,7 @@ class _PopUpState extends State<PopUp> {
                   });
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 45),
         ],
       ),
     );

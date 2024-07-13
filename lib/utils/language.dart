@@ -46,10 +46,8 @@ class _LanguagePopupState extends State<LanguagePopup> {
               await context.setLocale(const Locale('vi'));
             } else if (d == 'English') {
               await context.setLocale(const Locale('en'));
-            } else if (d == 'Japanese') {
-              await context.setLocale(const Locale('ja'));
-            } else if (d == 'Korean') {
-              await context.setLocale(const Locale('ko'));
+            } else if (d == 'Chinese') {
+              await context.setLocale(const Locale('cn'));
             }
             Navigator.pop(context);
           },

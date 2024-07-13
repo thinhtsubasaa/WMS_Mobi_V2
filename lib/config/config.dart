@@ -35,7 +35,7 @@ class AppConfig {
   static const List<String> languages = [
     'English',
     'Tiếng Việt',
-    'Japanese',
-    'Korean'
+    'Chinese'
+    
   ];
 }
