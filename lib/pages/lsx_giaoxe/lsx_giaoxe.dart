@@ -49,7 +49,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'KIỂM TRA - LỊCH SỬ XE GIAO XE',
+          'LỊCH SỬ XE GIAO XE',
         ),
       ),
     );

@@ -78,6 +78,8 @@ class _SplashPageState extends State<SplashPage> {
           updateButtonText: "Cập nhật",
         );
       }
+      print("DEVICE : " + status.localVersion);
+      print("STORE : " + status.storeVersion);
     }
   }
 

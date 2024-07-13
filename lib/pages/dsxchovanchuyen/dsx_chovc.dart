@@ -1,7 +1,4 @@
-import 'package:Thilogi/pages/ds_vanchuyen/custom_body_dsvanchuyen.dart';
-import 'package:Thilogi/pages/dsgiaoxe/custom_body_dsgiaoxe.dart';
-import 'package:Thilogi/pages/dsx_danhan/custom_body_dsx.dart';
-import 'package:Thilogi/pages/lsnhanxe/custom_body_lsdanhan.dart';
+import 'package:Thilogi/pages/dsxchovanchuyen/custom_body_dsxchovc.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';
@@ -9,7 +6,7 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-class DSVanChuyenPage extends StatelessWidget {
+class DSXChoVanChuyenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +27,7 @@ class DSVanChuyenPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyLSVanChuyen(),
+              child: CustomBodyDSXChoVanChuyen(),
             ),
           ),
           BottomContent(),
@@ -52,7 +49,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'LỊCH SỬ XE VẬN CHUYỂN',
+          'DANH SÁCH XE CHỜ VẬN CHUYỂN',
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:Thilogi/pages/ds_vanchuyen/ds_vanchuyen.dart';
 import 'package:Thilogi/pages/dsgiaoxe/ds_giaoxe.dart';
+import 'package:Thilogi/pages/dsxchovanchuyen/dsx_chovc.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
@@ -207,6 +208,20 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(LSDaGiaoPage());
                       },
                     ),
+                    if (userHasPermission(
+                      menuRoles, 'danh-sach-xe-cho-van-chuyen-mobi'))
+                    CustomButton(
+                        'DANH SÁCH XE CHỜ VẬN CHUYỂN',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_02_QLBaiXe_XuatBai_DSChoXuat.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(DSXChoVanChuyenPage());
+                    }),
                 ],
                 // PageIndicator(currentPage: currentPage, pageCount: pageCount),
               ),
