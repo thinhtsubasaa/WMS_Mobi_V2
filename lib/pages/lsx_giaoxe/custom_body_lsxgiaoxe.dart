@@ -59,7 +59,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
   void getDoiTac() async {
     try {
       final http.Response response =
-          await requestHelper.getData('DM_DoiTac/Get_DoiTac');
+          await requestHelper.getData('DM_DoiTac/GetDoiTacLogistic');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         _doitacList = (decodedData as List)
