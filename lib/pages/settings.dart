@@ -7,8 +7,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-
-import '../blocs/theme_bloc.dart';
 import '../utils/sign_out.dart';
 import '../widgets/divider.dart';
 
@@ -105,40 +103,40 @@ class UserUI extends StatelessWidget {
     final AppBloc ab = context.watch<AppBloc>();
     return Column(
       children: [
-        // ListTile(
-        //   contentPadding: EdgeInsets.all(0),
-        //   leading: CircleAvatar(
-        //     backgroundColor: Colors.greenAccent,
-        //     radius: 18,
-        //     child: Icon(
-        //       Feather.cloud,
-        //       size: 18,
-        //       color: Colors.white,
-        //     ),
-        //   ),
-        //   title: Text(
-        //     ab.apiUrl,
-        //     style: TextStyle(
-        //       fontSize: 16,
-        //       fontWeight: FontWeight.w500,
-        //       color: Theme.of(context).colorScheme.primary,
-        //     ),
-        //   ),
-        // ),
-        // const DividerWidget(),
         ListTile(
-          contentPadding: const EdgeInsets.all(0),
-          leading: const CircleAvatar(
-            backgroundColor: Colors.black,
+          contentPadding: EdgeInsets.all(0),
+          leading: CircleAvatar(
+            backgroundColor: Colors.greenAccent,
             radius: 18,
             child: Icon(
-              Feather.activity,
+              Feather.cloud,
               size: 18,
               color: Colors.white,
             ),
           ),
-          title: Text("Phiên bản ${ab.appVersion}"),
+          title: Text(
+            ab.apiUrl,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
         ),
+        const DividerWidget(),
+        // ListTile(
+        //   contentPadding: const EdgeInsets.all(0),
+        //   leading: const CircleAvatar(
+        //     backgroundColor: Colors.black,
+        //     radius: 18,
+        //     child: Icon(
+        //       Feather.activity,
+        //       size: 18,
+        //       color: Colors.white,
+        //     ),
+        //   ),
+        //   title: Text("Phiên bản ${ab.appVersion}"),
+        // ),
         const DividerWidget(),
         ListTile(
           contentPadding: const EdgeInsets.all(0),
@@ -211,7 +209,7 @@ class UserUI extends StatelessWidget {
             backgroundColor: Colors.blueGrey,
             radius: 18,
             child: Icon(
-              Feather.globe,
+              Icons.language,
               size: 18,
               color: Colors.white,
             ),

@@ -181,8 +181,8 @@ class _CheckSheetUploadAnhState extends State<CheckSheetUploadAnh> {
                   const SizedBox(width: 10),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                    ),
+                        // backgroundColor: Theme.of(context).primaryColor,
+                        ),
                     onPressed: () => imageSelector(context, 'camera'),
                     icon: const Icon(Icons.camera_alt),
                     label: const Text(""),

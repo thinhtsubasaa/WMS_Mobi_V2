@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:Thilogi/models/tinhtrangdonhang.dart';
+import 'package:Thilogi/models/tracking_chuyentiep.dart';
+import 'package:Thilogi/models/tracking_xuatxe.dart';
 import 'package:Thilogi/pages/tracking/custom_body_trackingxe.dart';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -50,6 +52,10 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
   List<LSXuatXeModel>? get xuatxe => _xuatxe;
   List<LSGiaoXeModel>? _giaoxe;
   List<LSGiaoXeModel>? get giaoxe => _giaoxe;
+  List<TrackingChuyenTiepModel>? _trackingchuyentiep;
+  List<TrackingChuyenTiepModel>? get trackingchuyentiep => _trackingchuyentiep;
+  List<TrackingXuatXeModel>? _trackingxuatxe;
+  List<TrackingXuatXeModel>? get trackingxuatxe => _trackingxuatxe;
   TinhTrangDonHangModel? _tinhtrang;
   TinhTrangDonHangModel? get tinhtrang => _tinhtrang;
   late StreamSubscription<ScanResult> scanSubscription;
@@ -305,6 +311,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
       _nhapbai = null;
       _xuatxe = null;
       _giaoxe = null;
+      _trackingchuyentiep = null;
+      _trackingxuatxe = null;
       Future.delayed(const Duration(seconds: 0), () {
         _qrData = barcodeScanResult;
         _qrDataController.text = barcodeScanResult;
@@ -331,7 +339,9 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
         if (_bl.lsxequa == null &&
             _bl.lsnhapbai == null &&
             _bl.lsxuatxe == null &&
-            _bl.lsgiaoxe == null) {
+            _bl.lsgiaoxe == null &&
+            _bl.trackingchuyentiep == null &&
+            _bl.trackingxuatxe == null) {
           // QuickAlert.show(
           //   // ignore: use_build_context_synchronously
           //   context: context,
@@ -351,6 +361,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
           _nhapbai = _bl.lsnhapbai;
           _xuatxe = _bl.lsxuatxe;
           _giaoxe = _bl.lsgiaoxe;
+          _trackingchuyentiep = _bl.trackingchuyentiep;
+          _trackingxuatxe = _bl.trackingxuatxe;
           _tinhtrang = _bl.tinhtrangdh;
           if (_tinhtrang?.toaDo == null) {
             QuickAlert.show(
@@ -368,7 +380,9 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
           print('2:$_nhapbai');
           print('3:$_xuatxe');
           print('4:$_giaoxe');
-          print('5:$_tinhtrang');
+          print('5:$_trackingchuyentiep');
+          print('6:$_trackingxuatxe');
+          print('7:$_tinhtrang');
         }
       });
     });
@@ -378,7 +392,11 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
   Widget build(BuildContext context) {
     _xuatxe?.sort((a, b) =>
         DateTime.parse(b.ngay ?? "").compareTo(DateTime.parse(a.ngay ?? "")));
+    _trackingxuatxe?.sort((a, b) =>
+        DateTime.parse(b.ngay ?? "").compareTo(DateTime.parse(a.ngay ?? "")));
     _nhapbai?.sort((a, b) => DateTime.parse(b.ngayVao ?? "")
+        .compareTo(DateTime.parse(a.ngayVao ?? "")));
+    _trackingchuyentiep?.sort((a, b) => DateTime.parse(b.ngayVao ?? "")
         .compareTo(DateTime.parse(a.ngayVao ?? "")));
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -532,6 +550,75 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                       //       );
                                       //     }).toList(),
                                       //   ),
+                                      if (_trackingxuatxe != null)
+                                        Column(
+                                          children:
+                                              _trackingxuatxe!.map((item) {
+                                            List<String> textLines = [];
+
+                                            // Kiểm tra và thêm chuỗi không rỗng
+                                            if (item.ngay != null &&
+                                                item.ngay!.isNotEmpty) {
+                                              textLines.add(formatDateTime(
+                                                  item.ngay ?? ""));
+                                            }
+                                            if (item.thongTinChiTiet != null &&
+                                                item.thongTinChiTiet!
+                                                    .isNotEmpty) {
+                                              textLines.add(
+                                                  item.thongTinChiTiet ?? "");
+                                            }
+                                            if (item.thongtinvanchuyen !=
+                                                    null &&
+                                                item.thongtinvanchuyen!
+                                                    .isNotEmpty) {
+                                              textLines.add(
+                                                  item.thongtinvanchuyen ?? "");
+                                            }
+                                            if (item.nguoiPhuTrach != null &&
+                                                item.nguoiPhuTrach!
+                                                    .isNotEmpty) {
+                                              textLines.add(
+                                                  item.nguoiPhuTrach ?? "");
+                                            }
+
+                                            // Nối các chuỗi với ký tự xuống dòng
+                                            String textLine =
+                                                textLines.join('\n');
+
+                                            return buildRowItem(
+                                              customImage: CustomImage2(),
+                                              textLine: textLine,
+                                            );
+                                          }).toList(),
+                                        ),
+                                      if (_trackingchuyentiep != null)
+                                        Column(
+                                          children:
+                                              _trackingchuyentiep!.map((item) {
+                                            bool isNewKho =
+                                                item.baiXe != previousKho;
+                                            previousKho = item.baiXe;
+                                            return buildRowItem(
+                                                customImage: isNewKho
+                                                    ? CustomImage3()
+                                                    : SizedBox(width: 105),
+                                                // customImage: CustomImage3(),
+                                                textLine: (item.thoiGianVao !=
+                                                            null
+                                                        ? (item.thoiGianVao ??
+                                                            "")
+                                                        : "") +
+                                                    '\n' +
+                                                    (item.kho ?? "") +
+                                                    ' - ' +
+                                                    (item.baiXe ?? "") +
+                                                    " - Vị trí: " +
+                                                    (item.viTri ?? "") +
+                                                    '\n' +
+                                                    (item.nguoiNhapBai ?? ""));
+                                          }).toList(),
+                                        ),
                                       if (_xuatxe != null)
                                         Column(
                                           children: _xuatxe!.map((item) {

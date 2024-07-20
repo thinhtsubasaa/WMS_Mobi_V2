@@ -1,16 +1,17 @@
 import 'dart:convert';
-import 'package:Thilogi/models/timxe.dart';
+
+import 'package:Thilogi/models/giaoxe.dart';
+import 'package:Thilogi/models/rutcont.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:quickalert/quickalert.dart';
 
-class TimXeBloc extends ChangeNotifier {
+class RutContBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
-  TimXeModel? _timxe;
-  TimXeModel? get timxe => _timxe;
+  RutContModel? _rutcont;
+  RutContModel? get rutcont => _rutcont;
 
   bool _hasError = false;
   bool get hasError => _hasError;
@@ -26,51 +27,47 @@ class TimXeBloc extends ChangeNotifier {
   String? _message;
   String? get message => _message;
 
-  Future<void> getData(BuildContext context, String soKhung) async {
+  Future<void> getData(BuildContext context, String qrcode) async {
     _isLoading = true;
-    _timxe = null;
+    _rutcont = null;
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetTimXeTrongBai?SoKhung=$soKhung');
+          .getData('KhoThanhPham/GetSoKhungRutContmobi?SoKhung=$qrcode');
+      print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        print("data: ${decodedData}");
         if (decodedData != null) {
-          List<DieuChuyen> dieuChuyenList = [];
-          if (decodedData['dieuChuyen'] != null &&
-              decodedData['dieuChuyen'] is List) {
-            dieuChuyenList = (decodedData['dieuChuyen'] as List<dynamic>)
-                .map((item) => DieuChuyen.fromJson(item))
-                .toList();
-          }
-          List<NhapKho> nhapKhoList = [];
-          if (decodedData['nhapKho'] != null &&
-              decodedData['nhapKho'] is List) {
-            nhapKhoList = (decodedData['nhapKho'] as List<dynamic>)
-                .map((item) => NhapKho.fromJson(item))
-                .toList();
-          }
-          _timxe = TimXeModel(
+          _rutcont = RutContModel(
             key: decodedData["key"],
             id: decodedData['id'],
             soKhung: decodedData['soKhung'],
-            tenKho: decodedData['tenKho'],
-            tenBaiXe: decodedData['tenBaiXe'],
-            tenViTri: decodedData['tenViTri'],
-            toaDo: decodedData['toaDo'],
-            nguoiPhuTrach: decodedData['nguoiPhuTrach'],
-            tenMau: decodedData['tenMau'],
+            maSanPham: decodedData['maSanPham'],
             tenSanPham: decodedData['tenSanPham'],
-            dieuChuyen: dieuChuyenList,
-            nhapKho: nhapKhoList,
+            soMay: decodedData['soMay'],
+            maMau: decodedData['maMau'],
+            tenMau: decodedData['tenMau'],
+            tenKho: decodedData['tenKho'],
+            maViTri: decodedData['maViTri'],
+            tenViTri: decodedData['tenViTri'],
+            mauSon: decodedData['mauSon'],
+            ngayNhapKhoView: decodedData['ngayNhapKhoView'],
+            tenTaiXe: decodedData['tenTaiXe'],
+            ghiChu: decodedData['ghiChu'],
+            maKho: decodedData['maKho'],
+            kho_Id: decodedData['kho_Id'],
+            bienSo_Id: decodedData['bienSo_Id'],
+            taiXe_Id: decodedData['taiXe_Id'],
+            nguoiNhan: decodedData['nguoiNhan'],
+            tenDiaDiem: decodedData['tenDiaDiem'],
+            tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
+            toaDo: decodedData['toaDo'],
+            noigiao: decodedData['noigiao'],
+            dangDiChuyen: decodedData['dangDiChuyen'],
           );
         }
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
-        if (errorMessage.isEmpty) {
-          errorMessage = "Xe chưa nhập kho";
-        }
 
         QuickAlert.show(
           // ignore: use_build_context_synchronously
@@ -80,7 +77,7 @@ class TimXeBloc extends ChangeNotifier {
           text: errorMessage,
           confirmBtnText: 'Đồng ý',
         );
-        _timxe = null;
+        _rutcont = null;
         _isLoading = false;
       }
 

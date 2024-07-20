@@ -104,7 +104,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
             ),
             child: Center(
               child: Text(
-                'Số khung\n(VIN)',
+                'Số khung\n(VIN)'.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
@@ -122,7 +122,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
               child: TextField(
                 controller: _qrDataController,
                 decoration: InputDecoration(
-                  hintText: 'Nhập hoặc quét mã VIN',
+                  hintText: 'Nhập hoặc quét mã VIN'.tr(),
                 ),
                 onSubmitted: (value) {
                   _handleBarcodeScanResult(value);
@@ -239,7 +239,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                   Container(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(
-                                      'Loại xe: ',
+                                      'Loại xe: '.tr(),
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 15,
@@ -338,8 +338,8 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                 borderRadius: BorderRadius.circular(5),
                               ),
                             ),
-                            child: const Text(
-                              'NHẬN XE',
+                            child: Text(
+                              'NHẬN XE'.tr(),
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
                                 fontSize: 16,
@@ -379,7 +379,7 @@ Widget showInfoXe(String title, String value) {
       child: Row(
         children: [
           Text(
-            title,
+            title.tr(),
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 15,

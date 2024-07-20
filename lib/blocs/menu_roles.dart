@@ -41,7 +41,7 @@ class MenuRoleBloc extends ChangeNotifier {
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        print("data:${decodedData}");
+        print("dataRole:${decodedData}");
 
         if (decodedData != null) {
           _menurole = (decodedData as List).map((p) {

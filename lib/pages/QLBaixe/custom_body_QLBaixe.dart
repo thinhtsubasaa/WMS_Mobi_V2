@@ -1,14 +1,12 @@
-import 'package:Thilogi/pages/dongSeal/dongseal.dart';
-import 'package:Thilogi/pages/dsx_danhan/dsx_danhan.dart';
 import 'package:Thilogi/pages/dsxchoxuat/dsx_choxuat.dart';
 import 'package:Thilogi/pages/lsdieuchuyen/ls_dieuchuyen.dart';
 import 'package:Thilogi/pages/lsnhapbai/ls_nhapbai.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/widgets/loading.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/baixe/baixe.dart';
 import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
-import 'package:Thilogi/pages/DongCont/dongcont.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +17,6 @@ import '../../blocs/menu_roles.dart';
 import '../../config/config.dart';
 import '../../models/menurole.dart';
 import '../../services/request_helper.dart';
-import '../khoxe/khoxe.dart';
 import '../timxe/timxe.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -136,7 +133,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               margin: const EdgeInsets.only(top: 30, bottom: 30),
               child: Wrap(
-                spacing: 25.0, // khoảng cách giữa các nút
+                spacing: 20.0, // khoảng cách giữa các nút
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
@@ -246,7 +243,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 33.w,
+      width: 28.w,
       child: Column(
         children: [
           Container(
@@ -256,7 +253,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
             child: page,
           ),
           Text(
-            buttonText,
+            buttonText.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',

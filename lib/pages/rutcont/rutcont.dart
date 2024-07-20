@@ -1,14 +1,13 @@
-import 'package:Thilogi/pages/DongCont/custom_body_dongcont.dart';
 import 'package:Thilogi/pages/rutcont/custom_body_rutcont.dart';
-import 'package:Thilogi/widgets/custom_appbar.dart';
-import 'package:Thilogi/widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 
 import 'package:sizer/sizer.dart';
+import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
+import '../../widgets/custom_title.dart';
 
-class RutContXePage extends StatelessWidget {
+class RutContPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +22,7 @@ class RutContXePage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyRutContXe(),
+              child: CustomBodyRutCont(),
             ),
           ),
           BottomContent(),
@@ -45,7 +44,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'KIỂM TRA - RÚT CONT',
+          'RÚT CONT',
         ),
       ),
     );

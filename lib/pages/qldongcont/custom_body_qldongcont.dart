@@ -1,7 +1,9 @@
 import 'package:Thilogi/pages/ds_dongcont/ds_dongcont.dart';
+import 'package:Thilogi/pages/rutcont/rutcont.dart';
 import 'package:Thilogi/pages/themdongcont/themdongcont.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
@@ -192,7 +194,7 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                   if (userHasPermission(
                       menuRoles, 'danh-sach-xe-dong-cont-mobi'))
                     CustomButton(
-                      'DANH SÁCH XE ĐÓNG CONT ',
+                      'DANH SÁCH XE ĐÓNG CONT',
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -206,20 +208,20 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                       },
                     ),
                   // if (userHasPermission(menuRoles, 'rut-cont-mobi'))
-                  // CustomButton(
-                  //   'RÚT CONT ',
-                  //   Stack(
-                  //     alignment: Alignment.center,
-                  //     children: [
-                  //       Image.asset(
-                  //         'assets/images/Button_QLBaiXe_DongCont.png',
-                  //       ),
-                  //     ],
-                  //   ),
-                  //   () {
-                  //     _handleButtonTap(LSDaDongContPage());
-                  //   },
-                  // ),
+                  CustomButton(
+                    'RÚT CONT',
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/Button_QLBaiXe_DongCont.png',
+                        ),
+                      ],
+                    ),
+                    () {
+                      _handleButtonTap(RutContPage());
+                    },
+                  ),
                 ],
               ),
 
@@ -254,7 +256,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
           ),
           const SizedBox(height: 8),
           Text(
-            buttonText,
+            buttonText.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',

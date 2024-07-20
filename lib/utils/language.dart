@@ -43,11 +43,11 @@ class _LanguagePopupState extends State<LanguagePopup> {
           ),
           onTap: () async {
             if (d == 'Tiếng Việt') {
-              await context.setLocale(const Locale('vi'));
+              await context.setLocale(const Locale('vi', 'VN'));
             } else if (d == 'English') {
-              await context.setLocale(const Locale('en'));
+              await context.setLocale(const Locale('en', 'US'));
             } else if (d == 'Chinese') {
-              await context.setLocale(const Locale('cn'));
+              await context.setLocale(const Locale('zh', 'CN'));
             }
             Navigator.pop(context);
           },

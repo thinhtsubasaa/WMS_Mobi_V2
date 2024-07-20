@@ -10,6 +10,7 @@ class LSX_GiaoXeModel {
   String? bienSo;
   String? taiXe;
   String? gioNhan;
+  String? donVi;
   String? nguoiPhuTrach;
 
   LSX_GiaoXeModel(
@@ -22,6 +23,7 @@ class LSX_GiaoXeModel {
       this.taiXe,
       this.loaiXe,
       this.gioNhan,
+      this.donVi,
       this.nguoiPhuTrach});
   factory LSX_GiaoXeModel.fromJson(Map<String, dynamic> json) {
     return LSX_GiaoXeModel(
@@ -32,6 +34,7 @@ class LSX_GiaoXeModel {
       noiGiao: json["noiGiao"],
       gioNhan: json["gioNhan"],
       loaiXe: json["loaiXe"],
+      donVi: json["donVi"],
       nguoiPhuTrach: json["nguoiPhuTrach"],
     );
   }

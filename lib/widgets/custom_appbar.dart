@@ -15,18 +15,18 @@ PreferredSizeWidget customAppBar(BuildContext context) {
             AppConfig.QLKhoImagePath,
             width: 70.w,
           ),
-          Container(
-            child: Text(
-              'TCT VẬN TẢI ĐƯỜNG BỘ THILOGI',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w700,
-                color: AppConfig.primaryColor,
-              ),
-            ),
-          ),
+          // Container(
+          //   child: Text(
+          //     'TCT VẬN TẢI ĐƯỜNG BỘ THILOGI',
+          //     textAlign: TextAlign.center,
+          //     style: TextStyle(
+          //       fontFamily: 'Roboto',
+          //       fontSize: 13.sp,
+          //       fontWeight: FontWeight.w700,
+          //       color: AppConfig.primaryColor,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     ),

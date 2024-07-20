@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:Thilogi/pages/Home.dart';
+import 'package:Thilogi/pages/login/Login.dart';
 import 'package:Thilogi/pages/lscongviec/LSCongviec.dart';
 import 'package:Thilogi/pages/qldongcont/qldongcont.dart';
 import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
@@ -7,6 +9,7 @@ import 'package:Thilogi/pages/tracuu/tracuu.dart';
 import 'package:Thilogi/pages/vanchuyen/giaoxe/VanChuyen.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
@@ -129,12 +132,20 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
           return LoadingWidget(context);
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
+        } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+          // Chuyển hướng sang trang đăng nhập nếu không có dữ liệu
+          Future.microtask(() => _goToLoginPage());
+          return Container();
         } else {
           // Dữ liệu đã được tải, xây dựng giao diện
           return _buildContent(snapshot.data!);
         }
       },
     );
+  }
+
+  void _goToLoginPage() {
+    nextScreenReplace(context, LoginPage());
   }
 
   @override
@@ -182,7 +193,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                     ),
                   if (userHasPermission(menuRoles, 'van-chuyen-giao-xe-mobi'))
                     CustomButton(
-                      'VẬN CHUYỂN\nGIAO XE',
+                      'VẬN CHUYỂN GIAO XE',
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -213,7 +224,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                   if (userHasPermission(
                       menuRoles, 'tracking-xe-thanh-pham-mobi'))
                     CustomButton(
-                      'TRACKING XE\nTHÀNH PHẨM',
+                      'TRACKING XE THÀNH PHẨM',
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -279,7 +290,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 40.w,
+      width: 35.w,
       // height: 35.h,
       child: Column(
         children: [
@@ -288,7 +299,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
             child: page,
           ),
           Text(
-            buttonText,
+            buttonText.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',

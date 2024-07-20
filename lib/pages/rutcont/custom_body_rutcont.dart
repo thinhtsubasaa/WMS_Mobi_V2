@@ -1,90 +1,86 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:Thilogi/blocs/dongcont_bloc.dart';
-import 'package:Thilogi/models/dongcont.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:Thilogi/blocs/rutcont_bloc.dart';
+import 'package:Thilogi/models/giaoxe.dart';
+import 'package:Thilogi/models/rutcont.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
+    as GeoLocationAccuracy;
+import 'package:http/http.dart' as http;
+
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 
-import 'package:http/http.dart' as http;
-import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
-    as GeoLocationAccuracy;
-
+import '../../blocs/giaoxe_bloc.dart';
 import '../../config/config.dart';
-import '../../models/dsxdongcont.dart';
+import '../../models/diadiem.dart';
+import '../../models/phuongthucvanchuyen.dart';
 import '../../services/app_service.dart';
+import '../../widgets/checksheet_upload_anh.dart';
 import '../../widgets/loading.dart';
 
-class CustomBodyRutContXe extends StatelessWidget {
+class CustomBodyRutCont extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(child: BodyRutContXeScreen());
+    return Container(child: BodyRutContScreen());
   }
 }
 
-class BodyRutContXeScreen extends StatefulWidget {
-  const BodyRutContXeScreen({Key? key}) : super(key: key);
+class BodyRutContScreen extends StatefulWidget {
+  const BodyRutContScreen({Key? key}) : super(key: key);
 
   @override
-  _BodyRutContXeScreenState createState() => _BodyRutContXeScreenState();
+  _BodyRutContScreenState createState() => _BodyRutContScreenState();
 }
 
-class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
+class _BodyRutContScreenState extends State<BodyRutContScreen>
     with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
-  String _qrData = '';
-  final _qrDataController = TextEditingController();
-  String? soContId;
 
-  String? DanhSachPhuongTienId;
-
-  List<DSX_DongContModel>? _dsxdongcontList;
-  List<DSX_DongContModel>? get dsxdongcont => _dsxdongcontList;
-
-  DongContModel? _data;
-  DSX_DongContModel? _dc;
-  bool _loading = false;
-  String? barcodeScanResult;
   String? lat;
   String? long;
-  bool _hasError = false;
-  bool get hasError => _hasError;
+  String _qrData = '';
+  final _qrDataController = TextEditingController();
+  RutContModel? _data;
+  bool _loading = false;
+  String? barcodeScanResult;
+  String? viTri;
 
-  String? _errorCode;
-  String? get errorCode => _errorCode;
-  bool _isLoading = true;
-  bool get isLoading => _isLoading;
-
-  bool _success = false;
-  bool get success => _success;
-
-  String? _message;
-  String? get message => _message;
-  bool _isMovingStarted = false;
+  late RutContBloc _bl;
+  File? _selectImage;
+  List<File> _selectedImages = [];
 
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
+  List<DiaDiemModel>? _diadiemList;
+  List<DiaDiemModel>? get diadiemList => _diadiemList;
+  List<PhuongThucVanChuyenModel>? _phuongthucvanchuyenList;
+  List<PhuongThucVanChuyenModel>? get phuongthucvanchuyenList =>
+      _phuongthucvanchuyenList;
 
-  late DongContBloc _bl;
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
+  String? _message;
+  String? get message => _message;
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
-  final TextEditingController textEditingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _bl = Provider.of<DongContBloc>(context, listen: false);
-    getSoCont();
+    _bl = Provider.of<RutContBloc>(context, listen: false);
+
     requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -98,7 +94,6 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
 
   @override
   void dispose() {
-    textEditingController.dispose();
     super.dispose();
   }
 
@@ -113,38 +108,16 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
     }
   }
 
-  void getSoCont() async {
-    try {
-      final http.Response response =
-          await requestHelper.getData('DM_DongCont/GetListContMobi');
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
-        _dsxdongcontList = (decodedData as List)
-            .map((item) => DSX_DongContModel.fromJson(item))
-            .toList();
-        // Gọi setState để cập nhật giao diện
-        setState(() {
-          _loading = false;
-        });
-      }
-    } catch (e) {
-      _hasError = true;
-      _errorCode = e.toString();
-    }
-  }
-
-  Future<void> postData(DongContModel? scanData, String soContId,
-      String soKhung, String toaDo) async {
+  Future<void> postData(RutContModel scanData, String viTri) async {
     _isLoading = true;
 
     try {
       var newScanData = scanData;
-      newScanData?.soKhung =
+      newScanData.soKhung =
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
-      print("print data: ${newScanData?.soKhung}");
+      print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/DongCont?SoContId=$soContId&SoKhung=$soKhung&ViTri=$toaDo',
-          newScanData?.toJson());
+          'KhoThanhPham/RutCont?ViTri=$viTri', newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -157,10 +130,9 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
           context: context,
           type: QuickAlertType.success,
           title: 'Thành công',
-          text: "Đóng cont thành công",
+          text: "Rút cont thành công",
           confirmBtnText: 'Đồng ý',
         );
-        _isMovingStarted = true;
         _btnController.reset();
       } else {
         String errorMessage = response.body.replaceAll('"', '');
@@ -273,7 +245,7 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
       _qrData = '';
       _qrDataController.text = barcodeScanResult;
       _data = null;
-      Future.delayed(const Duration(seconds: 0), () {
+      Future.delayed(const Duration(seconds: 1), () {
         _qrData = barcodeScanResult;
         _qrDataController.text = barcodeScanResult;
         _onScan(barcodeScanResult);
@@ -288,19 +260,13 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
     _bl.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
-        if (_bl.dongcont == null) {
+        if (_bl.rutcont == null) {
+          barcodeScanResult = null;
           _qrData = '';
           _qrDataController.text = '';
-          barcodeScanResult = null;
         }
         _loading = false;
-        _data = _bl.dongcont;
-        print("Số cont: ${_data?.soCont}");
-        if (_data?.soCont != null) {
-          _isMovingStarted = true;
-        } else {
-          _isMovingStarted = false;
-        }
+        _data = _bl.rutcont;
       });
     });
   }
@@ -310,24 +276,26 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
       _loading = true;
     });
 
-    _data?.key = _bl.dongcont?.key;
-    _data?.id = _bl.dongcont?.id;
-    _data?.soKhung = _bl.dongcont?.soKhung;
-    _data?.tenSanPham = _bl.dongcont?.tenSanPham;
-    _data?.maSanPham = _bl.dongcont?.maSanPham;
-    _data?.soMay = _bl.dongcont?.soMay;
-    _data?.maMau = _bl.dongcont?.maMau;
-    _data?.tenMau = _bl.dongcont?.tenMau;
-    _data?.tenKho = _bl.dongcont?.tenKho;
-    _data?.maViTri = _bl.dongcont?.maViTri;
-    _data?.tenViTri = _bl.dongcont?.tenViTri;
-    _data?.mauSon = _bl.dongcont?.mauSon;
-    _data?.ngayNhapKhoView = _bl.dongcont?.ngayNhapKhoView;
-    _data?.maKho = _bl.dongcont?.maKho;
-    _data?.soCont = _bl.dongcont?.soCont;
-
-    _data?.soSeal = _bl.dongcont?.soSeal;
-
+    _data?.key = _bl.rutcont?.key;
+    _data?.id = _bl.rutcont?.id;
+    _data?.soKhung = _bl.rutcont?.soKhung;
+    _data?.tenSanPham = _bl.rutcont?.tenSanPham;
+    _data?.maSanPham = _bl.rutcont?.maSanPham;
+    _data?.soMay = _bl.rutcont?.soMay;
+    _data?.maMau = _bl.rutcont?.maMau;
+    _data?.tenMau = _bl.rutcont?.tenMau;
+    _data?.tenKho = _bl.rutcont?.tenKho;
+    _data?.maViTri = _bl.rutcont?.maViTri;
+    _data?.tenViTri = _bl.rutcont?.tenViTri;
+    _data?.mauSon = _bl.rutcont?.mauSon;
+    _data?.ngayNhapKhoView = _bl.rutcont?.ngayNhapKhoView;
+    _data?.maKho = _bl.rutcont?.maKho;
+    _data?.kho_Id = _bl.rutcont?.kho_Id;
+    _data?.noigiao = _bl.rutcont?.noigiao;
+    _data?.tenDiaDiem = _bl.rutcont?.tenDiaDiem;
+    _data?.tenPhuongThucVanChuyen = _bl.rutcont?.tenPhuongThucVanChuyen;
+    _data?.bienSo_Id = _bl.rutcont?.bienSo_Id;
+    _data?.taiXe_Id = _bl.rutcont?.taiXe_Id;
     Geolocator.getCurrentPosition(
       desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
     ).then((position) {
@@ -337,10 +305,8 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
       });
 
       _data?.toaDo = "${lat},${long}";
-
-      print("viTri: ${_data?.toaDo}");
-      print("soContId: ${soContId}");
-      print("soKhung:${_data?.soKhung}");
+      print("Vi tri: ${_data?.toaDo}");
+      print("vi Tri: ${_data?.kho_Id}");
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
@@ -354,12 +320,9 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          postData(_data!, soContId ?? "", _data?.soKhung ?? "",
-                  _data?.toaDo ?? "")
-              .then((_) {
+          postData(_data!, _data?.toaDo ?? "").then((_) {
             setState(() {
               _data = null;
-              soContId = null;
               barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
@@ -369,7 +332,6 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
         }
       });
     }).catchError((error) {
-      // Handle error while getting location
       print("Error getting location: $error");
     });
   }
@@ -378,7 +340,7 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
     QuickAlert.show(
         context: context,
         type: QuickAlertType.confirm,
-        text: 'Bạn có muốn đóng cont không?',
+        text: 'Bạn có muốn rút cont không?',
         title: '',
         confirmBtnText: 'Đồng ý',
         cancelBtnText: 'Không',
@@ -399,10 +361,6 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
           Navigator.of(context).pop();
           _onSave();
         });
-  }
-
-  void _startMoving(BuildContext context) {
-    _showConfirmationDialog(context); // Hiển thị hộp thoại xác nhận
   }
 
   @override
@@ -429,7 +387,7 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 'Thông Tin Xác Nhận',
                                 style: TextStyle(
                                   fontFamily: 'Comfortaa',
@@ -437,287 +395,96 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              Divider(height: 1, color: Color(0xFFA71C20)),
-                              SizedBox(height: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    height:
-                                        MediaQuery.of(context).size.height < 600
-                                            ? 10.h
-                                            : 7.h,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color: const Color(0xFF818180),
-                                        width: 1,
+                              const Divider(
+                                height: 1,
+                                color: AppConfig.primaryColor,
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 10,
+                                  bottom: 10,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 7.h,
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.only(left: 10),
+                                            child: Text(
+                                              'Loại xe: ',
+                                              style: TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w700,
+                                                color: Color(0xFF818180),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            constraints: BoxConstraints(
+                                                maxWidth: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.70),
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                _data?.tenSanPham ?? '',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontFamily: 'Coda Caption',
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppConfig.primaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 20.w,
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFFF6C6C7),
-                                            border: Border(
-                                              right: BorderSide(
-                                                color: Color(0xFF818180),
-                                                width: 1,
-                                              ),
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "Số Cont",
-                                              textAlign: TextAlign.left,
-                                              style: const TextStyle(
-                                                fontFamily: 'Comfortaa',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color: AppConfig.textInput,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                            flex: 1,
-                                            child: Container(
-                                                padding: EdgeInsets.only(
-                                                    top: MediaQuery.of(context)
-                                                                .size
-                                                                .height <
-                                                            600
-                                                        ? 0
-                                                        : 5),
-                                                child:
-                                                    DropdownButtonHideUnderline(
-                                                  child:
-                                                      DropdownButton2<String>(
-                                                    isExpanded: true,
-                                                    items: _dsxdongcontList
-                                                        ?.map((item) {
-                                                      return DropdownMenuItem<
-                                                          String>(
-                                                        value: item.id,
-                                                        child: Container(
-                                                          constraints: BoxConstraints(
-                                                              maxWidth: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.9),
-                                                          child:
-                                                              SingleChildScrollView(
-                                                            scrollDirection:
-                                                                Axis.horizontal,
-                                                            child: Text(
-                                                              item.soCont ?? "",
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontFamily:
-                                                                    'Comfortaa',
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: AppConfig
-                                                                    .textInput,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                    value: soContId,
-                                                    onChanged: (newValue) {
-                                                      setState(() {
-                                                        soContId = newValue;
-                                                      });
-                                                    },
-                                                    buttonStyleData:
-                                                        const ButtonStyleData(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16),
-                                                      height: 40,
-                                                      width: 200,
-                                                    ),
-                                                    dropdownStyleData:
-                                                        const DropdownStyleData(
-                                                      maxHeight: 200,
-                                                    ),
-                                                    menuItemStyleData:
-                                                        const MenuItemStyleData(
-                                                      height: 40,
-                                                    ),
-                                                    dropdownSearchData:
-                                                        DropdownSearchData(
-                                                      searchController:
-                                                          textEditingController,
-                                                      searchInnerWidgetHeight:
-                                                          50,
-                                                      searchInnerWidget:
-                                                          Container(
-                                                        height: 50,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                          top: 8,
-                                                          bottom: 4,
-                                                          right: 8,
-                                                          left: 8,
-                                                        ),
-                                                        child: TextFormField(
-                                                          expands: true,
-                                                          maxLines: null,
-                                                          controller:
-                                                              textEditingController,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            isDense: true,
-                                                            contentPadding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                              horizontal: 10,
-                                                              vertical: 8,
-                                                            ),
-                                                            hintText:
-                                                                'Tìm số cont',
-                                                            hintStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        12),
-                                                            border:
-                                                                OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      searchMatchFn:
-                                                          (item, searchValue) {
-                                                        if (item
-                                                            is DropdownMenuItem<
-                                                                String>) {
-                                                          // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                          String itemId =
-                                                              item.value ?? "";
-                                                          // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                          return _dsxdongcontList?.any((soCont) =>
-                                                                  soCont.id ==
-                                                                      itemId &&
-                                                                  soCont.soCont
-                                                                          ?.toLowerCase()
-                                                                          .contains(
-                                                                              searchValue.toLowerCase()) ==
-                                                                      true) ??
-                                                              false;
-                                                        } else {
-                                                          return false;
-                                                        }
-                                                      },
-                                                    ),
-                                                    onMenuStateChange:
-                                                        (isOpen) {
-                                                      if (!isOpen) {
-                                                        textEditingController
-                                                            .clear();
-                                                      }
-                                                    },
-                                                  ),
-                                                ))),
-                                      ],
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    Item(
+                                      title: 'Số khung: ',
+                                      value: _data?.soKhung,
                                     ),
-                                  ),
-                                ],
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    Item(
+                                        title: 'Màu: ',
+                                        // value: _data != null
+                                        //     ? "${_data?.tenMau} (${_data?.maMau})"
+                                        //     : "",
+                                        value: _data != null
+                                            ? (_data?.tenMau != null &&
+                                                    _data?.maMau != null
+                                                ? "${_data?.tenMau} (${_data?.maMau})"
+                                                : "")
+                                            : ""),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    Item(
+                                      title: 'Số máy: ',
+                                      value: _data?.soMay,
+                                    ),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    Item(
+                                      title: 'Nơi giao: ',
+                                      value: _data?.noigiao,
+                                    ),
+                                    CheckSheetUploadAnh(
+                                      lstFiles: [],
+                                    )
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                  Column(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 10, right: 10),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 7.h,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      'Loại xe: ',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF818180),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.70),
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Text(
-                                        _data?.tenSanPham ?? '',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontFamily: 'Coda Caption',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          color: AppConfig.primaryColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                            Item(
-                              title: 'Số khung: ',
-                              value: _data?.soKhung,
-                            ),
-                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                            Item(
-                                title: 'Màu: ',
-                                value: _data != null
-                                    ? (_data?.tenMau != null &&
-                                            _data?.maMau != null
-                                        ? "${_data?.tenMau} (${_data?.maMau})"
-                                        : "")
-                                    : ""),
-                            // value: _data != null
-                            //     ? "${_data?.tenMau} (${_data?.maMau})"
-                            //     : "",
-
-                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                            Item(
-                              title: 'Số máy: ',
-                              value: _data?.soMay,
-                            ),
-                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                            Item(
-                              title: 'Khu Vực: ',
-                              value: _data?.khuVuc,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -729,7 +496,7 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RoundedLoadingButton(
-                child: Text('Xác nhận',
+                child: Text('Rút cont',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       color: AppConfig.textButton,
@@ -737,7 +504,7 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
                       fontSize: 16,
                     )),
                 controller: _btnController,
-                onPressed: soContId != null
+                onPressed: _data?.soKhung != null
                     ? () => _showConfirmationDialog(context)
                     : null,
               ),
@@ -746,71 +513,6 @@ class _BodyRutContXeScreenState extends State<BodyRutContXeScreen>
         ),
       ],
     ));
-  }
-}
-
-class MyInputWidget extends StatelessWidget {
-  final String title;
-  final String text;
-  final TextStyle textStyle;
-
-  const MyInputWidget({
-    Key? key,
-    required this.title,
-    required this.text,
-    required this.textStyle,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 7.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(
-          color: const Color(0xFF818180),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 30.w,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF6C6C7),
-              border: Border(
-                right: BorderSide(
-                  color: Color(0xFF818180),
-                  width: 1,
-                ),
-              ),
-            ),
-            child: Center(
-              child: Text(
-                title,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: AppConfig.textInput,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: EdgeInsets.only(top: 5, left: 15.sp),
-              child: Text(
-                text,
-                style: textStyle,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 
@@ -836,7 +538,7 @@ class Item extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),

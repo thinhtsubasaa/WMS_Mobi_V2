@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/models/doitac.dart';
 import 'package:Thilogi/models/lsvanchuyen.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -28,9 +30,11 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
-
+  String? doiTac_Id;
   List<LSVanChuyenModel>? _dn;
   List<LSVanChuyenModel>? get dn => _dn;
+  List<DoiTacModel>? _doitacList;
+  List<DoiTacModel>? get doitacList => _doitacList;
   bool _hasError = false;
   bool get hasError => _hasError;
   String? selectedDate;
@@ -43,15 +47,47 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
   @override
   void initState() {
     super.initState();
+    getDoiTac();
     selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    getDSXVanChuyen(selectedDate, maNhanVienController.text);
+    getDSXVanChuyen(selectedDate, doiTac_Id ?? "", maNhanVienController.text);
   }
 
-  Future<void> getDSXVanChuyen(String? Ngay, String? keyword) async {
+  void getDoiTac() async {
+    try {
+      final http.Response response =
+          await requestHelper.getData('DM_DoiTac/Get_DoiTac');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        _doitacList = (decodedData as List)
+            .map((item) => DoiTacModel.fromJson(item))
+            .toList();
+        _doitacList!.insert(0, DoiTacModel(id: '', tenDoiTac: 'Tất cả'));
+
+        // Đặt giá trị mặc định cho DropdownButton là ID của "Tất cả"
+        setState(() {
+          doiTac_Id = '';
+          _loading = false;
+        });
+
+        // Gọi hàm để lấy dữ liệu với giá trị mặc định "Tất cả"
+        getDSXVanChuyen(selectedDate, '', maNhanVienController.text);
+        // Gọi setState để cập nhật giao diện
+        // setState(() {
+        //   _loading = false;
+        // });
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  Future<void> getDSXVanChuyen(
+      String? Ngay, String? doiTac_Id, String? keyword) async {
     _dn = [];
     try {
       final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeVanChuyenAll?Ngay=$Ngay&keyword=$keyword');
+          'KhoThanhPham/GetDanhSachXeVanChuyenAll?Ngay=$Ngay&DoiTac_Id=$doiTac_Id&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
@@ -86,7 +122,8 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
         _loading = false;
       });
       print("Selected Date: $selectedDate");
-      await getDSXVanChuyen(selectedDate, maNhanVienController.text);
+      await getDSXVanChuyen(
+          selectedDate, doiTac_Id ?? "", maNhanVienController.text);
     }
   }
 
@@ -113,7 +150,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 2.5,
+        width: MediaQuery.of(context).size.width * 3,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -134,6 +171,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                 3: FlexColumnWidth(0.35),
                 4: FlexColumnWidth(0.3),
                 5: FlexColumnWidth(0.3),
+                6: FlexColumnWidth(0.3),
               },
               children: [
                 TableRow(
@@ -142,6 +180,11 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                       color: Colors.red,
                       child:
                           _buildTableCell('Giờ nhận', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Đơn vị vận chuyển',
+                          textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -173,7 +216,8 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
               ],
             ),
             Container(
-              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              height:
+                  MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
@@ -184,6 +228,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                     3: FlexColumnWidth(0.35),
                     4: FlexColumnWidth(0.3),
                     5: FlexColumnWidth(0.3),
+                    6: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn?.map((item) {
@@ -193,6 +238,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
                               _buildTableCell(item.gioNhan ?? ""),
+                              _buildTableCell(item.donVi ?? ""),
                               _buildTableCell(item.soKhung ?? ""),
                               _buildTableCell(item.loaiXe ?? ""),
                               _buildTableCell(item.thongTinChiTiet ?? ""),
@@ -378,12 +424,218 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXVanChuyen(selectedDate,
+                                          getDSXVanChuyen(
+                                              selectedDate,
+                                              doiTac_Id ?? "",
                                               maNhanVienController.text);
                                           setState(() {
                                             _loading = false;
                                           });
                                         },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height < 600
+                                          ? 10.h
+                                          : 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: const Color(0xFFBC2925),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 30.w,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF6C6C7),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: Color(0xFF818180),
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Đơn vị vận chuyển ",
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppConfig.textInput,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                            padding: EdgeInsets.only(
+                                                top: MediaQuery.of(context)
+                                                            .size
+                                                            .height <
+                                                        600
+                                                    ? 0
+                                                    : 5),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton2<String>(
+                                                isExpanded: true,
+                                                items: _doitacList?.map((item) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: item.id,
+                                                    child: Container(
+                                                      constraints: BoxConstraints(
+                                                          maxWidth: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.9),
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        child: Text(
+                                                          item.tenDoiTac ?? "",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontFamily:
+                                                                'Comfortaa',
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: AppConfig
+                                                                .textInput,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                value: doiTac_Id,
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    doiTac_Id = newValue;
+                                                  });
+
+                                                  if (newValue != null) {
+                                                    if (newValue == '') {
+                                                      getDSXVanChuyen(
+                                                          selectedDate,
+                                                          '',
+                                                          maNhanVienController
+                                                              .text);
+                                                    } else {
+                                                      getDSXVanChuyen(
+                                                          selectedDate,
+                                                          newValue,
+                                                          maNhanVienController
+                                                              .text);
+                                                      print(
+                                                          "object : ${doiTac_Id}");
+                                                    }
+                                                  }
+                                                },
+                                                buttonStyleData:
+                                                    const ButtonStyleData(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 16),
+                                                  height: 40,
+                                                  width: 200,
+                                                ),
+                                                dropdownStyleData:
+                                                    const DropdownStyleData(
+                                                  maxHeight: 200,
+                                                ),
+                                                menuItemStyleData:
+                                                    const MenuItemStyleData(
+                                                  height: 40,
+                                                ),
+                                                dropdownSearchData:
+                                                    DropdownSearchData(
+                                                  searchController:
+                                                      textEditingController,
+                                                  searchInnerWidgetHeight: 50,
+                                                  searchInnerWidget: Container(
+                                                    height: 50,
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      top: 8,
+                                                      bottom: 4,
+                                                      right: 8,
+                                                      left: 8,
+                                                    ),
+                                                    child: TextFormField(
+                                                      expands: true,
+                                                      maxLines: null,
+                                                      controller:
+                                                          textEditingController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        isDense: true,
+                                                        contentPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 8,
+                                                        ),
+                                                        hintText: 'Tìm đơn vị',
+                                                        hintStyle:
+                                                            const TextStyle(
+                                                                fontSize: 12),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  searchMatchFn:
+                                                      (item, searchValue) {
+                                                    if (item
+                                                        is DropdownMenuItem<
+                                                            String>) {
+                                                      // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                      String itemId =
+                                                          item.value ?? "";
+                                                      // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                      return _doitacList?.any((baiXe) =>
+                                                              baiXe.id ==
+                                                                  itemId &&
+                                                              baiXe.tenDoiTac
+                                                                      ?.toLowerCase()
+                                                                      .contains(
+                                                                          searchValue
+                                                                              .toLowerCase()) ==
+                                                                  true) ??
+                                                          false;
+                                                    } else {
+                                                      return false;
+                                                    }
+                                                  },
+                                                ),
+                                                onMenuStateChange: (isOpen) {
+                                                  if (!isOpen) {
+                                                    textEditingController
+                                                        .clear();
+                                                  }
+                                                },
+                                              ),
+                                            )),
                                       ),
                                     ],
                                   ),

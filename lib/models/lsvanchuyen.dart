@@ -6,6 +6,7 @@ class LSVanChuyenModel {
   String? thongTinVanChuyen;
   String? thongTinChiTiet;
   String? nguoiVanChuyen;
+  String? donVi;
   String? gioNhan;
 
   LSVanChuyenModel(
@@ -16,6 +17,7 @@ class LSVanChuyenModel {
       this.thongTinVanChuyen,
       this.thongTinChiTiet,
       this.nguoiVanChuyen,
+      this.donVi,
       this.gioNhan});
   factory LSVanChuyenModel.fromJson(Map<String, dynamic> json) {
     return LSVanChuyenModel(
@@ -26,6 +28,7 @@ class LSVanChuyenModel {
       thongTinChiTiet: json["thongTinChiTiet"],
       thongTinVanChuyen: json["thongTinVanChuyen"],
       nguoiVanChuyen: json["nguoiVanChuyen"],
+      donVi: json["donVi"],
       gioNhan: json["gioNhan"],
     );
   }

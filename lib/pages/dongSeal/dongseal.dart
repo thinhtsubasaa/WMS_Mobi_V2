@@ -44,7 +44,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'KIỂM TRA - ĐÓNG SEAL',
+          'ĐÓNG SEAL',
         ),
       ),
     );

@@ -315,6 +315,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
     _bl.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
+      
         if (_bl.timxe == null) {
           _qrData = '';
           _qrDataController.text = '';
@@ -526,6 +527,18 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                       CustomItem(
                                         title: 'Số khung: ',
                                         value: _data?.soKhung,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      CustomItem(
+                                        title: 'Màu xe: ',
+                                        value: _data?.tenMau,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      CustomItem(
+                                        title: 'Loại xe: ',
+                                        value: _data?.tenSanPham,
                                       ),
                                       const Divider(
                                           height: 1, color: Color(0xFFCCCCCC)),

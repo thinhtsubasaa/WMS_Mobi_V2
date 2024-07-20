@@ -3,6 +3,7 @@ import 'package:Thilogi/pages/lsnhanxe/ls_danhan.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
@@ -179,7 +180,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 35.w,
+      width: 32.w,
       child: Column(
         children: [
           Container(
@@ -188,7 +189,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
           ),
           const SizedBox(height: 8),
           Text(
-            buttonText,
+            buttonText.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',

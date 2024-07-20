@@ -50,7 +50,7 @@ class BottomContent extends StatelessWidget {
         color: AppConfig.bottom,
       ),
       child: customTitle(
-        'KIỂM TRA - QUẢN LÝ ĐÓNG CONT',
+        'QUẢN LÝ ĐÓNG CONT',
       ),
     );
   }

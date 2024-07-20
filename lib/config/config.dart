@@ -24,8 +24,8 @@ class AppConfig {
   static Color appThemeColor = const Color(0xFF00529C);
 
   // Image path
-  static const String QLKhoImagePath = 'assets/images/Image_Appbar.png';
-  static const String appBarImagePath = 'assets/images/AppBar.png';
+  static const String QLKhoImagePath = 'assets/images/AppBar_New.png';
+  static const String appBarImagePath = 'assets/images/AppBar_New.png';
   static const String backgroundImagePath = 'assets/images/background.png';
   static const String homeImagePath = 'assets/images/BodyHome.png';
   static const String bottomHomeImagePath = 'assets/images/BottomHome.png';
@@ -35,7 +35,6 @@ class AppConfig {
   static const List<String> languages = [
     'English',
     'Tiếng Việt',
-    'Chinese'
-    
+    'Chinese',
   ];
 }

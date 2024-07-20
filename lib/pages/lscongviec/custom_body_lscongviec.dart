@@ -8,6 +8,7 @@ import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
@@ -270,21 +271,21 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                         _handleButtonTap(LSVanChuyenPage());
                       },
                     ),
-                  // if (userHasPermission(menuRoles, 'lich-su-giao-xe-mobi'))
-                  CustomButton(
-                    'LỊCH SỬ GIAO XE',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                        ),
-                      ],
+                  if (userHasPermission(menuRoles, 'lich-su-giao-xe-mobi'))
+                    CustomButton(
+                      'LỊCH SỬ GIAO XE',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(LSGiaoXePage());
+                      },
                     ),
-                    () {
-                      _handleButtonTap(LSGiaoXePage());
-                    },
-                  ),
                 ],
                 // PageIndicator(currentPage: currentPage, pageCount: pageCount),
               ),
@@ -318,7 +319,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
           ),
           const SizedBox(height: 8),
           Text(
-            buttonText,
+            buttonText.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',

@@ -49,7 +49,7 @@ class BottomContent extends StatelessWidget {
         color: AppConfig.bottom,
       ),
       child: customTitle(
-        'KIỂM TRA - VẬN CHUYỂN / GIAO XE',
+        'VẬN CHUYỂN / GIAO XE',
       ),
     );
   }

@@ -50,7 +50,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   String _qrData = '';
   String? lat;
   String? long;
-
   String? KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
   String? BaiXeId;
   String? ViTriId;
@@ -1374,8 +1373,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                               Column(
                                 children: [
                                   Container(
-                                    margin:
-                                        EdgeInsets.only(top: 10, bottom: 10),
+                                    // margin:
+                                    //     EdgeInsets.only(top: 10, bottom: 10),
                                     child: Column(
                                       children: [
                                         Container(
