@@ -168,14 +168,15 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Nơi giao', textColor: Colors.white),
+                          _buildTableCell('Nơi đến', textColor: Colors.white),
                     ),
                   ],
                 ),
               ],
             ),
             Container(
-              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              height:
+                  MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:Thilogi/models/dsxdanhan.dart';
+import 'package:Thilogi/pages/lsnhanxe/ls_danhan.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -214,20 +215,43 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
       children: [
         const SizedBox(height: 5),
         CardVin(),
-        const SizedBox(height: 15),
+        const SizedBox(height: 5),
         _loading
             ? LoadingWidget(context)
             : Expanded(
                 child: SingleChildScrollView(
                   child: Container(
                     width: 90.w,
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
                     margin: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                     child: Column(
                       children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(left: 10),
+                              child: Text(
+                                'Thông Tin Xác Nhận',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.visibility),
+                              onPressed: () {
+                                // Hành động khi nhấn vào icon
+                                nextScreen(context, LSDaNhanPage());
+                              },
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -373,7 +397,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
 
 Widget showInfoXe(String title, String value) {
   return Container(
-    height: 9.h,
+    height: 8.h,
     padding: const EdgeInsets.all(10),
     child: Center(
       child: Row(

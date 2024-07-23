@@ -156,7 +156,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_QLBaiXe_XuatBai.png',
+                            'assets/images/Button_04_VC_GX_XuatBai.png',
                           ),
                         ],
                       ),
@@ -171,7 +171,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_GiaoXe.png',
+                            'assets/images/Button_04_VC_GX_GiaoXe.png',
                           ),
                         ],
                       ),
@@ -179,37 +179,37 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(GiaoXePage());
                       },
                     ),
-                  if (userHasPermission(
-                      menuRoles, 'danh-sach-xe-van-chuyen-mobi'))
-                    CustomButton(
-                      'DANH SÁCH XE ĐANG VẬN CHUYỂN',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                          ),
-                        ],
-                      ),
-                      () {
-                        _handleButtonTap(DSVanChuyenPage());
-                      },
-                    ),
-                  if (userHasPermission(menuRoles, 'danh-sach-xe-da-giao-mobi'))
-                    CustomButton(
-                      'DANH SÁCH XE ĐÃ GIAO',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                          ),
-                        ],
-                      ),
-                      () {
-                        _handleButtonTap(LSDaGiaoPage());
-                      },
-                    ),
+                  // if (userHasPermission(
+                  //     menuRoles, 'danh-sach-xe-van-chuyen-mobi'))
+                  //   CustomButton(
+                  //     'DANH SÁCH XE ĐANG VẬN CHUYỂN',
+                  //     Stack(
+                  //       alignment: Alignment.center,
+                  //       children: [
+                  //         Image.asset(
+                  //           'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     () {
+                  //       _handleButtonTap(DSVanChuyenPage());
+                  //     },
+                  //   ),
+                  // if (userHasPermission(menuRoles, 'danh-sach-xe-da-giao-mobi'))
+                  //   CustomButton(
+                  //     'DANH SÁCH XE ĐÃ GIAO',
+                  //     Stack(
+                  //       alignment: Alignment.center,
+                  //       children: [
+                  //         Image.asset(
+                  //           'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     () {
+                  //       _handleButtonTap(LSDaGiaoPage());
+                  //     },
+                  //   ),
                   if (userHasPermission(
                       menuRoles, 'danh-sach-xe-cho-van-chuyen-mobi'))
                     CustomButton(

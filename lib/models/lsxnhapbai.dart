@@ -7,6 +7,7 @@ class LSX_NhapBaiModel {
   String? noiDen;
   String? noiNhap;
   String? gioNhan;
+  String? ngay;
   LSX_NhapBaiModel(
       {this.id,
       this.loaiXe,
@@ -15,6 +16,7 @@ class LSX_NhapBaiModel {
       this.gioNhan,
       this.noiDen,
       this.noiNhap,
+      this.ngay,
       this.nguoiNhapBai});
 
   factory LSX_NhapBaiModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class LSX_NhapBaiModel {
       noiNhap: json["noiNhap"],
       nguoiNhapBai: json["nguoiNhapBai"],
       noiDen: json["noiDen"],
+      ngay: json["ngay"],
       gioNhan: json["gioNhan"],
     );
   }

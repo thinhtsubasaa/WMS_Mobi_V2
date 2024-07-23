@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:Thilogi/blocs/dieuchuyen_bloc.dart';
 import 'package:Thilogi/models/dieuchuyen.dart';
 import 'package:Thilogi/models/taixe.dart';
+import 'package:Thilogi/pages/lsdieuchuyen/ls_dieuchuyen.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -752,13 +754,26 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Thông Tin Xác Nhận',
-                                style: TextStyle(
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Thông Tin Xác Nhận',
+                                    style: TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.visibility),
+                                    onPressed: () {
+                                      // Hành động khi nhấn vào icon
+                                      nextScreen(context, LSDieuChuyenPage());
+                                    },
+                                  ),
+                                ],
                               ),
                               const Divider(
                                   height: 1, color: Color(0xFFA71C20)),

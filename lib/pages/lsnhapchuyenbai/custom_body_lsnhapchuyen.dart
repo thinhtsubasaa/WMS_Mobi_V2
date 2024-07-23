@@ -41,6 +41,8 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
   bool _hasError = false;
   bool get hasError => _hasError;
   String? selectedDate;
+  String? selectedFromDate;
+  String? selectedToDate;
   String? _errorCode;
   String? get errorCode => _errorCode;
   final TextEditingController textEditingController = TextEditingController();
@@ -49,17 +51,20 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
   @override
   void initState() {
     super.initState();
-    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    getLSNhap(selectedDate, maNhanVienController.text);
-    getLSNhapBai(selectedDate, maNhanVienController.text);
+    selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
+    selectedToDate =
+        DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
+    getLSNhap(selectedFromDate, selectedToDate, maNhanVienController.text);
+    getLSNhapBai(selectedFromDate, selectedToDate, maNhanVienController.text);
     getTotalNumberOfXe();
   }
 
-  Future<void> getLSNhap(String? ngay, String? keyword) async {
+  Future<void> getLSNhap(
+      String? tuNgay, String? denNgay, String? keyword) async {
     _dn = [];
     try {
       final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeDieuChuyenAll?Ngay=$ngay&keyword=$keyword');
+          'KhoThanhPham/GetDanhSachXeDieuChuyenAll?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("dataChuyen: " +
@@ -80,11 +85,12 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
     }
   }
 
-  Future<void> getLSNhapBai(String? ngay, String? keyword) async {
+  Future<void> getLSNhapBai(
+      String? tuNgay, String? denNgay, String? keyword) async {
     _cx = [];
     try {
       final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeNhapBaiAll?Ngay=$ngay&keyword=$keyword');
+          'KhoThanhPham/GetDanhSachXeNhapBaiAll?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("dataNhap: " +
@@ -106,21 +112,27 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
   }
 
   void _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDateRange: DateTimeRange(
+        start: DateTime.now(),
+        end: DateTime.now().add(Duration(days: 1)),
+      ),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != DateTime.now()) {
       setState(() {
-        selectedDate = DateFormat('dd/MM/yyyy').format(picked);
-        // Gọi API với ngày đã chọn
+        selectedFromDate = DateFormat('MM/dd/yyyy').format(picked.start);
+        selectedToDate = DateFormat('MM/dd/yyyy').format(picked.end);
         _loading = false;
       });
-      print("Selected Date: $selectedDate");
-      await getLSNhap(selectedDate, maNhanVienController.text);
-      await getLSNhapBai(selectedDate, maNhanVienController.text);
+      print("TuNgay: $selectedFromDate");
+      print("DenNgay: $selectedToDate");
+      await getLSNhap(
+          selectedFromDate, selectedToDate, maNhanVienController.text);
+      await getLSNhapBai(
+          selectedFromDate, selectedToDate, maNhanVienController.text);
     }
   }
 
@@ -133,30 +145,30 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
       ...?_dn?.map((e) => {'type': 'dn', 'data': e}),
       ...?_cx?.map((e) => {'type': 'cx', 'data': e})
     ];
-    combinedList.sort((a, b) {
-      try {
-        var aData = a['data'];
-        var bData = b['data'];
-        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate +
-            ((aData is LSX_NhapChuyenBaiModel
-                    ? aData.gioNhan
-                    : (aData as LSX_NhapBaiModel).gioNhan) ??
-                "00:00"));
-        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate +
-            ((bData is LSX_NhapChuyenBaiModel
-                    ? bData.gioNhan
-                    : (bData as LSX_NhapBaiModel).gioNhan) ??
-                "00:00"));
-        return bTime.compareTo(aTime); // Sắp xếp giảm dần
-      } catch (e) {
-        // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
-        return 0;
-      }
-    });
+    // combinedList.sort((a, b) {
+    //   try {
+    //     var aData = a['data'];
+    //     var bData = b['data'];
+    //     DateTime aTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate +
+    //         ((aData is LSX_NhapChuyenBaiModel
+    //                 ? aData.gioNhan
+    //                 : (aData as LSX_NhapBaiModel).ngay) ??
+    //             ""));
+    //     DateTime bTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate +
+    //         ((bData is LSX_NhapChuyenBaiModel
+    //                 ? bData.gioNhan
+    //                 : (bData as LSX_NhapBaiModel).ngay) ??
+    //             ""));
+    //     return bTime.compareTo(aTime); // Sắp xếp giảm dần
+    //   } catch (e) {
+    //     // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
+    //     return 0;
+    //   }
+    // });
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 2,
+        width: MediaQuery.of(context).size.width * 2.5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -171,7 +183,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
             Table(
               border: TableBorder.all(),
               columnWidths: {
-                0: FlexColumnWidth(0.15),
+                0: FlexColumnWidth(0.3),
                 1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
@@ -183,7 +195,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                          _buildTableCell('Ngày nhận', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -214,7 +226,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                 child: Table(
                   border: TableBorder.all(),
                   columnWidths: {
-                    0: FlexColumnWidth(0.15),
+                    0: FlexColumnWidth(0.3),
                     1: FlexColumnWidth(0.3),
                     2: FlexColumnWidth(0.3),
                     3: FlexColumnWidth(0.3),
@@ -229,8 +241,8 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
                               _buildTableCell(data is LSX_NhapChuyenBaiModel
-                                  ? data.gioNhan ?? ""
-                                  : (data as LSX_NhapBaiModel).gioNhan ?? ""),
+                                  ? data.ngay ?? ""
+                                  : (data as LSX_NhapBaiModel).ngay ?? ""),
                               _buildTableCell(data is LSX_NhapChuyenBaiModel
                                   ? data.soKhung ?? ""
                                   : (data as LSX_NhapBaiModel).soKhung ?? ""),
@@ -302,45 +314,39 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Danh sách nhập chuyển bãi',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                const Text(
+                                  'Danh sách nhập chuyển bãi',
+                                  style: TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => _selectDate(context),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 7, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.blue),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    GestureDetector(
-                                      onTap: () => _selectDate(context),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 7, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.blue),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.calendar_today,
+                                            color: Colors.blue),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          selectedFromDate != null &&
+                                                  selectedToDate != null
+                                              ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
+                                              : 'Chọn ngày',
+                                          style: TextStyle(color: Colors.blue),
                                         ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors.blue),
-                                            SizedBox(width: 4),
-                                            Text(
-                                              selectedDate ?? 'Chọn ngày',
-                                              style:
-                                                  TextStyle(color: Colors.blue),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                                 SizedBox(
                                   height: 4,
@@ -429,9 +435,13 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getLSNhap(selectedDate,
+                                          getLSNhap(
+                                              selectedFromDate,
+                                              selectedToDate,
                                               maNhanVienController.text);
-                                          getLSNhapBai(selectedDate,
+                                          getLSNhapBai(
+                                              selectedFromDate,
+                                              selectedToDate,
                                               maNhanVienController.text);
                                           setState(() {
                                             _loading = false;

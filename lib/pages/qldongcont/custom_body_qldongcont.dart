@@ -153,7 +153,7 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_QLBaiXe_DongCont.png',
+                            'assets/images/Button_QLBaiXe_DongCont2.png',
                           ),
                         ],
                       ),
@@ -183,7 +183,7 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_QLBaiXe_DongCont.png',
+                            'assets/images/Button_03_DongCont_AddCont.png',
                           ),
                         ],
                       ),
@@ -191,37 +191,37 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                         _handleButtonTap(ThemDongContPage());
                       },
                     ),
-                  if (userHasPermission(
-                      menuRoles, 'danh-sach-xe-dong-cont-mobi'))
-                    CustomButton(
-                      'DANH SÁCH XE ĐÓNG CONT',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                          ),
-                        ],
-                      ),
-                      () {
-                        _handleButtonTap(LSDaDongContPage());
-                      },
-                    ),
+                  // if (userHasPermission(
+                  //     menuRoles, 'danh-sach-xe-dong-cont-mobi'))
+                  //   CustomButton(
+                  //     'DANH SÁCH XE ĐÓNG CONT',
+                  //     Stack(
+                  //       alignment: Alignment.center,
+                  //       children: [
+                  //         Image.asset(
+                  //           'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     () {
+                  //       _handleButtonTap(LSDaDongContPage());
+                  //     },
+                  //   ),
                   // if (userHasPermission(menuRoles, 'rut-cont-mobi'))
-                  CustomButton(
-                    'RÚT CONT',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Button_QLBaiXe_DongCont.png',
-                        ),
-                      ],
-                    ),
-                    () {
-                      _handleButtonTap(RutContPage());
-                    },
-                  ),
+                  // CustomButton(
+                  //   'RÚT CONT',
+                  //   Stack(
+                  //     alignment: Alignment.center,
+                  //     children: [
+                  //       Image.asset(
+                  //         'assets/images/Button_QLBaiXe_DongCont.png',
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   () {
+                  //     _handleButtonTap(RutContPage());
+                  //   },
+                  // ),
                 ],
               ),
 

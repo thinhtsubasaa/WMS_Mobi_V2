@@ -7,6 +7,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+
+import '../blocs/theme_bloc.dart';
 import '../utils/sign_out.dart';
 import '../widgets/divider.dart';
 

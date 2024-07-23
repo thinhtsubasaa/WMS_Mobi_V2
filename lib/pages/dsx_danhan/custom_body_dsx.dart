@@ -33,7 +33,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
   String _qrData = '';
   final _qrDataController = TextEditingController();
   bool _loading = false;
-  String? id = "004cbc8d-1a72-42cf-cbf6-08dc9bff5b38";
+  String? id;
   String? KhoXeId;
   List<NhaMayModel>? _nhamayList;
   List<NhaMayModel>? get nhamayList => _nhamayList;
@@ -42,7 +42,8 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
   bool _hasError = false;
   bool get hasError => _hasError;
   String? selectedDate;
-
+  String? selectedFromDate;
+  String? selectedToDate;
   String? _errorCode;
   String? get errorCode => _errorCode;
   final TextEditingController textEditingController = TextEditingController();
@@ -51,50 +52,14 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
   @override
   void initState() {
     super.initState();
-    // getDSXDaNhan(id ?? "", selectedDate);
-
     getData();
-    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    getDSXDaNhanALL(selectedDate, maNhanVienController.text).then((_) {
-      // Sau khi tải dữ liệu "ALL", tiếp tục với dữ liệu theo ID
-      if (id == "004cbc8d-1a72-42cf-cbf6-08dc9bff5b38") {
-        // Đã tải "ALL" rồi nên không cần gọi lại
-      } else {
-        getDSXDaNhan(selectedDate, id, maNhanVienController.text);
-      }
-    });
-    // getDSXDaNhan(selectedDate, id);
-    // setState(() {
-    //   if (id == "004cbc8d-1a72-42cf-cbf6-08dc9bff5b38") {
-    //     getDSXDaNhanALL(selectedDate);
-    //   }
-    // });
+    selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
+    selectedToDate =
+        DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
+    getDSXDaNhan(
+        selectedFromDate, selectedToDate, id ?? "", maNhanVienController.text);
   }
 
-  // void getDSXDaNhan(String? id, String? ngay) async {
-  //   _dn = [];
-  //   try {
-  //     final http.Response response = await requestHelper.getData(
-  //         'KhoThanhPham/GetDanhSachXeDaNhanAll?LoaiXe_Id=$id&Ngay=$ngay');
-  //     if (response.statusCode == 200) {
-  //       var decodedData = jsonDecode(response.body);
-  //       print("data: " + decodedData);
-  //       if (decodedData != null) {
-  //         _dn = (decodedData as List)
-  //             .map((item) => DS_DaNhanModel.fromJson(item))
-  //             .toList();
-
-  //         // Gọi setState để cập nhật giao diện
-  //         setState(() {
-  //           _loading = false;
-  //         });
-  //       }
-  //     }
-  //   } catch (e) {
-  //     _hasError = true;
-  //     _errorCode = e.toString();
-  //   }
-  // }
   void getData() async {
     try {
       final http.Response response = await requestHelper.getData('NhaMay');
@@ -105,11 +70,15 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
         _nhamayList = (decodedData as List)
             .map((item) => NhaMayModel.fromJson(item))
             .toList();
+        _nhamayList!.insert(0, NhaMayModel(id: '', tenNhaMay: 'Tất cả'));
 
         // Gọi setState để cập nhật giao diện
         setState(() {
+          id = '';
           _loading = false;
         });
+        getDSXDaNhan(
+            selectedFromDate, selectedToDate, '', maNhanVienController.text);
       }
     } catch (e) {
       _hasError = true;
@@ -117,39 +86,13 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
     }
   }
 
-  Future<void> getDSXDaNhanALL(String? ngay, String? keyword) async {
+  Future<void> getDSXDaNhan(
+      String? tuNgay, String? denNgay, String? id, String? keyword) async {
     _dn = [];
-    print("Date: $ngay");
+
     try {
       final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeDaNhanAllNM?Ngay=$ngay&keyword=$keyword');
-
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
-        print("dataALL: " +
-            decodedData.toString()); // In dữ liệu nhận được từ API để kiểm tra
-        if (decodedData != null) {
-          _dn = (decodedData as List)
-              .map((item) => DS_DaNhanModel.fromJson(item))
-              .toList();
-          setState(() {
-            _loading =
-                false; // Đã nhận được dữ liệu, không còn trong quá trình loading nữa
-          });
-        }
-      }
-    } catch (e) {
-      _hasError = true;
-      _errorCode = e.toString();
-    }
-  }
-
-  Future<void> getDSXDaNhan(String? ngay, String? id, String? keyword) async {
-    _dn = [];
-    print("Date: $ngay");
-    try {
-      final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeDaNhanAll?Ngay=$ngay&NhaMay_Id=$id&keyword=$keyword');
+          'KhoThanhPham/GetDanhSachXeDaNhanAll?TuNgay=$tuNgay&DenNgay=$denNgay&NhaMay_Id=$id&keyword=$keyword');
 
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -172,28 +115,25 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
   }
 
   void _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDateRange: DateTimeRange(
+        start: DateTime.now(),
+        end: DateTime.now().add(Duration(days: 1)),
+      ),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != DateTime.now()) {
       setState(() {
-        selectedDate = DateFormat('dd/MM/yyyy').format(picked);
-        // Gọi API với ngày đã chọn
+        selectedFromDate = DateFormat('MM/dd/yyyy').format(picked.start);
+        selectedToDate = DateFormat('MM/dd/yyyy').format(picked.end);
         _loading = false;
       });
-      print("Selected Date: $selectedDate");
-      await getDSXDaNhanALL(selectedDate, maNhanVienController.text);
-      if (id != "004cbc8d-1a72-42cf-cbf6-08dc9bff5b38") {
-        await getDSXDaNhan(selectedDate, id, maNhanVienController.text);
-      }
-      setState(() {
-        _loading = false;
-      });
-      // getDSXDaNhan(selectedDate, id);
-      // getDSXDaNhanALL(selectedDate);
+      print("TuNgay: $selectedFromDate");
+      print("DenNgay: $selectedToDate");
+      await getDSXDaNhan(selectedFromDate, selectedToDate, id ?? "",
+          maNhanVienController.text);
     }
   }
 
@@ -202,22 +142,22 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
     const String defaultDate = "1970-01-01 ";
 
     // Sắp xếp danh sách _dn theo giờ nhận mới nhất
-    _dn?.sort((a, b) {
-      try {
-        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (a.gioNhan ?? "00:00"));
-        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (b.gioNhan ?? "00:00"));
-        return bTime.compareTo(aTime); // Sắp xếp giảm dần
-      } catch (e) {
-        // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
-        return 0;
-      }
-    });
+    // _dn?.sort((a, b) {
+    //   try {
+    //     DateTime aTime =
+    //         DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (a.ngay ?? ""));
+    //     DateTime bTime =
+    //         DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (b.ngay ?? ""));
+    //     return bTime.compareTo(aTime); // Sắp xếp giảm dần
+    //   } catch (e) {
+    //     // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
+    //     return 0;
+    //   }
+    // });
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 2.2,
+        width: MediaQuery.of(context).size.width * 2.5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -232,7 +172,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
             Table(
               border: TableBorder.all(),
               columnWidths: {
-                0: FlexColumnWidth(0.15),
+                0: FlexColumnWidth(0.3),
                 1: FlexColumnWidth(0.2),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
@@ -245,7 +185,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                          _buildTableCell('Ngày nhận', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -276,13 +216,12 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
               ],
             ),
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 1.2, // Chiều cao cố định
+              height: MediaQuery.of(context).size.height, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
                   columnWidths: {
-                    0: FlexColumnWidth(0.15),
+                    0: FlexColumnWidth(0.3),
                     1: FlexColumnWidth(0.2),
                     2: FlexColumnWidth(0.3),
                     3: FlexColumnWidth(0.3),
@@ -296,7 +235,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                           return TableRow(
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
-                              _buildTableCell(item.gioNhan ?? ""),
+                              _buildTableCell(item.ngay ?? ""),
                               _buildTableCell(item.nhaMay ?? ""),
                               _buildTableCell(item.soKhung ?? ""),
                               _buildTableCell(item.loaiXe ?? ""),
@@ -355,45 +294,39 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Danh sách xe đã nhận',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                const Text(
+                                  'Danh sách xe đã nhận',
+                                  style: TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => _selectDate(context),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.blue),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    GestureDetector(
-                                      onTap: () => _selectDate(context),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.blue),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.calendar_today,
+                                            color: Colors.blue),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          selectedFromDate != null &&
+                                                  selectedToDate != null
+                                              ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
+                                              : 'Chọn ngày',
+                                          style: TextStyle(color: Colors.blue),
                                         ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors.blue),
-                                            SizedBox(width: 8),
-                                            Text(
-                                              selectedDate ?? 'Chọn ngày',
-                                              style:
-                                                  TextStyle(color: Colors.blue),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                                 SizedBox(
                                   height: 4,
@@ -482,13 +415,13 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXDaNhanALL(selectedDate,
+
+                                          getDSXDaNhan(
+                                              selectedFromDate,
+                                              selectedToDate,
+                                              id ?? "",
                                               maNhanVienController.text);
-                                          if (id !=
-                                              "004cbc8d-1a72-42cf-cbf6-08dc9bff5b38") {
-                                            getDSXDaNhan(selectedDate, id,
-                                                maNhanVienController.text);
-                                          }
+
                                           setState(() {
                                             _loading = false;
                                           });
@@ -591,15 +524,17 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                                                     id = newValue;
                                                   });
                                                   if (newValue != null) {
-                                                    if (id ==
-                                                        "004cbc8d-1a72-42cf-cbf6-08dc9bff5b38") {
-                                                      getDSXDaNhanALL(
-                                                          selectedDate,
+                                                    if (id == '') {
+                                                      getDSXDaNhan(
+                                                          selectedFromDate,
+                                                          selectedToDate,
+                                                          '',
                                                           maNhanVienController
                                                               .text);
                                                     } else {
                                                       getDSXDaNhan(
-                                                          selectedDate,
+                                                          selectedFromDate,
+                                                          selectedToDate,
                                                           newValue,
                                                           maNhanVienController
                                                               .text);

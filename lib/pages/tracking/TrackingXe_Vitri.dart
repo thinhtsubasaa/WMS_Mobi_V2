@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:Thilogi/models/tinhtrangdonhang.dart';
 import 'package:Thilogi/models/tracking_chuyentiep.dart';
 import 'package:Thilogi/models/tracking_xuatxe.dart';
+import 'package:Thilogi/pages/Home.dart';
 import 'package:Thilogi/pages/tracking/custom_body_trackingxe.dart';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -409,18 +410,18 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
               AppConfig.QLKhoImagePath,
               width: 70.w,
             ),
-            Container(
-              child: Text(
-                'TCT VẬN TẢI ĐƯỜNG BỘ THILOGI',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFFBC2925),
-                ),
-              ),
-            ),
+            // Container(
+            //   child: Text(
+            //     'TCT VẬN TẢI ĐƯỜNG BỘ THILOGI',
+            //     textAlign: TextAlign.center,
+            //     style: TextStyle(
+            //       fontFamily: 'Roboto',
+            //       fontSize: 14.sp,
+            //       fontWeight: FontWeight.w700,
+            //       color: Color(0xFFBC2925),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -597,12 +598,12 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                           children:
                                               _trackingchuyentiep!.map((item) {
                                             bool isNewKho =
-                                                item.baiXe != previousKho;
-                                            previousKho = item.baiXe;
+                                                item.kho != previousKho;
+                                            previousKho = item.kho;
                                             return buildRowItem(
                                                 customImage: isNewKho
-                                                    ? CustomImage3()
-                                                    : SizedBox(width: 105),
+                                                    ? CustomImage5()
+                                                    : SizedBox(width: 120),
                                                 // customImage: CustomImage3(),
                                                 textLine: (item.thoiGianVao !=
                                                             null
@@ -655,7 +656,11 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                                 textLines.join('\n');
 
                                             return buildRowItem(
-                                              customImage: CustomImage2(),
+                                              customImage: !item
+                                                      .thongtinvanchuyen!
+                                                      .contains("Cont")
+                                                  ? CustomImage2()
+                                                  : CustomImage6(),
                                               textLine: textLine,
                                             );
                                           }).toList(),
@@ -669,7 +674,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                             return buildRowItem(
                                                 customImage: isNewKho
                                                     ? CustomImage3()
-                                                    : SizedBox(width: 105),
+                                                    : SizedBox(width: 120),
                                                 // customImage: CustomImage3(),
                                                 textLine: (item.thoiGianVao !=
                                                             null
@@ -686,22 +691,6 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                                     (item.nguoiNhapBai ?? ""));
                                           }).toList(),
                                         ),
-                                      // if (_xequa != null)
-                                      //   Column(
-                                      //     children: _xequa!.map((item) {
-                                      //       return buildRowItem(
-                                      //         customImage: CustomImage4(),
-                                      //         textLine: formatDateTime(
-                                      //                 item.ngayNhan ?? "") +
-                                      //             '\n' +
-                                      //             (item.noiNhan != null
-                                      //                 ? ('${(item.noiNhan ?? "")}')
-                                      //                 : "") +
-                                      //             '\n' +
-                                      //             (item.nguoiNhan ?? ""),
-                                      //       );
-                                      //     }).toList(),
-                                      //   ),
                                       if (_xequa != null)
                                         Column(
                                           children: _xequa!.map((item) {

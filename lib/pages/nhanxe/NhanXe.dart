@@ -1,3 +1,5 @@
+import 'package:Thilogi/pages/lsnhanxe/ls_danhan.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/nhanxe/custom_body_NhanXe.dart';
@@ -47,7 +49,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'NHẬN XE',
+          'KIỂM TRA - NHẬN XE',
         ),
       ),
     );

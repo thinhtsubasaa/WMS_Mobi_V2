@@ -421,141 +421,18 @@ class buildRowItem extends StatelessWidget {
   }
 }
 
-// class CustomImage1 extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       children: [
-//         Image.asset(
-//           'assets/images/car4.png',
-//           width: 65,
-//           height: 75,
-//         ),
-//         Transform.translate(
-//           offset: const Offset(-25, -15),
-//           child: Image.asset(
-//             'assets/images/tick.png',
-//             width: 40,
-//             height: 40,
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// class CustomImage2 extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Stack(
-//       alignment: Alignment.center,
-//       children: [
-//         Image.asset(
-//           'assets/images/car5.png',
-//           width: 105,
-//           height: 80,
-//         ),
-//         Transform.translate(
-//           offset: const Offset(0, -3),
-//           child: Padding(
-//             padding: const EdgeInsets.only(right: 60),
-//             child: Image.asset(
-//               'assets/images/car4.png',
-//               width: 35,
-//               height: 40,
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// class CustomImage3 extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Stack(
-//       alignment: Alignment.center,
-//       children: [
-//         Image.asset(
-//           'assets/images/car3.png',
-//           width: 105,
-//           height: 80,
-//         ),
-//         Transform.translate(
-//           offset: const Offset(0, 3),
-//           child: Padding(
-//             padding: const EdgeInsets.only(right: 55),
-//             child: Image.asset(
-//               'assets/images/car4.png',
-//               width: 40,
-//               height: 40,
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// class CustomImage4 extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       children: [
-//         Image.asset(
-//           'assets/images/car4.png',
-//           width: 65,
-//           height: 75,
-//         ),
-//         Transform.translate(
-//           offset: const Offset(-25, -15),
-//           child: Image.asset(
-//             'assets/images/search.png',
-//             width: 40,
-//             height: 60,
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// class CustomImage5 extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Transform.translate(
-//       offset: const Offset(-50, -5),
-//       child: Image.asset(
-//         'assets/images/car4.png',
-//         width: 70,
-//         height: 80,
-//       ),
-//     );
-//   }
-// }
 class CustomImage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 105,
+      width: 120,
       height: 80,
-      child: Row(
-        children: [
-          Image.asset(
-            'assets/images/car4.png',
-            width: 65,
-            height: 75,
-          ),
-          Transform.translate(
-            offset: const Offset(-25, -15),
-            child: Image.asset(
-              'assets/images/tick.png',
-              width: 40,
-              height: 40,
-            ),
-          ),
-        ],
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_GiaoXe.png',
+        width: 120, // Đảm bảo kích thước không vượt quá Container
+        height: 80,
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -565,28 +442,12 @@ class CustomImage2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 105,
+      width: 120,
       height: 80,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.asset(
-            'assets/images/car5.png',
-            width: 105,
-            height: 80,
-          ),
-          Transform.translate(
-            offset: const Offset(0, -3),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 60),
-              child: Image.asset(
-                'assets/images/car4.png',
-                width: 35,
-                height: 40,
-              ),
-            ),
-          ),
-        ],
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_VCDuongBo.png',
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -596,28 +457,12 @@ class CustomImage3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 105,
+      width: 120,
       height: 80,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.asset(
-            'assets/images/car3.png',
-            width: 105,
-            height: 80,
-          ),
-          Transform.translate(
-            offset: const Offset(0, 3),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 55),
-              child: Image.asset(
-                'assets/images/car4.png',
-                width: 40,
-                height: 40,
-              ),
-            ),
-          ),
-        ],
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_LuuBai.png',
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -627,24 +472,12 @@ class CustomImage4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 105,
+      width: 120,
       height: 80,
-      child: Row(
-        children: [
-          Image.asset(
-            'assets/images/car4.png',
-            width: 65,
-            height: 75,
-          ),
-          Transform.translate(
-            offset: const Offset(-25, -15),
-            child: Image.asset(
-              'assets/images/search.png',
-              width: 40,
-              height: 60,
-            ),
-          ),
-        ],
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_KiemTraNhanXe.png',
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -654,15 +487,27 @@ class CustomImage5 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 105,
+      width: 120,
       height: 80,
-      child: Transform.translate(
-        offset: const Offset(-50, -5),
-        child: Image.asset(
-          'assets/images/car4.png',
-          width: 70,
-          height: 80,
-        ),
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_KhoTrungChuyen.png',
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+      ),
+    );
+  }
+}
+
+class CustomImage6 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 120,
+      height: 80,
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_VCDuongBien.png',
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }

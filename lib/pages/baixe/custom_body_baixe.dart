@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:Thilogi/blocs/nhapbai.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/vitri.dart';
+import 'package:Thilogi/pages/lsnhapbai/ls_nhapbai.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
@@ -525,13 +527,27 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Thông Tin Xác Nhận',
-                                style: TextStyle(
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Thông Tin Xác Nhận',
+                                    style: TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.visibility),
+                                    onPressed: () {
+                                      // Hành động khi nhấn vào icon
+                                      nextScreen(context, LSNhapBaiPage());
+                                      // Điều hướng đến trang lịch sử hoặc thực hiện hành động khác
+                                    },
+                                  ),
+                                ],
                               ),
                               const Divider(
                                   height: 1, color: Color(0xFFA71C20)),

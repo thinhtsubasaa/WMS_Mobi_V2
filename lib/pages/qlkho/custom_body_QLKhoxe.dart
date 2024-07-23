@@ -173,7 +173,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         ],
                       ),
                       () {
-                        _handleButtonTap(QLNhanXePage());
+                        _handleButtonTap(NhanXePage());
                       },
                     ),
                   if (userHasPermission(menuRoles, 'quan-ly-bai-xe-mobi'))
@@ -237,21 +237,6 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(TrackingXeVitriPage());
                       },
                     ),
-                  if (userHasPermission(menuRoles, 'thong-tin-nhan-vien-mobi'))
-                    CustomButton(
-                      'TRA CỨU THÔNG TIN NHÂN VIÊN',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_TTTheNhanVien.png',
-                          ),
-                        ],
-                      ),
-                      () {
-                        _handleButtonTap(TraCuuPage());
-                      },
-                    ),
                   if (userHasPermission(menuRoles, 'lich-su-cong-viec-mobi'))
                     CustomButton(
                       'LỊCH SỬ CÔNG VIỆC',
@@ -265,6 +250,21 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                       ),
                       () {
                         _handleButtonTap(LSCongViecPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'thong-tin-nhan-vien-mobi'))
+                    CustomButton(
+                      'TRA CỨU THÔNG TIN NHÂN VIÊN',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_TTTheNhanVien.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(TraCuuPage());
                       },
                     ),
                 ],

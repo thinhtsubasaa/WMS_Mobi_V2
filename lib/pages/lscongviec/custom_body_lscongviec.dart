@@ -218,7 +218,7 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_NhapChuyenBai.png',
+                            'assets/images/Button_09_LichSuCongViec_DongCont.png',
                           ),
                         ],
                       ),
@@ -263,7 +263,7 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                            'assets/images/Button_09_LichSuCongViec_VanChuyen.png',
                           ),
                         ],
                       ),
@@ -278,7 +278,7 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                            'assets/images/Button_09_LichSuCongViec_GiaoXe.png',
                           ),
                         ],
                       ),

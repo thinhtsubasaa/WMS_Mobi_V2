@@ -7,6 +7,9 @@ import 'package:Thilogi/models/diadiem.dart';
 import 'package:Thilogi/models/loaiphuongtien.dart';
 import 'package:Thilogi/models/phuongthucvanchuyen.dart';
 import 'package:Thilogi/models/xuatkho.dart';
+import 'package:Thilogi/pages/ds_vanchuyen/ds_vanchuyen.dart';
+import 'package:Thilogi/pages/lsx_vanchuyen/lsx_vanchuyen.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -407,13 +410,27 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Thông Tin Xác Nhận',
-                                style: TextStyle(
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Thông Tin Xác Nhận',
+                                    style: TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.visibility),
+                                    onPressed: () {
+                                      // Hành động khi nhấn vào icon
+                                      nextScreen(context, DSVanChuyenPage());
+                                      // Điều hướng đến trang lịch sử hoặc thực hiện hành động khác
+                                    },
+                                  ),
+                                ],
                               ),
                               const Divider(
                                 height: 1,

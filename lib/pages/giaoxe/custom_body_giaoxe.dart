@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:Thilogi/models/giaoxe.dart';
+import 'package:Thilogi/pages/dsgiaoxe/ds_giaoxe.dart';
+import 'package:Thilogi/pages/lsx_giaoxe/lsx_giaoxe.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -24,6 +26,7 @@ import '../../config/config.dart';
 import '../../models/diadiem.dart';
 import '../../models/phuongthucvanchuyen.dart';
 import '../../services/app_service.dart';
+import '../../utils/next_screen.dart';
 import '../../widgets/checksheet_upload_anh.dart';
 import '../../widgets/loading.dart';
 
@@ -385,13 +388,27 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Thông Tin Xác Nhận',
-                                style: TextStyle(
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Thông Tin Xác Nhận',
+                                    style: TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.visibility),
+                                    onPressed: () {
+                                      // Hành động khi nhấn vào icon
+                                      nextScreen(context, LSDaGiaoPage());
+                                      // Điều hướng đến trang lịch sử hoặc thực hiện hành động khác
+                                    },
+                                  ),
+                                ],
                               ),
                               const Divider(
                                 height: 1,

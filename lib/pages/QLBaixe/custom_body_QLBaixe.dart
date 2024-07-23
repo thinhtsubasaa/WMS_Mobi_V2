@@ -133,7 +133,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               margin: const EdgeInsets.only(top: 30, bottom: 30),
               child: Wrap(
-                spacing: 20.0, // khoảng cách giữa các nút
+                spacing: 25.0, // khoảng cách giữa các nút
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
@@ -190,34 +190,34 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                         ), () {
                       _handleButtonTap(DSXChoXuatPage());
                     }),
-                  if (userHasPermission(
-                      menuRoles, 'danh-sach-xe-nhap-bai-mobi'))
-                    CustomButton(
-                        'LỊCH SỬ XE NHẬP BÃI',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                            ),
-                          ],
-                        ), () {
-                      _handleButtonTap(LSNhapBaiPage());
-                    }),
-                  if (userHasPermission(
-                      menuRoles, 'danh-sach-xe-chuyen-bai-mobi'))
-                    CustomButton(
-                        'LỊCH SỬ XE CHUYỂN BÃI',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                            ),
-                          ],
-                        ), () {
-                      _handleButtonTap(LSDieuChuyenPage());
-                    }),
+                  // if (userHasPermission(
+                  //     menuRoles, 'danh-sach-xe-nhap-bai-mobi'))
+                  //   CustomButton(
+                  //       'LỊCH SỬ XE NHẬP BÃI',
+                  //       Stack(
+                  //         alignment: Alignment.center,
+                  //         children: [
+                  //           Image.asset(
+                  //             'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                  //           ),
+                  //         ],
+                  //       ), () {
+                  //     _handleButtonTap(LSNhapBaiPage());
+                  //   }),
+                  // if (userHasPermission(
+                  //     menuRoles, 'danh-sach-xe-chuyen-bai-mobi'))
+                  //   CustomButton(
+                  //       'LỊCH SỬ XE CHUYỂN BÃI',
+                  //       Stack(
+                  //         alignment: Alignment.center,
+                  //         children: [
+                  //           Image.asset(
+                  //             'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                  //           ),
+                  //         ],
+                  //       ), () {
+                  //     _handleButtonTap(LSDieuChuyenPage());
+                  //   }),
                 ],
               ),
 
@@ -243,7 +243,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 28.w,
+      width: 32.w,
       child: Column(
         children: [
           Container(

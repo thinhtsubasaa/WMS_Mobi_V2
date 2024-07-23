@@ -11,6 +11,7 @@ class LSDongContModel {
   String? bienSo;
   String? taiXe;
   String? gioNhan;
+  String? ngay;
 
   LSDongContModel(
       {this.id,
@@ -24,6 +25,7 @@ class LSDongContModel {
       this.bienSo,
       this.taiXe,
       this.loaiXe,
+      this.ngay,
       this.gioNhan});
   factory LSDongContModel.fromJson(Map<String, dynamic> json) {
     return LSDongContModel(
@@ -39,6 +41,7 @@ class LSDongContModel {
       taiXe: json["taiXe"],
       gioNhan: json["gioNhan"],
       loaiXe: json["loaiXe"],
+      ngay: json["ngay"],
     );
   }
 }

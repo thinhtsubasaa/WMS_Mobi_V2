@@ -42,7 +42,8 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
   bool _hasError = false;
   bool get hasError => _hasError;
   String? selectedDate;
-
+  String? selectedFromDate;
+  String? selectedToDate;
   String? _errorCode;
   String? get errorCode => _errorCode;
   final TextEditingController textEditingController = TextEditingController();
@@ -52,8 +53,11 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
   void initState() {
     super.initState();
     getDoiTac();
-    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    getDSXGiaoXe(selectedDate, doiTac_Id ?? "", maNhanVienController.text);
+    selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
+    selectedToDate =
+        DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
+    getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "",
+        maNhanVienController.text);
   }
 
   void getDoiTac() async {
@@ -74,7 +78,8 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
         });
 
         // Gọi hàm để lấy dữ liệu với giá trị mặc định "Tất cả"
-        getDSXGiaoXe(selectedDate, '', maNhanVienController.text);
+        getDSXGiaoXe(
+            selectedFromDate, selectedToDate, '', maNhanVienController.text);
         // Gọi setState để cập nhật giao diện
         // setState(() {
         //   _loading = false;
@@ -86,12 +91,12 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
     }
   }
 
-  Future<void> getDSXGiaoXe(
-      String? Ngay, String? doiTac_Id, String? keyword) async {
+  Future<void> getDSXGiaoXe(String? tuNgay, String? denNgay, String? doiTac_Id,
+      String? keyword) async {
     _dn = [];
     try {
       final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeGiaoXeAll?Ngay=$Ngay&DoiTac_Id=$doiTac_Id&keyword=$keyword');
+          'KhoThanhPham/GetDanhSachXeGiaoXeAll?TuNgay=$tuNgay&DenNgay=$denNgay&DoiTac_Id=$doiTac_Id&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
@@ -113,21 +118,25 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
   }
 
   void _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDateRange: DateTimeRange(
+        start: DateTime.now(),
+        end: DateTime.now().add(Duration(days: 1)),
+      ),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != DateTime.now()) {
       setState(() {
-        selectedDate = DateFormat('dd/MM/yyyy').format(picked);
-        // Gọi API với ngày đã chọn
+        selectedFromDate = DateFormat('MM/dd/yyyy').format(picked.start);
+        selectedToDate = DateFormat('MM/dd/yyyy').format(picked.end);
         _loading = false;
       });
-      print("Selected Date: $selectedDate");
-      await getDSXGiaoXe(
-          selectedDate, doiTac_Id ?? "", maNhanVienController.text);
+      print("TuNgay: $selectedFromDate");
+      print("DenNgay: $selectedToDate");
+      await getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "",
+          maNhanVienController.text);
     }
   }
 
@@ -138,18 +147,18 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
     const String defaultDate = "1970-01-01 ";
 
     // Sắp xếp danh sách _dn theo giờ nhận mới nhất
-    _dn?.sort((a, b) {
-      try {
-        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (a.gioNhan ?? "00:00"));
-        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (b.gioNhan ?? "00:00"));
-        return bTime.compareTo(aTime); // Sắp xếp giảm dần
-      } catch (e) {
-        // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
-        return 0;
-      }
-    });
+    // _dn?.sort((a, b) {
+    //   try {
+    //     DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
+    //         .parse(defaultDate + (a.gioNhan ?? "00:00"));
+    //     DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
+    //         .parse(defaultDate + (b.gioNhan ?? "00:00"));
+    //     return bTime.compareTo(aTime); // Sắp xếp giảm dần
+    //   } catch (e) {
+    //     // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
+    //     return 0;
+    //   }
+    // });
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -169,7 +178,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
             Table(
               border: TableBorder.all(),
               columnWidths: {
-                0: FlexColumnWidth(0.15),
+                0: FlexColumnWidth(0.3),
                 1: FlexColumnWidth(0.35),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
@@ -183,7 +192,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                          _buildTableCell('Ngày nhận', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -224,7 +233,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                 child: Table(
                   border: TableBorder.all(),
                   columnWidths: {
-                    0: FlexColumnWidth(0.15),
+                    0: FlexColumnWidth(0.3),
                     1: FlexColumnWidth(0.35),
                     2: FlexColumnWidth(0.3),
                     3: FlexColumnWidth(0.3),
@@ -239,7 +248,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                           return TableRow(
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
-                              _buildTableCell(item.gioNhan ?? ""),
+                              _buildTableCell(item.ngay ?? ""),
                               _buildTableCell(item.donVi ?? ""),
                               _buildTableCell(item.soKhung ?? ""),
                               _buildTableCell(item.loaiXe ?? ""),
@@ -299,45 +308,39 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Danh sách xe đã giao',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                const Text(
+                                  'Danh sách xe đã giao',
+                                  style: TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => _selectDate(context),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.blue),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    GestureDetector(
-                                      onTap: () => _selectDate(context),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.blue),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.calendar_today,
+                                            color: Colors.blue),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          selectedFromDate != null &&
+                                                  selectedToDate != null
+                                              ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
+                                              : 'Chọn ngày',
+                                          style: TextStyle(color: Colors.blue),
                                         ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors.blue),
-                                            SizedBox(width: 8),
-                                            Text(
-                                              selectedDate ?? 'Chọn ngày',
-                                              style:
-                                                  TextStyle(color: Colors.blue),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                                 SizedBox(
                                   height: 4,
@@ -427,7 +430,8 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                           });
                                           // Gọi API với từ khóa tìm kiếm
                                           getDSXGiaoXe(
-                                              selectedDate,
+                                              selectedFromDate,
+                                              selectedToDate,
                                               doiTac_Id ?? "",
                                               maNhanVienController.text);
                                           setState(() {
@@ -535,13 +539,15 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                                   if (newValue != null) {
                                                     if (newValue == '') {
                                                       getDSXGiaoXe(
-                                                          selectedDate,
+                                                          selectedFromDate,
+                                                          selectedToDate,
                                                           '',
                                                           maNhanVienController
                                                               .text);
                                                     } else {
                                                       getDSXGiaoXe(
-                                                          selectedDate,
+                                                          selectedFromDate,
+                                                          selectedToDate,
                                                           newValue,
                                                           maNhanVienController
                                                               .text);

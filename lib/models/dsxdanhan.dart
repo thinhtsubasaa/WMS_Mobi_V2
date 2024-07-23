@@ -6,6 +6,7 @@ class DS_DaNhanModel {
   String? nhaMay;
   String? nguoiNhan;
   String? gioNhan;
+  String? ngay;
 
   DS_DaNhanModel(
       {this.id,
@@ -14,6 +15,7 @@ class DS_DaNhanModel {
       this.mauXe,
       this.nhaMay,
       this.gioNhan,
+      this.ngay,
       this.nguoiNhan});
 
   factory DS_DaNhanModel.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class DS_DaNhanModel {
       nguoiNhan: json["nguoiNhan"],
       nhaMay: json["nhaMay"],
       gioNhan: json["gioNhan"],
+      ngay: json["ngay"],
     );
   }
 }
