@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:Thilogi/models/timxe.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:quickalert/quickalert.dart';
 
@@ -61,6 +60,7 @@ class TimXeBloc extends ChangeNotifier {
             nguoiPhuTrach: decodedData['nguoiPhuTrach'],
             tenMau: decodedData['tenMau'],
             tenSanPham: decodedData['tenSanPham'],
+            donVi: decodedData['donVi'],
             dieuChuyen: dieuChuyenList,
             nhapKho: nhapKhoList,
           );

@@ -1,4 +1,4 @@
-class DS_DongContModel {
+class DS_DongSealModel {
   String? key;
   String? id;
   String? soCont;
@@ -8,7 +8,7 @@ class DS_DongContModel {
   String? viTri;
   String? tau;
 
-  DS_DongContModel(
+  DS_DongSealModel(
       {this.key,
       this.id,
       this.soCont,
@@ -18,8 +18,8 @@ class DS_DongContModel {
       this.tau,
       this.viTri});
 
-  factory DS_DongContModel.fromJson(Map<String, dynamic> json) {
-    return DS_DongContModel(
+  factory DS_DongSealModel.fromJson(Map<String, dynamic> json) {
+    return DS_DongSealModel(
       key: json["key"],
       id: json["id"],
       soCont: json["soCont"],
@@ -38,5 +38,6 @@ class DS_DongContModel {
         "viTri": viTri,
         "loaiXe": loaiXe,
         "soKhung": soKhung,
+        "tau": tau,
       };
 }

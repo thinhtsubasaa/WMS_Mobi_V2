@@ -9,6 +9,7 @@ class TimXeModel {
   String? tenMau;
   String? tenSanPham;
   String? nguoiPhuTrach;
+  String? donVi;
   List<DieuChuyen>? dieuChuyen;
   List<NhapKho>? nhapKho;
 
@@ -23,6 +24,7 @@ class TimXeModel {
     this.nguoiPhuTrach,
     this.tenMau,
     this.tenSanPham,
+    this.donVi,
     this.dieuChuyen,
     this.nhapKho,
   });
@@ -37,6 +39,7 @@ class TimXeModel {
       tenBaiXe: json["tenBaiXe"],
       toaDo: json["toaDo"],
       tenMau: json["tenMau"],
+      donVi: json["donVi"],
       tenSanPham: json["tenSanPham"],
       nguoiPhuTrach: json["nguoiPhuTrach"],
       dieuChuyen: (json['dieuChuyen'] as List<dynamic>?)

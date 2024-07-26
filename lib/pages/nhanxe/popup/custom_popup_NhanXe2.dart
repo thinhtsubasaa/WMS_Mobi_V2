@@ -1,10 +1,8 @@
-import 'package:Thilogi/pages/nhanxe/NhanXe2.dart';
 import 'package:flutter/material.dart';
 
 import 'package:sizer/sizer.dart';
 
 import '../../../config/config.dart';
-import '../../../utils/next_screen.dart';
 
 // ignore: use_key_in_widget_constructors
 class PopUp2 extends StatelessWidget {
@@ -118,7 +116,6 @@ class PopUp2 extends StatelessWidget {
             height: 1,
             color: AppConfig.primaryColor,
           ),
-          const SizedBox(height: 10),
         ],
       ),
     );
@@ -128,7 +125,7 @@ class PopUp2 extends StatelessWidget {
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.all(10),
+          margin: EdgeInsets.only(left: 10, right: 10),
           child: Column(
             children: [
               Row(
@@ -183,12 +180,7 @@ class PopUp2 extends StatelessWidget {
     int index = 0; // Biến đếm số thứ tự
     return Container(
       width: 100.w,
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height < 600
-            ? MediaQuery.of(context).size.height * 2
-            : 90.h, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
-      ),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -203,15 +195,14 @@ class PopUp2 extends StatelessWidget {
           Table(
             border: TableBorder.all(),
             columnWidths: {
-              0: FlexColumnWidth(0.25), // Cột 'TT' chiếm 20% chiều ngang
-              1: FlexColumnWidth(0.5), // Cột 'Tên Option' chiếm 60% chiều ngang
-              2: FlexColumnWidth(0.25), // Cột 'Số lượng' chiếm 20% chiều ngang
+              0: FlexColumnWidth(0.15),
+              1: FlexColumnWidth(0.5),
+              2: FlexColumnWidth(0.25),
             },
             children: [
               TableRow(
                 children: [
                   Container(
-                    width: double.infinity,
                     color: Colors.red,
                     child: _buildTableCell('TT', textColor: Colors.white),
                   ),
@@ -226,20 +217,36 @@ class PopUp2 extends StatelessWidget {
                   ),
                 ],
               ),
-              ...phuKien?.map((item) {
-                    index++; // Tăng số thứ tự sau mỗi lần lặp
-
-                    return TableRow(
-                      children: [
-                        _buildTableCell(index.toString()), // Số thứ tự
-                        _buildTableCell(item.tenPhuKien ?? ""),
-                        _buildTableCell(item.giaTri ??
-                            ""), // Giả sử mỗi item có một trường 'giaTri'
-                      ],
-                    );
-                  })?.toList() ??
-                  [],
             ],
+          ),
+          Container(
+            height:
+                MediaQuery.of(context).size.height * 0.5, // Chiều cao cố định
+            child: SingleChildScrollView(
+              child: Table(
+                border: TableBorder.all(),
+                columnWidths: {
+                  0: FlexColumnWidth(0.15),
+                  1: FlexColumnWidth(0.5),
+                  2: FlexColumnWidth(0.25),
+                },
+                children: [
+                  ...phuKien?.map((item) {
+                        index++; // Tăng số thứ tự sau mỗi lần lặp
+
+                        return TableRow(
+                          children: [
+                            _buildTableCell(index.toString()), // Số thứ tự
+                            _buildTableCell(item.tenPhuKien ?? ""),
+                            _buildTableCell(item.giaTri ??
+                                ""), // Giả sử mỗi item có một trường 'giaTri'
+                          ],
+                        );
+                      })?.toList() ??
+                      [],
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -251,6 +258,7 @@ class PopUp2 extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Text(
         content,
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: 'Comfortaa',
           fontSize: 12,
@@ -264,7 +272,6 @@ class PopUp2 extends StatelessWidget {
 
 Widget showInfoXe(String title, String value) {
   return Container(
-    padding: EdgeInsets.only(top: 10),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

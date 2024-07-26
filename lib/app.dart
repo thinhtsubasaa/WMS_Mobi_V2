@@ -6,7 +6,6 @@ import 'package:Thilogi/blocs/giaoxe_bloc.dart';
 import 'package:Thilogi/blocs/khoxe_bloc.dart';
 import 'package:Thilogi/blocs/menu_roles.dart';
 import 'package:Thilogi/blocs/nhapbai.dart';
-import 'package:Thilogi/blocs/rutcont_bloc.dart';
 import 'package:Thilogi/blocs/scan_bloc.dart';
 import 'package:Thilogi/blocs/scan_nhanvien_bloc.dart';
 import 'package:Thilogi/blocs/theme_bloc.dart';
@@ -82,9 +81,6 @@ class MyApp extends StatelessWidget {
                 ),
                 ChangeNotifierProvider<Scan_NhanVienBloc>(
                   create: (context) => Scan_NhanVienBloc(),
-                ),
-                ChangeNotifierProvider<RutContBloc>(
-                  create: (context) => RutContBloc(),
                 ),
               ],
               child: MaterialApp(

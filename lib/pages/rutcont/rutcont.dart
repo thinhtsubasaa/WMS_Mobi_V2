@@ -22,7 +22,7 @@ class RutContPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyRutCont(),
+              child: CustomBodyRutContXe(),
             ),
           ),
           BottomContent(),

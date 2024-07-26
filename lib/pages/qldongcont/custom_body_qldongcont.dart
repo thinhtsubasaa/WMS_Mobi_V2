@@ -207,21 +207,21 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                   //       _handleButtonTap(LSDaDongContPage());
                   //     },
                   //   ),
-                  // if (userHasPermission(menuRoles, 'rut-cont-mobi'))
-                  // CustomButton(
-                  //   'RÚT CONT',
-                  //   Stack(
-                  //     alignment: Alignment.center,
-                  //     children: [
-                  //       Image.asset(
-                  //         'assets/images/Button_QLBaiXe_DongCont.png',
-                  //       ),
-                  //     ],
-                  //   ),
-                  //   () {
-                  //     _handleButtonTap(RutContPage());
-                  //   },
-                  // ),
+                  if (userHasPermission(menuRoles, 'rut-cont-mobi'))
+                    CustomButton(
+                      'RÚT CONT',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_QLBaiXe_DongCont.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(RutContPage());
+                      },
+                    ),
                 ],
               ),
 
