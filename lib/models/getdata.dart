@@ -20,7 +20,7 @@ class DataModel {
   String? viTri_Id;
   String? toaDo;
 
-  List<HuKien>? phuKien;
+  List<HuKien>? phukien;
 
   DataModel({
     this.key,
@@ -42,7 +42,7 @@ class DataModel {
     this.ngayNhapKhoView,
     this.tenTaiXe,
     this.ghiChu,
-    this.phuKien,
+    this.phukien,
     this.toaDo,
   });
 
@@ -68,8 +68,8 @@ class DataModel {
       BaiXe_Id: json["BaiXe_Id"],
       viTri_Id: json["viTri_Id"],
       toaDo: json["toaDo"],
-      phuKien:
-          (json['phuKien'] as List).map((e) => HuKien.fromJson(e)).toList(),
+      phukien:
+          (json['phukien'] as List).map((e) => HuKien.fromJson(e)).toList(),
     );
   }
   Map<String, dynamic> toJson() => {

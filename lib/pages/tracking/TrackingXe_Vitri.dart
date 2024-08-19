@@ -453,8 +453,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                           alignment: Alignment.bottomCenter,
                           constraints: BoxConstraints(
                             maxHeight: MediaQuery.of(context).size.height < 600
-                                ? MediaQuery.of(context).size.height * 1.5
-                                : MediaQuery.of(context).size.height * 0.8,
+                                ? MediaQuery.of(context).size.height * 1.65
+                                : MediaQuery.of(context).size.height * 0.95,
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
@@ -483,8 +483,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                     color: Color(0xFFF6C6C7),
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 16.0, bottom: 16.0),
+                                    padding: EdgeInsets.only(top: 0, bottom: 0),
                                     child: Image.asset(
                                       'assets/images/road.png',
                                       height: MediaQuery.of(context)
@@ -492,9 +491,9 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                                   .height <
                                               600
                                           ? MediaQuery.of(context).size.height *
-                                              1.5
+                                              1.62
                                           : MediaQuery.of(context).size.height *
-                                              0.8,
+                                              0.92,
                                     ),
                                   ),
                                 ),

@@ -29,6 +29,7 @@ import '../../models/vitri.dart';
 import 'package:http/http.dart' as http;
 
 import '../../services/app_service.dart';
+import '../../widgets/checksheet_upload_anh.dart';
 import '../../widgets/loading.dart';
 
 class CustomBodyChuyenXe extends StatelessWidget {
@@ -95,6 +96,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       RoundedLoadingButtonController();
 
   final TextEditingController textEditingController = TextEditingController();
+  final TextEditingController _ghiChu = TextEditingController();
 
   @override
   void initState() {
@@ -352,7 +354,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     }
   }
 
-  Future<void> BatDauDieuChuyen(DieuChuyenModel scanData, String ToaDo) async {
+  Future<void> BatDauDieuChuyen(
+      DieuChuyenModel scanData, String ToaDo, String? ghiChu) async {
     _isLoading = true;
     try {
       var newScanData = scanData;
@@ -360,7 +363,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/BatDauDieuChuyen?ToaDo=$ToaDo', newScanData.toJson());
+          'KhoThanhPham/BatDauDieuChuyen?ToaDo=$ToaDo&GhiChu=$ghiChu',
+          newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -555,6 +559,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     _data?.mauSon = _bl.dieuchuyen?.mauSon;
     _data?.ngayNhapKhoView = _bl.dieuchuyen?.ngayNhapKhoView;
     _data?.tenTaiXe = _bl.dieuchuyen?.tenTaiXe;
+    _data?.ghiChu = _ghiChu.text;
 
     _data?.thoiGianKetThuc = _bl.dieuchuyen?.thoiGianKetThuc;
 
@@ -572,6 +577,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       print("Kho_ID:${_data?.khoDen_Id}");
       print("Bai_ID:${_data?.baiXe_Id}");
       print("ViTri_ID:${_data?.viTri_Id}");
+      print("Ghi chu: ${_data?.ghiChu}");
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
@@ -591,6 +597,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
               KhoXeId = null;
               BaiXeId = null;
               ViTriId = null;
+
               barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
@@ -626,7 +633,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     _data?.mauSon = _bl.dieuchuyen?.mauSon;
     _data?.ngayNhapKhoView = _bl.dieuchuyen?.ngayNhapKhoView;
     _data?.tenTaiXe = _bl.dieuchuyen?.tenTaiXe;
-
+    _data?.ghiChu = _ghiChu.text;
     _data?.thoiGianBatDau = _bl.dieuchuyen?.thoiGianBatDau;
 
     // Get location here
@@ -655,7 +662,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          BatDauDieuChuyen(_data!, _data?.toaDo ?? "").then((_) {
+          BatDauDieuChuyen(_data!, _data?.toaDo ?? "", _ghiChu.text).then((_) {
             setState(() {
               KhoXeId = null;
               BaiXeId = null;
@@ -668,6 +675,19 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         }
       });
     }).catchError((error) {
+      _btnController.error();
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Bạn chưa có tọa độ vị trí. Vui lòng BẬT VỊ TRÍ',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
       print("Error getting location: $error");
     });
   }
@@ -1066,7 +1086,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                                   const TextStyle(
                                                                 fontFamily:
                                                                     'Comfortaa',
-                                                                fontSize: 14,
+                                                                fontSize: 13,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600,
@@ -1488,6 +1508,16 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                         const Divider(
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
+                                        ItemGhiChu(
+                                          title: 'Ghi chú: ',
+                                          controller: _ghiChu,
+                                        ),
+                                        const Divider(
+                                            height: 1,
+                                            color: Color(0xFFCCCCCC)),
+                                        CheckSheetUploadAnh(
+                                          lstFiles: [],
+                                        )
                                       ],
                                     ),
                                   ),
@@ -1593,7 +1623,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                             fontSize: 15,
                           )),
                       controller: _btnController,
-                      onPressed: (_isMovingStarted == true)
+                      onPressed: (ViTriId != null)
                           ? () => _showConfirmationDialog(context,
                               _selectedViTri ?? "", _data?.tenKho ?? "")
                           : null),
@@ -1640,6 +1670,57 @@ class Item extends StatelessWidget {
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: AppConfig.primaryColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ItemGhiChu extends StatelessWidget {
+  final String title;
+  final TextEditingController controller;
+
+  const ItemGhiChu({
+    Key? key,
+    required this.title,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+            SizedBox(width: 10), // Khoảng cách giữa title và text field
+            Expanded(
+              child: TextField(
+                controller: controller,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none, // Loại bỏ đường viền mặc định
+                  hintText: '',
+                  contentPadding: EdgeInsets.symmetric(vertical: 9),
+                ),
               ),
             ),
           ],

@@ -9,6 +9,7 @@ class AppBloc extends ChangeNotifier {
 
   // String _apiUrl = "https://172.20.42.140:5001";
   String _apiUrl = "https://apiwms.thilogi.vn";
+
   String get apiUrl => _apiUrl;
 
   String? _appFunctions = "none";

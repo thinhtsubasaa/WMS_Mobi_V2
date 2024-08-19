@@ -9,9 +9,7 @@ import 'package:Thilogi/pages/timxe/timxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-
 import 'package:sizer/sizer.dart';
-
 import '../../models/dsxchoxuat.dart';
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
@@ -59,6 +57,8 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
   @override
   void initState() {
     super.initState();
+    getData();
+    getBaiXeList(KhoXeId ?? "");
     getDoiTac();
     getPTVC();
     // getData();
@@ -146,6 +146,18 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
         _baixeList = (decodedData as List)
             .map((item) => BaiXeModel.fromJson(item))
             .toList();
+        _baixeList!.insert(0, BaiXeModel(id: '', tenBaiXe: 'Tất cả'));
+        setState(() {
+          id = '';
+          _loading = false;
+        });
+        getDSXChoXuat('', doiTac_Id ?? "", phuongThuc_Id ?? "");
+        // Gọi hàm để lấy dữ liệu với giá trị mặc định "Tất cả"
+
+        // Gọi setState để cập nhật giao diện
+        // setState(() {
+        //   _loading = false;
+        // });
       }
     } catch (e) {
       _hasError = true;
@@ -254,7 +266,8 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
               ],
             ),
             Container(
-              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              height:
+                  MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
@@ -300,14 +313,6 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
                           );
                         }).toList() ??
                         [],
-                    // TableRow(
-                    //   children: [
-                    //     _buildTableCell('Tổng số', textColor: Colors.red),
-                    //     _buildTableCell(_cx?.length.toString() ?? ''),
-                    //     Container(),
-                    //     Container(),
-                    //   ],
-                    // ),
                   ],
                 ),
               ),
@@ -336,9 +341,6 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
 
   @override
   Widget build(BuildContext context) {
-    getData();
-    getBaiXeList(KhoXeId ?? "");
-
     return Container(
       child: Column(
         children: [
@@ -456,7 +458,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
                                                                     const TextStyle(
                                                                   fontFamily:
                                                                       'Comfortaa',
-                                                                  fontSize: 14,
+                                                                  fontSize: 13,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w600,
@@ -475,13 +477,21 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
                                                           // doiTac_Id = null;
                                                         });
                                                         if (newValue != null) {
-                                                          getDSXChoXuat(
-                                                              newValue,
-                                                              doiTac_Id ?? "",
-                                                              phuongThuc_Id ??
-                                                                  "");
-                                                          print(
-                                                              "object : ${id}");
+                                                          if (newValue == '') {
+                                                            getDSXChoXuat(
+                                                                '',
+                                                                doiTac_Id ?? "",
+                                                                phuongThuc_Id ??
+                                                                    "");
+                                                          } else {
+                                                            getDSXChoXuat(
+                                                                newValue,
+                                                                doiTac_Id ?? "",
+                                                                phuongThuc_Id ??
+                                                                    "");
+                                                            print(
+                                                                "object : ${id}");
+                                                          }
                                                         }
                                                       },
                                                       buttonStyleData:
@@ -688,13 +698,13 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
                                                         if (newValue != null) {
                                                           if (newValue == '') {
                                                             getDSXChoXuat(
-                                                                id,
+                                                                id ?? "",
                                                                 '',
                                                                 phuongThuc_Id ??
                                                                     "");
                                                           } else {
                                                             getDSXChoXuat(
-                                                                id,
+                                                                id ?? "",
                                                                 newValue,
                                                                 phuongThuc_Id ??
                                                                     "");
@@ -908,12 +918,12 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
                                                         if (newValue != null) {
                                                           if (newValue == '') {
                                                             getDSXChoXuat(
-                                                                id,
+                                                                id ?? "",
                                                                 doiTac_Id ?? "",
                                                                 '');
                                                           } else {
                                                             getDSXChoXuat(
-                                                                id,
+                                                                id ?? "",
                                                                 doiTac_Id ?? "",
                                                                 newValue);
                                                             print(

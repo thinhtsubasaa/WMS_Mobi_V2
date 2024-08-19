@@ -1,5 +1,6 @@
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
+import 'package:Thilogi/utils/changepassword.dart';
 import 'package:Thilogi/utils/language.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 
@@ -105,27 +106,27 @@ class UserUI extends StatelessWidget {
     final AppBloc ab = context.watch<AppBloc>();
     return Column(
       children: [
-        ListTile(
-          contentPadding: EdgeInsets.all(0),
-          leading: CircleAvatar(
-            backgroundColor: Colors.greenAccent,
-            radius: 18,
-            child: Icon(
-              Feather.cloud,
-              size: 18,
-              color: Colors.white,
-            ),
-          ),
-          title: Text(
-            ab.apiUrl,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ),
-        const DividerWidget(),
+        // ListTile(
+        //   contentPadding: EdgeInsets.all(0),
+        //   leading: CircleAvatar(
+        //     backgroundColor: Colors.greenAccent,
+        //     radius: 18,
+        //     child: Icon(
+        //       Feather.cloud,
+        //       size: 18,
+        //       color: Colors.white,
+        //     ),
+        //   ),
+        //   title: Text(
+        //     ab.apiUrl,
+        //     style: TextStyle(
+        //       fontSize: 16,
+        //       fontWeight: FontWeight.w500,
+        //       color: Theme.of(context).colorScheme.primary,
+        //     ),
+        //   ),
+        // ),
+        // const DividerWidget(),
         // ListTile(
         //   contentPadding: const EdgeInsets.all(0),
         //   leading: const CircleAvatar(
@@ -139,7 +140,7 @@ class UserUI extends StatelessWidget {
         //   ),
         //   title: Text("Phiên bản ${ab.appVersion}"),
         // ),
-        const DividerWidget(),
+        // const DividerWidget(),
         ListTile(
           contentPadding: const EdgeInsets.all(0),
           leading: const CircleAvatar(
@@ -184,29 +185,6 @@ class UserUI extends StatelessWidget {
         const DividerWidget(),
         ListTile(
           contentPadding: const EdgeInsets.all(0),
-          leading: CircleAvatar(
-            backgroundColor: Colors.redAccent[100],
-            radius: 18,
-            child: const Icon(
-              Feather.log_out,
-              size: 18,
-              color: Colors.white,
-            ),
-          ),
-          title: Text(
-            'Đăng xuất',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ).tr(),
-          trailing: const Icon(Feather.chevron_right),
-          onTap: () => openLogoutDialog(context),
-        ),
-        const DividerWidget(),
-        ListTile(
-          contentPadding: const EdgeInsets.all(0),
           leading: const CircleAvatar(
             backgroundColor: Colors.blueGrey,
             radius: 18,
@@ -226,6 +204,52 @@ class UserUI extends StatelessWidget {
           ).tr(),
           trailing: const Icon(Feather.chevron_right),
           onTap: () => nextScreenPopup(context, const LanguagePopup()),
+        ),
+        const DividerWidget(),
+        ListTile(
+          contentPadding: const EdgeInsets.all(0),
+          leading: CircleAvatar(
+            backgroundColor: Colors.redAccent[100],
+            radius: 18,
+            child: Icon(
+              Feather.lock,
+              size: 18,
+              color: Colors.white,
+            ),
+          ),
+          title: Text(
+            'Đổi mật khẩu',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ).tr(),
+          trailing: const Icon(Feather.chevron_right),
+          onTap: () => nextScreenPopup(context, const ChangePass()),
+        ),
+        const DividerWidget(),
+        ListTile(
+          contentPadding: const EdgeInsets.all(0),
+          leading: CircleAvatar(
+            backgroundColor: Colors.redAccent[100],
+            radius: 18,
+            child: const Icon(
+              Feather.log_out,
+              size: 18,
+              color: Colors.white,
+            ),
+          ),
+          title: Text(
+            'Đăng xuất',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ).tr(),
+          trailing: const Icon(Feather.chevron_right),
+          onTap: () => openLogoutDialog(context),
         ),
       ],
     );

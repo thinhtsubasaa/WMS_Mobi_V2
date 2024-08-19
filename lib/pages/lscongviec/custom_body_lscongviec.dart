@@ -3,6 +3,8 @@ import 'package:Thilogi/pages/lsx_dongcont/ls_dongcont.dart';
 import 'package:Thilogi/pages/lsnhanxe/ls_danhan.dart';
 import 'package:Thilogi/pages/lsnhapchuyenbai/ls_nhapchuyen.dart';
 import 'package:Thilogi/pages/lsx_giaoxe/lsx_giaoxe.dart';
+import 'package:Thilogi/pages/lsx_racong/lsx_racong.dart';
+import 'package:Thilogi/pages/lsx_rutcont/lsx_rutcont.dart';
 import 'package:Thilogi/pages/lsx_vanchuyen/lsx_vanchuyen.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
@@ -284,6 +286,36 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                       ),
                       () {
                         _handleButtonTap(LSGiaoXePage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'lich-su-xe-ra-cong-mobi'))
+                    CustomButton(
+                      'LỊCH SỬ XE RA CỔNG',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_LichSuCongViec_GiaoXe.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(LSXeRaCongPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'lich-su-xe-rut-cont-mobi'))
+                    CustomButton(
+                      'LỊCH SỬ XE RÚT CONT',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_LichSuCongViec_GiaoXe.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(LSXeRutContPage());
                       },
                     ),
                 ],

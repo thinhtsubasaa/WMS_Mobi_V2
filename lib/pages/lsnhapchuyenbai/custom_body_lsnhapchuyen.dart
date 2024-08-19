@@ -36,8 +36,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
 
   List<LSX_NhapChuyenBaiModel>? _dn;
   List<LSX_NhapChuyenBaiModel>? get dn => _dn;
-  List<LSX_NhapBaiModel>? _cx;
-  List<LSX_NhapBaiModel>? get cx => _cx;
+
   bool _hasError = false;
   bool get hasError => _hasError;
   String? selectedDate;
@@ -55,7 +54,6 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
     selectedToDate =
         DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
     getLSNhap(selectedFromDate, selectedToDate, maNhanVienController.text);
-    getLSNhapBai(selectedFromDate, selectedToDate, maNhanVienController.text);
     getTotalNumberOfXe();
   }
 
@@ -72,32 +70,6 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
         if (decodedData != null) {
           _dn = (decodedData as List)
               .map((item) => LSX_NhapChuyenBaiModel.fromJson(item))
-              .toList();
-          setState(() {
-            _loading =
-                false; // Đã nhận được dữ liệu, không còn trong quá trình loading nữa
-          });
-        }
-      }
-    } catch (e) {
-      _hasError = true;
-      _errorCode = e.toString();
-    }
-  }
-
-  Future<void> getLSNhapBai(
-      String? tuNgay, String? denNgay, String? keyword) async {
-    _cx = [];
-    try {
-      final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeNhapBaiAll?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
-        print("dataNhap: " +
-            decodedData.toString()); // In dữ liệu nhận được từ API để kiểm tra
-        if (decodedData != null) {
-          _cx = (decodedData as List)
-              .map((item) => LSX_NhapBaiModel.fromJson(item))
               .toList();
           setState(() {
             _loading =
@@ -131,8 +103,6 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
       print("DenNgay: $selectedToDate");
       await getLSNhap(
           selectedFromDate, selectedToDate, maNhanVienController.text);
-      await getLSNhapBai(
-          selectedFromDate, selectedToDate, maNhanVienController.text);
     }
   }
 
@@ -141,10 +111,10 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
     const String defaultDate = "1970-01-01 ";
 
     // Sắp xếp danh sách _dn theo giờ nhận mới nhất
-    var combinedList = [
-      ...?_dn?.map((e) => {'type': 'dn', 'data': e}),
-      ...?_cx?.map((e) => {'type': 'cx', 'data': e})
-    ];
+    // var combinedList = [
+    //   ...?_dn?.map((e) => {'type': 'dn', 'data': e}),
+    //   ...?_cx?.map((e) => {'type': 'cx', 'data': e})
+    // ];
     // combinedList.sort((a, b) {
     //   try {
     //     var aData = a['data'];
@@ -233,30 +203,18 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                     4: FlexColumnWidth(0.3),
                   },
                   children: [
-                    ...combinedList.map((item) {
-                          var data = item['data'];
+                    ..._dn?.map((item) {
                           index++; // Tăng số thứ tự sau mỗi lần lặp
 
                           return TableRow(
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
-                              _buildTableCell(data is LSX_NhapChuyenBaiModel
-                                  ? data.ngay ?? ""
-                                  : (data as LSX_NhapBaiModel).ngay ?? ""),
-                              _buildTableCell(data is LSX_NhapChuyenBaiModel
-                                  ? data.soKhung ?? ""
-                                  : (data as LSX_NhapBaiModel).soKhung ?? ""),
-                              _buildTableCell(data is LSX_NhapChuyenBaiModel
-                                  ? data.noiDi ?? ""
-                                  : ""),
-                              _buildTableCell(data is LSX_NhapChuyenBaiModel
-                                  ? data.noiDen ?? ""
-                                  : (data as LSX_NhapBaiModel).noiDen ?? ""),
+                              _buildTableCell(item.ngay ?? ""),
+                              _buildTableCell(item.soKhung ?? ""),
+                              _buildTableCell(item.noiDi ?? ""),
+                              _buildTableCell(item.noiDen ?? ""),
 
-                              _buildTableCell(data is LSX_NhapChuyenBaiModel
-                                  ? data.nguoiNhapBai ?? ""
-                                  : (data as LSX_NhapBaiModel).nguoiNhapBai ??
-                                      ""),
+                              _buildTableCell(item.nguoiNhapBai ?? ""),
                             ],
                           );
                         }).toList() ??
@@ -288,7 +246,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
   }
 
   int getTotalNumberOfXe() {
-    return (_dn?.length ?? 0) + (_cx?.length ?? 0);
+    return (_dn?.length ?? 0);
   }
 
   @override
@@ -315,7 +273,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'Danh sách nhập chuyển bãi',
+                                  'Danh sách chuyển bãi',
                                   style: TextStyle(
                                     fontFamily: 'Comfortaa',
                                     fontSize: 16,
@@ -439,10 +397,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                                               selectedFromDate,
                                               selectedToDate,
                                               maNhanVienController.text);
-                                          getLSNhapBai(
-                                              selectedFromDate,
-                                              selectedToDate,
-                                              maNhanVienController.text);
+
                                           setState(() {
                                             _loading = false;
                                           });

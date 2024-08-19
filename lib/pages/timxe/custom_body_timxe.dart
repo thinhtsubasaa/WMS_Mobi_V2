@@ -521,7 +521,8 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                 const Divider(
                                     height: 1, color: Color(0xFFA71C20)),
                                 Container(
-                                  margin: EdgeInsets.all(10),
+                                  margin: EdgeInsets.only(
+                                      right: 10, top: 10, bottom: 10),
                                   child: Column(
                                     children: [
                                       CustomItem(
@@ -554,7 +555,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                       ),
                                       const Divider(
                                           height: 1, color: Color(0xFFCCCCCC)),
-                                      CustomItem(
+                                      Item(
                                         title: 'Bãi Xe: ',
                                         value: _data?.tenBaiXe,
                                       ),

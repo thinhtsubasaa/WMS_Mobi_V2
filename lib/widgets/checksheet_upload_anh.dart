@@ -190,13 +190,13 @@ class _CheckSheetUploadAnhState extends State<CheckSheetUploadAnh> {
                   const SizedBox(width: 10),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueGrey,
+                      backgroundColor: Color(0xFF00B528),
                     ),
                     onPressed: (_loading || _allowUploadFile() == false)
                         ? null
                         : () => _uploadAnh(),
                     icon: const Icon(Icons.cloud_upload),
-                    label: const Text(""),
+                    label: const Text("Tải ảnh"),
                   ),
                 ],
               ),

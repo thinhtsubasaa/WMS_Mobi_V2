@@ -157,7 +157,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 2.5,
+        width: MediaQuery.of(context).size.width * 3,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -216,7 +216,8 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
               ],
             ),
             Container(
-              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              height:
+                  MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),

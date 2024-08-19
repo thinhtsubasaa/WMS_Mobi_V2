@@ -5,6 +5,7 @@ import 'package:Thilogi/blocs/nhapbai.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/vitri.dart';
 import 'package:Thilogi/pages/lsnhapbai/ls_nhapbai.dart';
+import 'package:Thilogi/pages/nhanxe/NhanXe2.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ import '../../services/app_service.dart';
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as GeoLocationAccuracy;
 import 'package:quickalert/quickalert.dart';
+import '../../widgets/checksheet_upload_anh.dart';
 import '../../widgets/loading.dart';
 
 class CustomBodyBaiXe extends StatelessWidget {
@@ -83,6 +85,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
   final TextEditingController textEditingController = TextEditingController();
+  final TextEditingController _ghiChu = TextEditingController();
 
   @override
   void initState() {
@@ -351,7 +354,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     });
   }
 
-  Future<void> postData(String ViTriId, String viTri, String soKhung) async {
+  Future<void> postData(
+      String ViTriId, String viTri, String soKhung, String? ghiChu) async {
     _isLoading = true;
     try {
       // var newScanData = scanData;
@@ -359,7 +363,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       //     newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       // print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/NhapKhoBai?ViTri_Id=$ViTriId&ToaDo=$viTri&SoKhung=$soKhung',
+          'KhoThanhPham/NhapKhoBai?ViTri_Id=$ViTriId&ToaDo=$viTri&SoKhung=$soKhung&GhiChu=$ghiChu',
           _data?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
@@ -429,6 +433,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     _data?.viTri_Id = ViTriId;
     _data?.id = _bl.baixe?.id;
     _data?.soKhung = _bl.baixe?.soKhung;
+    _data?.ghiChu = _ghiChu.text;
 
     Geolocator.getCurrentPosition(
       desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
@@ -455,11 +460,13 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          postData(ViTriId!, _data?.toaDo ?? "", _data?.soKhung ?? "")
+          postData(ViTriId!, _data?.toaDo ?? "", _data?.soKhung ?? "",
+                  _ghiChu.text)
               .then((_) {
             setState(() {
               _data = null;
               barcodeScanResult = null;
+              _ghiChu.text = '';
               // KhoXeId = null;
               // BaiXeId = null;
               // ViTriId = null;
@@ -472,6 +479,19 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         }
       });
     }).catchError((error) {
+      _btnController.error();
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Bạn chưa có tọa độ vị trí. Vui lòng BẬT VỊ TRÍ',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
       print("Error getting location: $error");
     });
   }
@@ -555,7 +575,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(height: 4),
                                   Container(
                                     height:
                                         MediaQuery.of(context).size.height < 600
@@ -632,7 +651,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                                 const TextStyle(
                                                               fontFamily:
                                                                   'Comfortaa',
-                                                              fontSize: 14,
+                                                              fontSize: 13,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
@@ -1001,6 +1020,14 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                           value: _data?.soMay,
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                        ItemGhiChu(
+                          title: 'Ghi chú: ',
+                          controller: _ghiChu,
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                        CheckSheetUploadAnh(
+                          lstFiles: [],
+                        )
                       ],
                     ),
                   ),
@@ -1072,6 +1099,57 @@ class Item extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ItemGhiChu extends StatelessWidget {
+  final String title;
+  final TextEditingController controller;
+
+  const ItemGhiChu({
+    Key? key,
+    required this.title,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+            SizedBox(width: 10), // Khoảng cách giữa title và text field
+            Expanded(
+              child: TextField(
+                controller: controller,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none, // Loại bỏ đường viền mặc định
+                  hintText: '',
+                  contentPadding: EdgeInsets.symmetric(vertical: 9),
+                ),
               ),
             ),
           ],

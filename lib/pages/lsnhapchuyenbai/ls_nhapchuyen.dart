@@ -1,5 +1,6 @@
 import 'package:Thilogi/pages/dsx_danhan/custom_body_dsx.dart';
 import 'package:Thilogi/pages/lsnhanxe/custom_body_lsdanhan.dart';
+import 'package:Thilogi/pages/lsnhapchuyenbai/custom_body_lsnhapbai.dart';
 import 'package:Thilogi/pages/lsnhapchuyenbai/custom_body_lsnhapchuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
@@ -8,31 +9,88 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-class LSNhapChuyenPage extends StatelessWidget {
+class LSNhapChuyenPage extends StatefulWidget {
+  const LSNhapChuyenPage({super.key});
+
+  @override
+  State<LSNhapChuyenPage> createState() => _LSNhapChuyenPage();
+}
+
+class _LSNhapChuyenPage extends State<LSNhapChuyenPage>
+    with SingleTickerProviderStateMixin, ChangeNotifier {
+  TabController? _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: 2);
+    _tabController!.addListener(_handleTabChange);
+  }
+
+  void _handleTabChange() {
+    if (_tabController!.indexIsChanging) {
+      // Call the action when the tab changes
+      // print('Tab changed to: ${_tabController!.index}');
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: customAppBar(context),
-      body: Column(
+      body: Stack(
         children: [
-          CustomCard(),
-          Expanded(
-            child: Container(
-              width: 100.w,
-              // decoration: const BoxDecoration(
-              //     // image: DecorationImage(
-              //     //   image: AssetImage(AppConfig.backgroundImagePath),
-              //     //   fit: BoxFit.cover,
-              //     // ),
-              //     ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onPrimary,
+          Column(
+            children: [
+              CustomCard(),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height < 600
+                          ? 10.h
+                          : 5.h),
+                  width: 100.w,
+                  decoration: BoxDecoration(
+                      // color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                  child: TabBarView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: _tabController,
+                    children: [CustomBodyLSNhapBai(), CustomBodyLSNhapChuyen()],
+                  ),
+                ),
               ),
-              child: CustomBodyLSNhapChuyen(),
+              BottomContent(),
+            ],
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              child: Column(
+                // crossAxisAlignment: CrossAxisAlignment.stretch,
+                // mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomCard(),
+                  TabBar(
+                    controller: _tabController,
+                    tabs: const [
+                      Tab(text: 'Đã nhập bãi'),
+                      Tab(text: 'Đã chuyển bãi'),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          BottomContent(),
         ],
       ),
     );

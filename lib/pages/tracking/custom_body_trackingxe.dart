@@ -377,7 +377,8 @@ class buildRowItem extends StatelessWidget {
             ? MediaQuery.of(context).size.width * 0.9
             : MediaQuery.of(context).size.width * 0.9,
       ),
-      height: 80, // Set a fixed height as needed
+      // height: 18.h,
+      height: 88,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -506,6 +507,66 @@ class CustomImage6 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_VCDuongBien.png',
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+      ),
+    );
+  }
+}
+
+class CustomImage7 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 120,
+      height: 80,
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_VCDuongBo_1.png',
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+      ),
+    );
+  }
+}
+
+class CustomImage8 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 120,
+      height: 80,
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_LuuBai_1.png',
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+      ),
+    );
+  }
+}
+
+class CustomImage9 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 120,
+      height: 80,
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_KiemTraNhanXe_1.png',
+        fit: BoxFit
+            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+      ),
+    );
+  }
+}
+
+class CustomImage10 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 120,
+      height: 80,
+      child: Image.asset(
+        'assets/images/A-Tracking3D/A_Tracking_KhoTrungChuyen_1.png',
         fit: BoxFit
             .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),

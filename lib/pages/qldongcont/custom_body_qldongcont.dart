@@ -1,4 +1,5 @@
 import 'package:Thilogi/pages/ds_dongcont/ds_dongcont.dart';
+import 'package:Thilogi/pages/huydongcont/huydongcont.dart';
 import 'package:Thilogi/pages/rutcont/rutcont.dart';
 import 'package:Thilogi/pages/themdongcont/themdongcont.dart';
 import 'package:Thilogi/services/app_service.dart';
@@ -220,6 +221,21 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                       ),
                       () {
                         _handleButtonTap(RutContPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'huy-dong-cont-mobi'))
+                    CustomButton(
+                      'HỦY ĐÓNG CONT',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_QLBaiXe_DongCont.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(HuyDongContPage());
                       },
                     ),
                 ],

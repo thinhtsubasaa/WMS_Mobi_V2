@@ -186,16 +186,17 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     setState(() {
       _loading = true;
     });
-    _sb.getData(context, value).then((_) {
+    _sb.get(context, value).then((_) {
       setState(() {
         _qrData = value;
-        print(_sb.scan);
         print(_sb.data);
-        if (_sb.scan != null) {
-          _data = _sb.scan;
-          _loading = false;
-        } else if (_sb.data != null) {
+        print(_sb.scan);
+
+        if (_sb.data != null) {
           _model = _sb.data;
+          _loading = false;
+        } else if (_sb.scan != null) {
+          _data = _sb.scan;
           _loading = false;
         } else {
           _qrData = '';
@@ -350,7 +351,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                       tenKho:
                                           _data?.tenKho ?? _model?.tenKho ?? "",
                                       phuKien: _data?.phuKien ??
-                                          _model?.phuKien ??
+                                          _model?.phukien ??
                                           [],
                                     ));
                                   }

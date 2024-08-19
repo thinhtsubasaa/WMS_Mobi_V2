@@ -26,6 +26,7 @@ import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
 
 import '../../config/config.dart';
 import '../../services/app_service.dart';
+import '../../widgets/checksheet_upload_anh.dart';
 import '../../widgets/loading.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -80,6 +81,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   late StreamSubscription<ScanResult> scanSubscription;
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
+  final TextEditingController _ghiChu = TextEditingController();
 
   @override
   void initState() {
@@ -129,7 +131,8 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
     }
   }
 
-  Future<void> postData(XuatKhoModel scanData, String viTri) async {
+  Future<void> postData(
+      XuatKhoModel scanData, String viTri, String? ghiChu) async {
     _isLoading = true;
 
     try {
@@ -138,7 +141,8 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/XuatKho?ToaDo=$viTri', newScanData.toJson());
+          'KhoThanhPham/XuatKho?ToaDo=$viTri&GhiChu=$ghiChu',
+          newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -261,7 +265,6 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
     print(barcodeScanResult);
-
     setState(() {
       _qrData = '';
       _qrDataController.text = barcodeScanResult;
@@ -314,7 +317,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
     _data?.kho_Id = _bl.xuatkho?.kho_Id;
     _data?.noidi = _bl.xuatkho?.noidi;
     _data?.noiden = _bl.xuatkho?.noiden;
-
+    _data?.ghiChu = _ghiChu.text;
     _data?.bienSo_Id = _bl.xuatkho?.bienSo_Id;
     _data?.taiXe_Id = _bl.xuatkho?.taiXe_Id;
     _data?.tenDiaDiem = _bl.xuatkho?.tenDiaDiem;
@@ -342,9 +345,10 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          postData(_data!, viTri ?? "").then((_) {
+          postData(_data!, viTri ?? "", _ghiChu.text).then((_) {
             setState(() {
               _data = null;
+              _ghiChu.text = '';
               barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
@@ -354,7 +358,19 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
         }
       });
     }).catchError((error) {
-      // Handle error while getting location
+      _btnController.error();
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Bạn chưa có tọa độ vị trí. Vui lòng BẬT VỊ TRÍ',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
       print("Error getting location: $error");
     });
   }
@@ -536,6 +552,15 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                     ),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
+                                    ItemGhiChu(
+                                      title: 'Ghi chú: ',
+                                      controller: _ghiChu,
+                                    ),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    CheckSheetUploadAnh(
+                                      lstFiles: [],
+                                    )
                                   ],
                                 ),
                               ),
@@ -607,6 +632,57 @@ class Item extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ItemGhiChu extends StatelessWidget {
+  final String title;
+  final TextEditingController controller;
+
+  const ItemGhiChu({
+    Key? key,
+    required this.title,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+            SizedBox(width: 10), // Khoảng cách giữa title và text field
+            Expanded(
+              child: TextField(
+                controller: controller,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none, // Loại bỏ đường viền mặc định
+                  hintText: '',
+                  contentPadding: EdgeInsets.symmetric(vertical: 9),
+                ),
               ),
             ),
           ],

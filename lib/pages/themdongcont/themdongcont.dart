@@ -1,4 +1,3 @@
-import 'package:Thilogi/pages/dongSeal/custom_body_dongseal.dart';
 import 'package:Thilogi/pages/themdongcont/custom_body_themdongcont.dart';
 import 'package:Thilogi/widgets/custom_appbar.dart';
 import 'package:Thilogi/widgets/custom_title.dart';

@@ -51,13 +51,13 @@ class NhanXe2Page extends StatelessWidget {
                         BlendMode.srcATop,
                       ),
                       child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(AppConfig.backgroundImagePath),
-                            fit: BoxFit.cover,
+                          // decoration: BoxDecoration(
+                          //   image: DecorationImage(
+                          //     image: AssetImage(AppConfig.backgroundImagePath),
+                          //     fit: BoxFit.cover,
+                          //   ),
+                          // ),
                           ),
-                        ),
-                      ),
                     ),
                   ),
 

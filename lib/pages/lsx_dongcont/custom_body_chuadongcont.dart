@@ -134,10 +134,11 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
               columnWidths: {
                 0: FlexColumnWidth(0.2),
                 1: FlexColumnWidth(0.3),
-                2: FlexColumnWidth(0.3),
+                2: FlexColumnWidth(0.35),
                 3: FlexColumnWidth(0.3),
                 4: FlexColumnWidth(0.3),
                 5: FlexColumnWidth(0.3),
+                6: FlexColumnWidth(0.3),
               },
               children: [
                 TableRow(
@@ -151,6 +152,10 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                       color: Colors.red,
                       child:
                           _buildTableCell('Số khung', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Vị trí', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -183,10 +188,11 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                   columnWidths: {
                     0: FlexColumnWidth(0.2),
                     1: FlexColumnWidth(0.3),
-                    2: FlexColumnWidth(0.3),
+                    2: FlexColumnWidth(0.35),
                     3: FlexColumnWidth(0.3),
                     4: FlexColumnWidth(0.3),
                     5: FlexColumnWidth(0.3),
+                    6: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn?.map((item) {
@@ -197,6 +203,7 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                               // _buildTableCell(index.toString()), // Số thứ tự
                               _buildTableCell(item.ngayTao ?? ""),
                               _buildTableCell(item.soKhung ?? ""),
+                              _buildTableCell(item.viTri ?? ""),
                               _buildTableCell(item.loaiXe ?? ""),
                               _buildTableCell(item.soMay ?? ""),
                               _buildTableCell(item.mauXe ?? ""),

@@ -1,8 +1,12 @@
 import 'dart:convert';
 
 import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/models/baixe.dart';
 import 'package:Thilogi/models/doitac.dart';
+import 'package:Thilogi/models/dsxchoxuat.dart';
+import 'package:Thilogi/models/khoxe.dart';
 import 'package:Thilogi/models/lsvanchuyen.dart';
+import 'package:Thilogi/models/phuongthucvanchuyen.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -35,6 +39,8 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
   List<LSVanChuyenModel>? get dn => _dn;
   List<DoiTacModel>? _doitacList;
   List<DoiTacModel>? get doitacList => _doitacList;
+  List<DS_ChoXuatModel>? _cx;
+  List<DS_ChoXuatModel>? get cx => _cx;
   bool _hasError = false;
   bool get hasError => _hasError;
   String? selectedDate;
@@ -55,6 +61,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
         DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
     getDSXVanChuyen(selectedFromDate, selectedToDate, doiTac_Id ?? "",
         maNhanVienController.text);
+    getDSXChoXuat('', "", "");
   }
 
   void getDoiTac() async {
@@ -81,6 +88,38 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
         // setState(() {
         //   _loading = false;
         // });
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  void getDSXChoXuat(
+      String? id, String? doiTac_Id, String? phuongThuc_Id) async {
+    _cx = [];
+    try {
+      final http.Response response = await requestHelper.getData(
+          'KhoThanhPham/GetDanhSachXeChoXuat?id=$id&DoiTac_Id=$doiTac_Id&PhuongThuc_Id=$phuongThuc_Id');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        if (decodedData != null) {
+          // Lọc dữ liệu chỉ bao gồm các mục có 'isKeHoach' là true
+          var filteredData =
+              decodedData.where((item) => item['isKeHoach'] == true).toList();
+          print("dayaaaa:$filteredData");
+
+          if (filteredData.isNotEmpty) {
+            _cx = (filteredData as List)
+                .map((item) => DS_ChoXuatModel.fromJson(item))
+                .toList();
+            print("Updated _cx: $_cx");
+
+            setState(() {
+              _loading = false;
+            });
+          }
+        }
       }
     } catch (e) {
       _hasError = true;
@@ -663,7 +702,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                                         height: 4,
                                       ),
                                       Text(
-                                        'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
+                                        'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ""}/${_cx?.length.toString() ?? ""}',
                                         style: TextStyle(
                                           fontFamily: 'Comfortaa',
                                           fontSize: 16,

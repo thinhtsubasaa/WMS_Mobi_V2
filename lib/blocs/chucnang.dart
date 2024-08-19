@@ -41,7 +41,8 @@ class ChucnangBloc extends ChangeNotifier {
       BuildContext context,
       RoundedLoadingButtonController controller,
       String soKhung,
-      String toaDo) async {
+      String toaDo,
+      String? ghiChu) async {
     _isLoading = true;
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied ||
@@ -60,8 +61,8 @@ class ChucnangBloc extends ChangeNotifier {
       double long = currentPosition.longitude;
       toaDo = "${lat},${long}";
 
-      final http.Response response = await requestHelper
-          .getData('GetDataXeThaPham?keyword=$soKhung&ToaDo=$toaDo');
+      final http.Response response = await requestHelper.getData(
+          'GetDataXeThaPham?keyword=$soKhung&ToaDo=$toaDo&GhiChu=$ghiChu');
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);

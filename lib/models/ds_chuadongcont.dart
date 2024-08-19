@@ -9,6 +9,7 @@ class DSX_ChuaDongContModel {
   String? mauXe;
   String? ngayTao;
   String? noiDen;
+  String? viTri;
 
   DSX_ChuaDongContModel({
     this.id,
@@ -21,6 +22,7 @@ class DSX_ChuaDongContModel {
     this.mauXe,
     this.ngayTao,
     this.noiDen,
+    this.viTri,
   });
 
   factory DSX_ChuaDongContModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class DSX_ChuaDongContModel {
       mauXe: json["mauXe"],
       ngayTao: json["ngayTao"],
       noiDen: json["noiDen"],
+      viTri: json["viTri"],
     );
   }
 }

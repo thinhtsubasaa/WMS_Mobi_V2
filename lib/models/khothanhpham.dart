@@ -19,6 +19,8 @@ class KhoThanhPhamModel {
   String? Kho_Id;
   String? BaiXe_Id;
   String? viTri_Id;
+  String? nguoiNhan;
+  String? ngayNhan;
   String? toaDo;
 
   KhoThanhPhamModel(
@@ -42,6 +44,8 @@ class KhoThanhPhamModel {
       this.ngayNhapKhoView,
       this.tenTaiXe,
       this.ghiChu,
+      this.nguoiNhan,
+      this.ngayNhan,
       this.toaDo});
 
   factory KhoThanhPhamModel.fromJson(Map<String, dynamic> json) {
@@ -66,6 +70,8 @@ class KhoThanhPhamModel {
       viTri_Id: json["viTri_Id"],
       lat: json["lat"],
       long: json["long"],
+      ngayNhan: json["ngayNhan"],
+      nguoiNhan: json["nguoiNhan"],
       toaDo: json["toaDo"],
     );
   }

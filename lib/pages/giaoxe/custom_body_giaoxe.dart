@@ -76,6 +76,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   String? get message => _message;
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
+  final TextEditingController _ghiChu = TextEditingController();
 
   @override
   void initState() {
@@ -109,7 +110,8 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     }
   }
 
-  Future<void> postData(GiaoXeModel scanData, String viTri) async {
+  Future<void> postData(
+      GiaoXeModel scanData, String viTri, String? ghiChu) async {
     _isLoading = true;
 
     try {
@@ -118,7 +120,8 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/GiaoXe?ViTri=$viTri', newScanData.toJson());
+          'KhoThanhPham/GiaoXe?ViTri=$viTri&GhiChu=$ghiChu',
+          newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -297,6 +300,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     _data?.tenPhuongThucVanChuyen = _bl.giaoxe?.tenPhuongThucVanChuyen;
     _data?.bienSo_Id = _bl.giaoxe?.bienSo_Id;
     _data?.taiXe_Id = _bl.giaoxe?.taiXe_Id;
+    _data?.ghiChu = _ghiChu.text;
     Geolocator.getCurrentPosition(
       desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
     ).then((position) {
@@ -321,9 +325,10 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          postData(_data!, _data?.toaDo ?? "").then((_) {
+          postData(_data!, _data?.toaDo ?? "", _ghiChu.text).then((_) {
             setState(() {
               _data = null;
+              _ghiChu.text = '';
               barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
@@ -333,6 +338,19 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
         }
       });
     }).catchError((error) {
+      _btnController.error();
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Bạn chưa có tọa độ vị trí. Vui lòng BẬT VỊ TRÍ',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
       print("Error getting location: $error");
     });
   }
@@ -491,6 +509,14 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                       title: 'Nơi giao: ',
                                       value: _data?.noigiao,
                                     ),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    ItemGhiChu(
+                                      title: 'Ghi chú: ',
+                                      controller: _ghiChu,
+                                    ),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
                                     CheckSheetUploadAnh(
                                       lstFiles: [],
                                     )
@@ -565,6 +591,57 @@ class Item extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ItemGhiChu extends StatelessWidget {
+  final String title;
+  final TextEditingController controller;
+
+  const ItemGhiChu({
+    Key? key,
+    required this.title,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+            SizedBox(width: 10), // Khoảng cách giữa title và text field
+            Expanded(
+              child: TextField(
+                controller: controller,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none, // Loại bỏ đường viền mặc định
+                  hintText: '',
+                  contentPadding: EdgeInsets.symmetric(vertical: 9),
+                ),
               ),
             ),
           ],

@@ -1,16 +1,14 @@
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
-import 'package:Thilogi/services/app_service.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/chucnang.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
 import 'package:Thilogi/utils/next_screen.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter/widgets.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../utils/snackbar.dart';
+import '../../../widgets/checksheet_upload_anh.dart';
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class PopUp extends StatefulWidget {
@@ -70,7 +68,8 @@ class _PopUpState extends State<PopUp> {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          color: Colors.white.withOpacity(0.9),
+          // color: Colors.white.withOpacity(0.9),
+          color: Theme.of(context).colorScheme.onPrimary,
           boxShadow: const [
             BoxShadow(
               color: Color(0x40000000),
@@ -90,6 +89,9 @@ class _PopUpState extends State<PopUp> {
                   children: [
                     _buildInputFields(),
                     _buildCarDetails(context),
+                    CheckSheetUploadAnh(
+                      lstFiles: [],
+                    ),
                   ],
                 ),
               ),
@@ -186,7 +188,7 @@ class _PopUpState extends State<PopUp> {
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.all(10),
+          margin: EdgeInsets.only(top: 10, left: 10, right: 10),
           child: Column(
             children: [
               Row(
@@ -243,7 +245,6 @@ class _PopUpState extends State<PopUp> {
             ],
           ),
         ),
-        SizedBox(height: 10.h),
       ],
     );
   }
@@ -362,12 +363,12 @@ class _PopUpState extends State<PopUp> {
                   },
                   onConfirmBtnTap: () {
                     Navigator.of(context).pop();
-                    _cv.getData(
-                        context, _btnController, widget.soKhung, toaDo ?? "");
+                    _cv.getData(context, _btnController, widget.soKhung,
+                        toaDo ?? "", ghiChuController.text);
                   });
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 40),
         ],
       ),
     );
