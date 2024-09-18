@@ -18,12 +18,6 @@ class DSXChoVanChuyenPage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
-              // decoration: const BoxDecoration(
-              //     // image: DecorationImage(
-              //     //   image: AssetImage(AppConfig.backgroundImagePath),
-              //     //   fit: BoxFit.cover,
-              //     // ),
-              //     ),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),

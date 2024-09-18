@@ -1,5 +1,3 @@
-import 'package:Thilogi/pages/lsx_giaoxe/custom_body_lsxgiaoxe.dart';
-import 'package:Thilogi/pages/lsx_racong/custom_body_lsxracong.dart';
 import 'package:Thilogi/pages/lsx_rutcont/custom_body_lsxrutcont.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';

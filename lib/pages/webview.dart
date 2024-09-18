@@ -1,75 +1,104 @@
-// import 'package:flutter/material.dart';
-// import 'package:webview_flutter/webview_flutter.dart';
-// // Import for Android features.
-// import 'package:webview_flutter_android/webview_flutter_android.dart';
-// // Import for iOS features.
-// import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+import 'package:Thilogi/blocs/user_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-// class WebViewContainer extends StatefulWidget {
-//   const WebViewContainer({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
-//   @override
-//   State<WebViewContainer> createState() => _WebViewContainerState();
-// }
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
-// class _WebViewContainerState extends State<WebViewContainer> {
-//   late final WebViewController controller;
+class _MyAppState extends State<MyApp> {
+  late WebViewController controller;
+  late UserBloc? ub;
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     late final PlatformWebViewControllerCreationParams params;
-//     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-//       params = WebKitWebViewControllerCreationParams(
-//         allowsInlineMediaPlayback: true,
-//         mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-//       );
-//     } else {
-//       params = const PlatformWebViewControllerCreationParams();
+  @override
+  void initState() {
+    super.initState();
+    ub = Provider.of<UserBloc>(context, listen: false);
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            // await _fillLoginForm();
+
+            // Inject JavaScript to remove unwanted elements
+            controller.runJavaScript("""
+                document.querySelector('header').style.display = 'none';
+                document.querySelector('footer').style.display = 'none';
+                document.querySelector('.div_frame').scrollIntoView();
+                """);
+          },
+        ),
+      )
+      ..loadRequest(
+          Uri.parse('https://bms.thilogi.vn/danh-muc-kho-wms/so-do-kho'));
+  }
+
+//   Future<void> _fillLoginForm() async {
+//     if (ub?.maNhanVien != null) {
+//       // Inject JavaScript to fill in the login form
+//       await controller.runJavaScript("""
+//   setTimeout(function() {
+//     // Create a MutationObserver to monitor changes in the DOM
+//     var observer = new MutationObserver(function(mutations) {
+//       mutations.forEach(function(mutation) {
+//         if (mutation.type === 'childList') {
+//           document.getElementById('basic_username').value = '${ub?.maNhanVien}';
+//           document.getElementById('basic_password').value = '${ub?.maNhanVien}';
+//         }
+//       });
+//     });
+
+//     // Observe changes in the form element
+//     var targetNode = document.querySelector('form');
+//     if (targetNode) {
+//       observer.observe(targetNode, { childList: true, subtree: true });
 //     }
 
-//     controller = WebViewController.fromPlatformCreationParams(params);
+//     // Set initial values
+//     document.getElementById('basic_username').value = '${ub?.maNhanVien}';
+//     document.getElementById('basic_password').value = '${ub?.maNhanVien}';
 
-//     if (controller.platform is AndroidWebViewController) {
-//       AndroidWebViewController.enableDebugging(true);
-//       (controller.platform as AndroidWebViewController)
-//           .setMediaPlaybackRequiresUserGesture(false);
+//     // Function to select the "Cá nhân" option from the dropdown
+//     function selectOption() {
+//       var selectElement = document.querySelector('.ant-select-selector');
+//       if (selectElement) {
+//         selectElement.click(); // Open the dropdown
+//         setTimeout(function() {
+//           var option = Array.from(document.querySelectorAll('.ant-select-item-option-content'))
+//             .find(option => option.textContent === 'Cá nhân');
+//           if (option) {
+//             option.click(); // Select the option
+//           }
+//         }, 500); // Adjust the timeout as necessary
+//       }
 //     }
 
-//     controller
-//       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-//       ..setBackgroundColor(const Color(0x00000000))
-//       ..setNavigationDelegate(
-//         NavigationDelegate(
-//           onProgress: (int progress) {
-//             // Update loading bar.
-//           },
-//           onPageStarted: (String url) {},
-//           onPageFinished: (String url) {},
-//           onHttpError: (HttpResponseError error) {},
-//           onWebResourceError: (WebResourceError error) {},
-//           onNavigationRequest: (NavigationRequest request) {
-//             if (request.url.startsWith(
-//                 'https://bms.thilogi.vn/danh-muc-kho-wms/so-do-kho')) {
-//               return NavigationDecision.prevent;
-//             }
-//             return NavigationDecision.navigate;
-//           },
-//         ),
-//       )
-//       ..loadRequest(
-//           Uri.parse('https://bms.thilogi.vn/danh-muc-kho-wms/so-do-kho'));
+//     // Call the function to select the option
+//     selectOption();
+//   }, 1000); // Adjust the timeout as necessary
+// """);
+//     }
 //   }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("Web View"),
-//       ),
-//       body: WebViewWidget(
-//         controller: controller,
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // AppBar is removed by not including it here
+      resizeToAvoidBottomInset: false,
+      body: WebViewWidget(
+        controller: controller,
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(const MaterialApp(
+    home: MyApp(),
+  ));
+}

@@ -23,9 +23,7 @@ class BodyTrackingXe extends StatelessWidget {
         width: 100.w,
         alignment: Alignment.bottomCenter,
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height < 600
-              ? MediaQuery.of(context).size.height * 0.9
-              : MediaQuery.of(context).size.height * 0.6,
+          maxHeight: MediaQuery.of(context).size.height < 600 ? MediaQuery.of(context).size.height * 0.9 : MediaQuery.of(context).size.height * 0.6,
           // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
         ),
         decoration: BoxDecoration(
@@ -58,9 +56,7 @@ class BodyTrackingXe extends StatelessWidget {
                   padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
                   child: Image.asset(
                     'assets/images/road.png',
-                    height: MediaQuery.of(context).size.height < 600
-                        ? MediaQuery.of(context).size.height * 0.9
-                        : MediaQuery.of(context).size.height * 0.6,
+                    height: MediaQuery.of(context).size.height < 600 ? MediaQuery.of(context).size.height * 0.9 : MediaQuery.of(context).size.height * 0.6,
                   ),
                 ),
               ),
@@ -85,8 +81,7 @@ class CustomTrackingXeScreen extends StatefulWidget {
   _CustomTrackingXeScreenState createState() => _CustomTrackingXeScreenState();
 }
 
-class _CustomTrackingXeScreenState extends State<CustomTrackingXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _CustomTrackingXeScreenState extends State<CustomTrackingXeScreen> with TickerProviderStateMixin, ChangeNotifier {
 // ignore: use_key_in_widget_constructors
   late TrackingBloc _bl;
   late FlutterDataWedge dataWedge;
@@ -231,9 +226,7 @@ class _CustomTrackingXeScreenState extends State<CustomTrackingXeScreen>
     _bl.getTrackingXe(context, value).then((_) {
       setState(() {
         _qrData = value;
-        if (_bl.lsxequa == null &&
-            _bl.lsnhapbai == null &&
-            _bl.lsxuatxe == null) {
+        if (_bl.lsxequa == null && _bl.lsnhapbai == null && _bl.lsxuatxe == null) {
           _qrData = '';
           _qrDataController.text = '';
         } else {
@@ -373,9 +366,7 @@ class buildRowItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width < 330
-            ? MediaQuery.of(context).size.width * 0.9
-            : MediaQuery.of(context).size.width * 0.9,
+        maxWidth: MediaQuery.of(context).size.width < 330 ? MediaQuery.of(context).size.width * 0.9 : MediaQuery.of(context).size.width * 0.9,
       ),
       // height: 18.h,
       height: 88,
@@ -432,8 +423,7 @@ class CustomImage1 extends StatelessWidget {
         'assets/images/A-Tracking3D/A_Tracking_GiaoXe.png',
         width: 120, // Đảm bảo kích thước không vượt quá Container
         height: 80,
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -447,8 +437,7 @@ class CustomImage2 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_VCDuongBo.png',
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -462,8 +451,7 @@ class CustomImage3 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_LuuBai.png',
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -477,8 +465,7 @@ class CustomImage4 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_KiemTraNhanXe.png',
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -492,8 +479,7 @@ class CustomImage5 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_KhoTrungChuyen.png',
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -507,8 +493,7 @@ class CustomImage6 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_VCDuongBien.png',
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -522,8 +507,7 @@ class CustomImage7 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_VCDuongBo_1.png',
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -537,8 +521,7 @@ class CustomImage8 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_LuuBai_1.png',
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -552,8 +535,7 @@ class CustomImage9 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_KiemTraNhanXe_1.png',
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }
@@ -567,8 +549,7 @@ class CustomImage10 extends StatelessWidget {
       height: 80,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_KhoTrungChuyen_1.png',
-        fit: BoxFit
-            .cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
+        fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
       ),
     );
   }

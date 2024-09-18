@@ -27,8 +27,16 @@ class XeRaCongModel {
   String? noiden;
   String? benVanChuyen;
   String? soXe;
-  String? maSoNhanVien;
+  String? maNhanVien;
   String? nguoiPhuTrach;
+  String? hinhAnhUrl;
+  String? tenNhanVien;
+  String? maPin;
+  String? sdt;
+  String? tencong;
+  String? lyDo;
+  String? noiditaixe;
+  String? hinhAnh;
 
   XeRaCongModel(
       {this.key,
@@ -57,44 +65,59 @@ class XeRaCongModel {
       this.toaDo,
       this.benVanChuyen,
       this.soXe,
-      this.maSoNhanVien,
+      this.maNhanVien,
       this.noidi,
       this.noiden,
-      this.nguoiPhuTrach});
+      this.nguoiPhuTrach,
+      this.tenNhanVien,
+      this.sdt,
+      this.maPin,
+      this.lyDo,
+      this.hinhAnh,
+      this.tencong,
+      this.hinhAnhUrl,
+      this.noiditaixe});
 
   factory XeRaCongModel.fromJson(Map<String, dynamic> json) {
     return XeRaCongModel(
-      key: json["key"],
-      id: json["id"],
-      soKhung: json["soKhung"],
-      maSanPham: json["maSanPham"],
-      tenSanPham: json["tenSanPham"],
-      soMay: json["soMay"],
-      maMau: json["maMau"],
-      tenMau: json["tenMau"],
-      tenKho: json["tenKho"],
-      maViTri: json["maViTri"],
-      tenViTri: json["tenViTr"],
-      mauSon: json["mauSon"],
-      ngayNhapKhoView: json["ngayNhapKhoView"],
-      tenTaiXe: json["tenTaiXe"],
-      ghiChu: json["ghiChu"],
-      maKho: json["maKho"],
-      taiXe_Id: json["taiXe_Id"],
-      bienSo_Id: json["bienSo_Id"],
-      kho_Id: json["kho_Id"],
-      tenDiaDiem: json["tenDiaDiem"],
-      tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"],
-      tenLoaiPhuongTien: json["tenLoaiPhuongTien"],
-      tenPhuongTien: json["tenPhuongTien"],
-      toaDo: json["viTri"],
-      noidi: json["noidi"],
-      noiden: json["noiden"],
-      benVanChuyen: json["benVanChuyen"],
-      soXe: json["soXe"],
-      maSoNhanVien: json["maSoNhanVien"],
-      nguoiPhuTrach: json["nguoiPhuTrach"],
-    );
+        key: json["key"],
+        id: json["id"],
+        soKhung: json["soKhung"],
+        maSanPham: json["maSanPham"],
+        tenSanPham: json["tenSanPham"],
+        soMay: json["soMay"],
+        maMau: json["maMau"],
+        tenMau: json["tenMau"],
+        tenKho: json["tenKho"],
+        maViTri: json["maViTri"],
+        tenViTri: json["tenViTr"],
+        mauSon: json["mauSon"],
+        ngayNhapKhoView: json["ngayNhapKhoView"],
+        tenTaiXe: json["tenTaiXe"],
+        ghiChu: json["ghiChu"],
+        maKho: json["maKho"],
+        taiXe_Id: json["taiXe_Id"],
+        bienSo_Id: json["bienSo_Id"],
+        kho_Id: json["kho_Id"],
+        tenDiaDiem: json["tenDiaDiem"],
+        tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"],
+        tenLoaiPhuongTien: json["tenLoaiPhuongTien"],
+        tenPhuongTien: json["tenPhuongTien"],
+        toaDo: json["viTri"],
+        noidi: json["noidi"],
+        noiden: json["noiden"],
+        benVanChuyen: json["benVanChuyen"],
+        soXe: json["soXe"],
+        maNhanVien: json["maNhanVien"],
+        nguoiPhuTrach: json["nguoiPhuTrach"],
+        hinhAnhUrl: json["hinhAnhUrl"],
+        tenNhanVien: json["tenNhanVien"],
+        sdt: json["sdt"],
+        maPin: json["maPin"],
+        noiditaixe: json["noiditaixe"],
+        lyDo: json["lyDo"],
+        hinhAnh: json["hinhAnh"],
+        tencong: json["tencong"]);
   }
   Map<String, dynamic> toJson() => {
         'key': key,
@@ -123,7 +146,15 @@ class XeRaCongModel {
         "noiden": noiden,
         "benVanChuyen": benVanChuyen,
         "soXe": soXe,
-        "maSoNhanVien": maSoNhanVien,
-        "nguoiPhuTrach": nguoiPhuTrach
+        "maSoNhanVien": maNhanVien,
+        "nguoiPhuTrach": nguoiPhuTrach,
+        "hinhAnhUrl": hinhAnhUrl,
+        "tenNhanVien": tenNhanVien,
+        "sdt": sdt,
+        "maPin": maPin,
+        "lyDo": lyDo,
+        "tencong": tencong,
+        "noiditaixe": noiditaixe,
+        "hinhAnh": hinhAnh,
       };
 }

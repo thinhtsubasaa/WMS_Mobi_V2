@@ -23,8 +23,7 @@ class BodyLSNhapBaiScreen extends StatefulWidget {
   _BodyLSNhapBaiScreenState createState() => _BodyLSNhapBaiScreenState();
 }
 
-class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
@@ -54,13 +53,10 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
   Future<void> getDSXNhapBai(String? ngay) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeNhapBai?Ngay=$ngay');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeNhapBai?Ngay=$ngay');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _dn = (decodedData as List)
-            .map((item) => LSX_NhapBaiModel.fromJson(item))
-            .toList();
+        _dn = (decodedData as List).map((item) => LSX_NhapBaiModel.fromJson(item)).toList();
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -97,18 +93,13 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
   }
 
   Widget _buildTableOptions(BuildContext context) {
-    int index = 0; // Biến đếm số thứ tự
-    // _dn?.sort((a, b) => DateTime.parse(b.gioNhan ?? "")
-    //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
+    int index = 0;
     const String defaultDate = "1970-01-01 ";
 
-    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
     _dn?.sort((a, b) {
       try {
-        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (a.gioNhan ?? "00:00"));
-        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (b.gioNhan ?? "00:00"));
+        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (a.gioNhan ?? "00:00"));
+        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (b.gioNhan ?? "00:00"));
         return bTime.compareTo(aTime); // Sắp xếp giảm dần
       } catch (e) {
         // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
@@ -133,7 +124,7 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
             ),
             Table(
               border: TableBorder.all(),
-              columnWidths: {
+              columnWidths: const {
                 0: FlexColumnWidth(0.15),
                 1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
@@ -144,24 +135,20 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
                   children: [
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                      child: _buildTableCell('Giờ nhận', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
+                      child: _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       width: double.infinity,
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Nơi nhập', textColor: Colors.white),
+                      child: _buildTableCell('Nơi nhập', textColor: Colors.white),
                     ),
                   ],
                 ),
@@ -172,7 +159,7 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
-                  columnWidths: {
+                  columnWidths: const {
                     0: FlexColumnWidth(0.15),
                     1: FlexColumnWidth(0.3),
                     2: FlexColumnWidth(0.3),
@@ -243,8 +230,7 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
                                       'Danh sách xe đã nhập',
@@ -257,24 +243,19 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
                                     GestureDetector(
                                       onTap: () => _selectDate(context),
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 5, vertical: 6),
+                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 6),
                                         decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.blue),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.blue),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors.blue),
-                                            SizedBox(width: 8),
+                                            const Icon(Icons.calendar_today, color: Colors.blue),
+                                            const SizedBox(width: 8),
                                             Text(
                                               selectedDate ?? 'Chọn ngày',
-                                              style:
-                                                  TextStyle(color: Colors.blue),
+                                              style: const TextStyle(color: Colors.blue),
                                             ),
                                           ],
                                         ),
@@ -282,22 +263,20 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 4,
                                       ),
                                       Text(
                                         'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: 'Comfortaa',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,

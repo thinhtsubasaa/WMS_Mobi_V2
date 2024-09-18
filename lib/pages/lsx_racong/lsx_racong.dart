@@ -1,4 +1,3 @@
-import 'package:Thilogi/pages/lsx_giaoxe/custom_body_lsxgiaoxe.dart';
 import 'package:Thilogi/pages/lsx_racong/custom_body_lsxracong.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
@@ -19,12 +18,6 @@ class LSXeRaCongPage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
-              // decoration: const BoxDecoration(
-              //     // image: DecorationImage(
-              //     //   image: AssetImage(AppConfig.backgroundImagePath),
-              //     //   fit: BoxFit.cover,
-              //     // ),
-              //     ),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),

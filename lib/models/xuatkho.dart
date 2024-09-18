@@ -32,6 +32,7 @@ class XuatKhoModel {
   String? maSoNhanVien;
   bool? dangDiChuyen;
   String? nguoiPhuTrach;
+  String? hinhAnh;
 
   XuatKhoModel(
       {this.key,
@@ -66,6 +67,7 @@ class XuatKhoModel {
       this.noidi,
       this.noiden,
       this.dangDiChuyen,
+      this.hinhAnh,
       this.nguoiPhuTrach});
 
   factory XuatKhoModel.fromJson(Map<String, dynamic> json) {
@@ -101,6 +103,7 @@ class XuatKhoModel {
       maSoNhanVien: json["maSoNhanVien"],
       dangDiChuyen: json["dangDiChuyen"],
       nguoiPhuTrach: json["nguoiPhuTrach"],
+      hinhAnh: json["hinhAnh"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -131,6 +134,7 @@ class XuatKhoModel {
         "benVanChuyen": benVanChuyen,
         "soXe": soXe,
         "maSoNhanVien": maSoNhanVien,
-        "nguoiPhuTrach": nguoiPhuTrach
+        "nguoiPhuTrach": nguoiPhuTrach,
+        "hinhAnh": hinhAnh,
       };
 }

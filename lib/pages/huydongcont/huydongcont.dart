@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 
 import 'package:sizer/sizer.dart';
-import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 
 class HuyDongContPage extends StatelessWidget {

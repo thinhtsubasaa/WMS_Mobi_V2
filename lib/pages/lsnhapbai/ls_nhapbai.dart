@@ -1,5 +1,3 @@
-import 'package:Thilogi/pages/dsx_danhan/custom_body_dsx.dart';
-import 'package:Thilogi/pages/lsnhanxe/custom_body_lsdanhan.dart';
 import 'package:Thilogi/pages/lsnhapbai/custom_body_lsnhapbai.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
@@ -16,16 +14,10 @@ class LSNhapBaiPage extends StatelessWidget {
       appBar: customAppBar(context),
       body: Column(
         children: [
-          CustomCard(),
+          const CustomCard(),
           Expanded(
             child: Container(
               width: 100.w,
-              // decoration: const BoxDecoration(
-              //     // image: DecorationImage(
-              //     //   image: AssetImage(AppConfig.backgroundImagePath),
-              //     //   fit: BoxFit.cover,
-              //     // ),
-              //     ),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
@@ -45,7 +37,7 @@ class BottomContent extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height / 11,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       decoration: const BoxDecoration(
         color: AppConfig.bottom,
       ),

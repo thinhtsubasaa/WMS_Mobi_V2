@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/models/doitac.dart';
-import 'package:Thilogi/models/lsu_giaoxe.dart';
-import 'package:Thilogi/models/lsx_racong.dart';
+import 'package:Thilogi/models/dongxe.dart';
+import 'package:Thilogi/models/khoxe.dart';
 import 'package:Thilogi/models/lsx_rutcont.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -28,8 +26,7 @@ class BodyLSRutContScreen extends StatefulWidget {
   _BodyLSRutContScreenState createState() => _BodyLSRutContScreenState();
 }
 
-class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSRutContScreenState extends State<BodyLSRutContScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
@@ -47,30 +44,79 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
   String? get errorCode => _errorCode;
   final TextEditingController textEditingController = TextEditingController();
   final TextEditingController maNhanVienController = TextEditingController();
+  String? KhoXeId;
+  String? DongXeId;
+  List<KhoXeModel>? _khoxeList;
+  List<KhoXeModel>? get khoxeList => _khoxeList;
+  List<DongXeModel>? _dongxeList;
+  List<DongXeModel>? get dongxeList => _dongxeList;
 
   @override
   void initState() {
     super.initState();
-
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
-    selectedToDate =
-        DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
-    getDSXRutCont(selectedFromDate, selectedToDate, maNhanVienController.text);
+    selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
+    setState(() {
+      KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
+      _loading = false;
+    });
+    getDataKho();
+    getDataDongXe();
+    // getDSXRutCont(selectedFromDate, selectedToDate, maNhanVienController.text);
   }
 
-  Future<void> getDSXRutCont(
-      String? tuNgay, String? denNgay, String? keyword) async {
+  void getDataKho() async {
+    try {
+      final http.Response response = await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _khoxeList = (decodedData as List).map((item) => KhoXeModel.fromJson(item)).where((item) => item.maKhoXe == "MT_CLA" || item.maKhoXe == "MN_NAMBO" || item.maKhoXe == "MB_BACBO").toList();
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
+          _loading = false;
+        });
+        getDSXRutCont(selectedFromDate, selectedToDate, KhoXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  void getDataDongXe() async {
+    try {
+      final http.Response response = await requestHelper.getData('Xe_DongXe');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _dongxeList = (decodedData["datalist"] as List).map((item) => DongXeModel.fromJson(item)).toList();
+        _dongxeList!.insert(0, DongXeModel(id: '', tenDongXe: 'Tất cả'));
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          DongXeId = '';
+          _loading = false;
+        });
+        getDSXRutCont(selectedFromDate, selectedToDate, KhoXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  Future<void> getDSXRutCont(String? tuNgay, String? denNgay, String? KhoXe_Id, String? DongXe_Id, String? keyword) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper.getData(
-          'DSX_DongCont/GetDanhSachContDaRut?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('DSX_DongCont/GetDanhSachContDaRut?TuNgay=$tuNgay&DenNgay=$denNgay&KhoXe_Id=$KhoXe_Id&DongXe_Id=$DongXe_Id&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
         if (decodedData != null) {
-          _dn = (decodedData as List)
-              .map((item) => LSX_RutContModel.fromJson(item))
-              .toList();
+          _dn = (decodedData as List).map((item) => LSX_RutContModel.fromJson(item)).toList();
 
           // Gọi setState để cập nhật giao diện
           setState(() {
@@ -102,30 +148,14 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
       });
       print("TuNgay: $selectedFromDate");
       print("DenNgay: $selectedToDate");
-      await getDSXRutCont(
-          selectedFromDate, selectedToDate, maNhanVienController.text);
+      await getDSXRutCont(selectedFromDate, selectedToDate, KhoXeId ?? "", DongXeId ?? "", maNhanVienController.text);
     }
   }
 
   Widget _buildTableOptions(BuildContext context) {
     int index = 0; // Biến đếm số thứ tự
-    // _dn?.sort((a, b) => DateTime.parse(b.gioNhan ?? "")
-    //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
-    const String defaultDate = "1970-01-01 ";
 
-    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
-    // _dn?.sort((a, b) {
-    //   try {
-    //     DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-    //         .parse(defaultDate + (a.gioNhan ?? "00:00"));
-    //     DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-    //         .parse(defaultDate + (b.gioNhan ?? "00:00"));
-    //     return bTime.compareTo(aTime); // Sắp xếp giảm dần
-    //   } catch (e) {
-    //     // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
-    //     return 0;
-    //   }
-    // });
+    const String defaultDate = "1970-01-01 ";
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -158,28 +188,23 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                   children: [
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Ngày rút cont',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Ngày rút cont', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                      child: _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số cont', textColor: Colors.white),
+                      child: _buildTableCell('Số cont', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số seal', textColor: Colors.white),
+                      child: _buildTableCell('Số seal', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -187,16 +212,14 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Người rút cont',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Người rút cont', textColor: Colors.white),
                     ),
                   ],
                 ),
               ],
             ),
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
+              height: MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
@@ -271,23 +294,14 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                     _loading
                         ? LoadingWidget(context)
                         : Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(top: 5, bottom: 10, left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe rút cont',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
                                 GestureDetector(
                                   onTap: () => _selectDate(context),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 6),
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.blue),
                                       borderRadius: BorderRadius.circular(8),
@@ -295,12 +309,10 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.calendar_today,
-                                            color: Colors.blue),
+                                        Icon(Icons.calendar_today, color: Colors.blue),
                                         SizedBox(width: 8),
                                         Text(
-                                          selectedFromDate != null &&
-                                                  selectedToDate != null
+                                          selectedFromDate != null && selectedToDate != null
                                               ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
                                               : 'Chọn ngày',
                                           style: TextStyle(color: Colors.blue),
@@ -312,16 +324,227 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 SizedBox(
                                   height: 4,
                                 ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: const Color(0xFFBC2925),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              items: _khoxeList?.map((item) {
+                                                return DropdownMenuItem<String>(
+                                                  value: item.id,
+                                                  child: Container(
+                                                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                    child: SingleChildScrollView(
+                                                      scrollDirection: Axis.horizontal,
+                                                      child: Text(
+                                                        item.tenKhoXe ?? "",
+                                                        textAlign: TextAlign.center,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Comfortaa',
+                                                          fontSize: 13,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: AppConfig.textInput,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: KhoXeId,
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  KhoXeId = newValue;
+                                                });
+                                                if (newValue != null) {
+                                                  getDataDongXe();
+                                                  getDSXRutCont(selectedFromDate, selectedToDate, newValue, DongXeId ?? "", maNhanVienController.text);
+                                                  print("object : ${newValue}");
+                                                }
+                                              },
+                                              buttonStyleData: const ButtonStyleData(
+                                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                                height: 40,
+                                                width: 200,
+                                              ),
+                                              dropdownStyleData: const DropdownStyleData(
+                                                maxHeight: 200,
+                                              ),
+                                              menuItemStyleData: const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                              dropdownSearchData: DropdownSearchData(
+                                                searchController: textEditingController,
+                                                searchInnerWidgetHeight: 50,
+                                                searchInnerWidget: Container(
+                                                  height: 50,
+                                                  padding: const EdgeInsets.only(
+                                                    top: 8,
+                                                    bottom: 4,
+                                                    right: 8,
+                                                    left: 8,
+                                                  ),
+                                                  child: TextFormField(
+                                                    expands: true,
+                                                    maxLines: null,
+                                                    controller: textEditingController,
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
+                                                      ),
+                                                      hintText: 'Tìm kho xe',
+                                                      hintStyle: const TextStyle(fontSize: 12),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                searchMatchFn: (item, searchValue) {
+                                                  if (item is DropdownMenuItem<String>) {
+                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                    String itemId = item.value ?? "";
+                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                    return _khoxeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenKhoXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                  } else {
+                                                    return false;
+                                                  }
+                                                },
+                                              ),
+                                              onMenuStateChange: (isOpen) {
+                                                if (!isOpen) {
+                                                  textEditingController.clear();
+                                                }
+                                              },
+                                            ),
+                                          )),
+                                    ),
+                                    SizedBox(
+                                      width: 3,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: const Color(0xFFBC2925),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              items: _dongxeList?.map((item) {
+                                                return DropdownMenuItem<String>(
+                                                  value: item.id,
+                                                  child: Container(
+                                                    child: Text(
+                                                      item.tenDongXe ?? "",
+                                                      textAlign: TextAlign.center,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Comfortaa',
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: AppConfig.textInput,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: DongXeId,
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  DongXeId = newValue;
+                                                });
+                                                if (newValue != null) {
+                                                  if (newValue == '') {
+                                                    getDSXRutCont(selectedFromDate, selectedToDate, KhoXeId ?? "", '', maNhanVienController.text);
+                                                  } else {
+                                                    getDSXRutCont(selectedFromDate, selectedToDate, KhoXeId ?? "", newValue, maNhanVienController.text);
+                                                    print("objectcong : ${newValue}");
+                                                  }
+                                                }
+                                              },
+                                              buttonStyleData: const ButtonStyleData(
+                                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                                height: 40,
+                                                width: 200,
+                                              ),
+                                              dropdownStyleData: const DropdownStyleData(
+                                                maxHeight: 200,
+                                              ),
+                                              menuItemStyleData: const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                              dropdownSearchData: DropdownSearchData(
+                                                searchController: textEditingController,
+                                                searchInnerWidgetHeight: 50,
+                                                searchInnerWidget: Container(
+                                                  height: 50,
+                                                  padding: const EdgeInsets.only(
+                                                    top: 8,
+                                                    bottom: 4,
+                                                    right: 8,
+                                                    left: 8,
+                                                  ),
+                                                  child: TextFormField(
+                                                    expands: true,
+                                                    maxLines: null,
+                                                    controller: textEditingController,
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
+                                                      ),
+                                                      hintText: 'Tìm dòng xe',
+                                                      hintStyle: const TextStyle(fontSize: 12),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                searchMatchFn: (item, searchValue) {
+                                                  if (item is DropdownMenuItem<String>) {
+                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                    String itemId = item.value ?? "";
+                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                    return _dongxeList?.any((viTri) => viTri.id == itemId && viTri.tenDongXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                  } else {
+                                                    return false;
+                                                  }
+                                                },
+                                              ),
+                                              onMenuStateChange: (isOpen) {
+                                                if (!isOpen) {
+                                                  textEditingController.clear();
+                                                }
+                                              },
+                                            ),
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
                                 Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -358,24 +581,14 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                       Expanded(
                                         flex: 1,
                                         child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: MediaQuery.of(context)
-                                                          .size
-                                                          .height <
-                                                      600
-                                                  ? 0
-                                                  : 5),
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
                                           child: TextField(
                                             controller: maNhanVienController,
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
                                               isDense: true,
-                                              hintText:
-                                                  'Nhập số cont, số khung',
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 15),
+                                              hintText: 'Nhập số cont, số khung',
+                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                                             ),
                                             style: const TextStyle(
                                               fontFamily: 'Comfortaa',
@@ -396,10 +609,7 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXRutCont(
-                                              selectedFromDate,
-                                              selectedToDate,
-                                              maNhanVienController.text);
+                                          getDSXRutCont(selectedFromDate, selectedToDate, KhoXeId ?? "", DongXeId ?? "", maNhanVienController.text);
                                           setState(() {
                                             _loading = false;
                                           });
@@ -410,8 +620,7 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                 ),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         height: 4,

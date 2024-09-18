@@ -23,8 +23,7 @@ class BodyLSGiaoXeScreen extends StatefulWidget {
   _BodyLSGiaoXeScreenState createState() => _BodyLSGiaoXeScreenState();
 }
 
-class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
@@ -49,13 +48,10 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
   Future<void> getDSXGiaoXe(String? ngay) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeGiaoXe?Ngay=$ngay');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeGiaoXe?Ngay=$ngay');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _dn = (decodedData as List)
-            .map((item) => LSX_GiaoXeModel.fromJson(item))
-            .toList();
+        _dn = (decodedData as List).map((item) => LSX_GiaoXeModel.fromJson(item)).toList();
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -100,13 +96,10 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
     // Sắp xếp danh sách _dn theo giờ nhận mới nhất
     _dn?.sort((a, b) {
       try {
-        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (a.gioNhan ?? "00:00"));
-        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (b.gioNhan ?? "00:00"));
+        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (a.gioNhan ?? "00:00"));
+        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (b.gioNhan ?? "00:00"));
         return bTime.compareTo(aTime); // Sắp xếp giảm dần
       } catch (e) {
-        // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
         return 0;
       }
     });
@@ -128,7 +121,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
             ),
             Table(
               border: TableBorder.all(),
-              columnWidths: {
+              columnWidths: const {
                 0: FlexColumnWidth(0.15),
                 1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
@@ -139,24 +132,20 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                   children: [
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                      child: _buildTableCell('Giờ nhận', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
+                      child: _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       width: double.infinity,
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Nơi giao', textColor: Colors.white),
+                      child: _buildTableCell('Nơi giao', textColor: Colors.white),
                     ),
                   ],
                 ),
@@ -167,7 +156,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
-                  columnWidths: {
+                  columnWidths: const {
                     0: FlexColumnWidth(0.15),
                     1: FlexColumnWidth(0.3),
                     2: FlexColumnWidth(0.3),
@@ -238,8 +227,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
                                       'Danh sách xe đã giao',
@@ -252,24 +240,19 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                     GestureDetector(
                                       onTap: () => _selectDate(context),
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 5, vertical: 6),
+                                        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
                                         decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.blue),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.blue),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors.blue),
+                                            Icon(Icons.calendar_today, color: Colors.blue),
                                             SizedBox(width: 8),
                                             Text(
                                               selectedDate ?? 'Chọn ngày',
-                                              style:
-                                                  TextStyle(color: Colors.blue),
+                                              style: TextStyle(color: Colors.blue),
                                             ),
                                           ],
                                         ),
@@ -280,17 +263,15 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(),
                                       Text(
                                         'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: 'Comfortaa',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,

@@ -1,13 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:Thilogi/blocs/dongcont_bloc.dart';
 import 'package:Thilogi/blocs/huydongcont_bloc.dart';
 import 'package:Thilogi/models/dongcont.dart';
 import 'package:Thilogi/pages/ds_dongcont/ds_dongcont.dart';
-import 'package:Thilogi/pages/lsdieuchuyen/ls_dieuchuyen.dart';
 import 'package:Thilogi/utils/next_screen.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
@@ -21,8 +18,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
-    as GeoLocationAccuracy;
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 
 import '../../config/config.dart';
 import '../../models/dsxdongcont.dart';
@@ -43,8 +39,7 @@ class BodyHuyDongContScreen extends StatefulWidget {
   _BodyHuyDongContScreenState createState() => _BodyHuyDongContScreenState();
 }
 
-class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
@@ -80,8 +75,7 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
   late StreamSubscription<ScanResult> scanSubscription;
 
   late HuyDongContBloc _bl;
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   final TextEditingController textEditingController = TextEditingController();
 
   @override
@@ -109,24 +103,19 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
     // Kiểm tra quyền truy cập vị trí
     LocationPermission permission = await Geolocator.checkPermission();
     // Nếu chưa có quyền, yêu cầu quyền truy cập vị trí
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       // Yêu cầu quyền truy cập vị trí
       await Geolocator.requestPermission();
     }
   }
 
-  Future<void> HuyDongCont(
-      DongContModel? scanData, String soKhung, String toaDo) async {
+  Future<void> HuyDongCont(DongContModel? scanData, String soKhung, String toaDo) async {
     _isLoading = true;
     try {
       var newScanData = scanData;
-      newScanData?.soKhung =
-          newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      newScanData?.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData?.soKhung}");
-      final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/HuyDongCont?SoKhung=$soKhung&ViTri=$toaDo',
-          newScanData?.toJson());
+      final http.Response response = await requestHelper.postData('KhoThanhPham/HuyDongCont?SoKhung=$soKhung&ViTri=$toaDo', newScanData?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -187,14 +176,14 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
           Container(
             width: 20.w,
             height: 11.h,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
               ),
               color: AppConfig.primaryColor,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 'Số khung\n(VIN)',
                 textAlign: TextAlign.center,
@@ -213,13 +202,13 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: TextField(
                 controller: _qrDataController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Nhập hoặc quét mã VIN',
                 ),
                 onSubmitted: (value) {
                   _handleBarcodeScanResult(value);
                 },
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -333,8 +322,7 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          HuyDongCont(_data!, _data?.soKhung ?? "", _data?.toaDo ?? "")
-              .then((_) {
+          HuyDongCont(_data!, _data?.soKhung ?? "", _data?.toaDo ?? "").then((_) {
             setState(() {
               _data = null;
               soContId = null;
@@ -372,11 +360,11 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
         title: '',
         confirmBtnText: 'Đồng ý',
         cancelBtnText: 'Không',
-        confirmBtnTextStyle: TextStyle(
+        confirmBtnTextStyle: const TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
         ),
-        cancelBtnTextStyle: TextStyle(
+        cancelBtnTextStyle: const TextStyle(
           color: Colors.red,
           fontSize: 19.0,
           fontWeight: FontWeight.bold,
@@ -416,8 +404,7 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
                                     'Thông Tin Xác Nhận',
@@ -452,7 +439,7 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
                                 children: [
                                   Container(
                                     padding: EdgeInsets.only(left: 10),
-                                    child: Text(
+                                    child: const Text(
                                       'Loại xe: ',
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
@@ -463,16 +450,13 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
                                     ),
                                   ),
                                   Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.70),
+                                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.70),
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Text(
                                         _data?.tenSanPham ?? '',
                                         textAlign: TextAlign.left,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: 'Coda Caption',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
@@ -490,14 +474,7 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
                               value: _data?.soKhung,
                             ),
                             const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                            Item(
-                                title: 'Màu: ',
-                                value: _data != null
-                                    ? (_data?.tenMau != null &&
-                                            _data?.maMau != null
-                                        ? "${_data?.tenMau} (${_data?.maMau})"
-                                        : "")
-                                    : ""),
+                            Item(title: 'Màu: ', value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
                             // value: _data != null
                             //     ? "${_data?.tenMau} (${_data?.maMau})"
                             //     : "",
@@ -541,9 +518,7 @@ class _BodyHuyDongContScreenState extends State<BodyHuyDongContScreen>
                       fontSize: 16,
                     )),
                 controller: _btnController,
-                onPressed: _data?.soCont != null
-                    ? () => _showConfirmationDialogHuyDongCont(context)
-                    : null,
+                onPressed: _data?.soCont != null ? () => _showConfirmationDialogHuyDongCont(context) : null,
               ),
             ],
           ),
@@ -638,7 +613,7 @@ class Item extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
@@ -647,7 +622,7 @@ class Item extends StatelessWidget {
             ),
             Text(
               value ?? "",
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 16,
                 fontWeight: FontWeight.w700,

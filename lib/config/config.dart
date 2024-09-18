@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AppConfig {
-  static const appName = "WMS_MOBI";
-  static const apiUrl = "http://10.17.40.172:5000";
+  static const appName = "THILOGI";
+  static const apiUrl = "https://apiwms.thilogi.vn";
 
   // Colors
   static const Color primaryColor = Color(0xFFA71C20);

@@ -1,15 +1,8 @@
 import 'dart:convert';
-
-import 'package:Thilogi/models/baixe.dart';
-import 'package:Thilogi/models/dsxdanhan.dart';
 import 'package:Thilogi/models/lsxdieuchuyen.dart';
-import 'package:Thilogi/models/lsxnhapbai.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import 'package:sizer/sizer.dart';
-
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,8 +20,7 @@ class BodyLSDieuChuyenScreen extends StatefulWidget {
   _BodyLSDieuChuyenScreenState createState() => _BodyLSDieuChuyenScreenState();
 }
 
-class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
@@ -57,13 +49,10 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
   Future<void> getDSXDieuChuyen(String? ngay) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeDieuChuyen?Ngay=$ngay');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeDieuChuyen?Ngay=$ngay');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _dn = (decodedData as List)
-            .map((item) => LSX_ChuyenBaiModel.fromJson(item))
-            .toList();
+        _dn = (decodedData as List).map((item) => LSX_ChuyenBaiModel.fromJson(item)).toList();
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -99,21 +88,16 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
   }
 
   Widget _buildTableOptions(BuildContext context) {
-    int index = 0; // Biến đếm số thứ tự
-    // _dn?.sort((a, b) => DateTime.parse(b.gioNhan ?? "")
-    //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
+    int index = 0;
+
     const String defaultDate = "1970-01-01 ";
 
-    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
     _dn?.sort((a, b) {
       try {
-        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (a.gioNhan ?? "00:00"));
-        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (b.gioNhan ?? "00:00"));
+        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (a.gioNhan ?? "00:00"));
+        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (b.gioNhan ?? "00:00"));
         return bTime.compareTo(aTime); // Sắp xếp giảm dần
       } catch (e) {
-        // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
         return 0;
       }
     });
@@ -126,7 +110,7 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
         children: [
           Text(
             'Tổng số xe đã thực hiện: ${countNotDash}/${_dn?.length.toString() ?? ""}',
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 17,
               fontWeight: FontWeight.w600,
@@ -149,7 +133,7 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                   ),
                   Table(
                     border: TableBorder.all(),
-                    columnWidths: {
+                    columnWidths: const {
                       0: FlexColumnWidth(0.15),
                       1: FlexColumnWidth(0.35),
                       2: FlexColumnWidth(0.3),
@@ -162,45 +146,38 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                         children: [
                           Container(
                             color: Colors.red,
-                            child: _buildTableCell('Giờ nhận',
-                                textColor: Colors.white),
+                            child: _buildTableCell('Giờ nhận', textColor: Colors.white),
                           ),
                           Container(
                             color: Colors.red,
-                            child: _buildTableCell('Số khung',
-                                textColor: Colors.white),
+                            child: _buildTableCell('Số khung', textColor: Colors.white),
                           ),
                           Container(
                             color: Colors.red,
-                            child: _buildTableCell('Loại Xe',
-                                textColor: Colors.white),
+                            child: _buildTableCell('Loại Xe', textColor: Colors.white),
                           ),
                           Container(
                             color: Colors.red,
-                            child: _buildTableCell('Màu xe',
-                                textColor: Colors.white),
+                            child: _buildTableCell('Màu xe', textColor: Colors.white),
                           ),
                           Container(
                             color: Colors.red,
-                            child: _buildTableCell('Nơi đi',
-                                textColor: Colors.white),
+                            child: _buildTableCell('Nơi đi', textColor: Colors.white),
                           ),
                           Container(
                             color: Colors.red,
-                            child: _buildTableCell('Nơi đến',
-                                textColor: Colors.white),
+                            child: _buildTableCell('Nơi đến', textColor: Colors.white),
                           ),
                         ],
                       ),
                     ],
                   ),
                   Container(
-                    height:
-                        MediaQuery.of(context).size.height, // Chiều cao cố định
+                    height: MediaQuery.of(context).size.height, // Chiều cao cố định
                     child: SingleChildScrollView(
                       child: Table(
                         border: TableBorder.all(),
-                        columnWidths: {
+                        columnWidths: const {
                           0: FlexColumnWidth(0.15),
                           1: FlexColumnWidth(0.35),
                           2: FlexColumnWidth(0.3),
@@ -215,18 +192,12 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                                 return TableRow(
                                   children: [
                                     // _buildTableCell(index.toString()), // Số thứ tự
-                                    _buildTableCell(item.gioNhan ?? "",
-                                        highlightRed: highlightRed),
-                                    _buildTableCell(item.soKhung ?? "",
-                                        highlightRed: highlightRed),
-                                    _buildTableCell(item.loaiXe ?? "",
-                                        highlightRed: highlightRed),
-                                    _buildTableCell(item.mauXe ?? "",
-                                        highlightRed: highlightRed),
-                                    _buildTableCell(item.noiDi ?? "",
-                                        highlightRed: highlightRed),
-                                    _buildTableCell(item.noiDen ?? "",
-                                        highlightRed: highlightRed),
+                                    _buildTableCell(item.gioNhan ?? "", highlightRed: highlightRed),
+                                    _buildTableCell(item.soKhung ?? "", highlightRed: highlightRed),
+                                    _buildTableCell(item.loaiXe ?? "", highlightRed: highlightRed),
+                                    _buildTableCell(item.mauXe ?? "", highlightRed: highlightRed),
+                                    _buildTableCell(item.noiDi ?? "", highlightRed: highlightRed),
+                                    _buildTableCell(item.noiDen ?? "", highlightRed: highlightRed),
                                   ],
                                 );
                               }).toList() ??
@@ -244,8 +215,7 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
     );
   }
 
-  Widget _buildTableCell(String content,
-      {Color textColor = Colors.black, bool highlightRed = false}) {
+  Widget _buildTableCell(String content, {Color textColor = Colors.black, bool highlightRed = false}) {
     if (highlightRed) {
       textColor = Colors.red;
     }
@@ -288,8 +258,7 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
                                       'Danh sách xe chuyển bãi',
@@ -302,24 +271,19 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                                     GestureDetector(
                                       onTap: () => _selectDate(context),
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 5, vertical: 6),
+                                        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
                                         decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.blue),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.blue),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors.blue),
+                                            Icon(Icons.calendar_today, color: Colors.blue),
                                             SizedBox(width: 8),
                                             Text(
                                               selectedDate ?? 'Chọn ngày',
-                                              style:
-                                                  TextStyle(color: Colors.blue),
+                                              style: TextStyle(color: Colors.blue),
                                             ),
                                           ],
                                         ),
@@ -327,27 +291,14 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      // SizedBox(
-                                      //   height: 4,
-                                      // ),
-                                      // Text(
-                                      //   'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
-                                      //   style: TextStyle(
-                                      //     fontFamily: 'Comfortaa',
-                                      //     fontSize: 16,
-                                      //     fontWeight: FontWeight.w600,
-                                      //   ),
-                                      // ),
                                       _buildTableOptions(context),
                                     ],
                                   ),

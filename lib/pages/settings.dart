@@ -68,8 +68,7 @@ class _SettingPageState extends State<SettingPage> {
           const SizedBox(height: 15),
           Container(
             padding: const EdgeInsets.all(20),
-            decoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
+            decoration: BoxDecoration(color: Theme.of(context).colorScheme.onPrimary),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

@@ -38,6 +38,14 @@ class UserBloc extends ChangeNotifier {
   String? get refreshToken => _refreshToken;
   String? _hinhAnhUrl;
   String? get hinhAnhUrl => _hinhAnhUrl;
+  String? _qrCode;
+  String? get qrCode => _qrCode;
+  String? _maNhanVien;
+  String? get maNhanVien => _maNhanVien;
+  String? _tenPhongBan;
+  String? get tenPhongBan => _tenPhongBan;
+  String? _congBaoVe;
+  String? get congBaoVe => _congBaoVe;
 
   Future saveUserData(UserModel userModel) async {
     // ignore: unnecessary_null_comparison
@@ -51,6 +59,10 @@ class UserBloc extends ChangeNotifier {
       sp.setString('refreshToken', userModel.refreshToken ?? '');
       sp.setString('accessRole', userModel.accessRole ?? '');
       sp.setString('hinhAnhUrl', userModel.hinhAnhUrl ?? '');
+      sp.setString('qrCode', userModel.qrCode ?? '');
+      sp.setString('maNhanVien', userModel.maNhanVien ?? '');
+      sp.setString('tenPhongBan', userModel.tenPhongBan ?? '');
+      sp.setString('congBaoVe', userModel.congBaoVe ?? '');
 
       _id = userModel.id;
       _fullName = userModel.fullName;
@@ -60,6 +72,10 @@ class UserBloc extends ChangeNotifier {
       _refreshToken = userModel.refreshToken;
       _accessRole = userModel.accessRole;
       _hinhAnhUrl = userModel.hinhAnhUrl;
+      _qrCode = userModel.qrCode;
+      _maNhanVien = userModel.maNhanVien;
+      _tenPhongBan = userModel.tenPhongBan;
+      _congBaoVe = userModel.congBaoVe;
       notifyListeners();
     }
   }
@@ -75,6 +91,10 @@ class UserBloc extends ChangeNotifier {
     _refreshToken = sp.getString('refreshToken');
     _accessRole = sp.getString('accessRole');
     _hinhAnhUrl = sp.getString('hinhAnhUrl');
+    _qrCode = sp.getString('qrCode');
+    _maNhanVien = sp.getString('maNhanVien');
+    _tenPhongBan = sp.getString('tenPhongBan');
+    _congBaoVe = sp.getString('congBaoVe');
     notifyListeners();
   }
 
@@ -108,6 +128,10 @@ class UserBloc extends ChangeNotifier {
       _id = null;
       _accessRole = null;
       _hinhAnhUrl = null;
+      _qrCode = null;
+      _maNhanVien = null;
+      _tenPhongBan = null;
+      _congBaoVe = null;
       notifyListeners();
     });
   }

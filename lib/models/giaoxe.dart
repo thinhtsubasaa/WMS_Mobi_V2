@@ -26,6 +26,7 @@ class GiaoXeModel {
   String? tenPhuongThucVanChuyen;
   String? noigiao;
   bool? dangDiChuyen;
+  String? hinhAnh;
   List<FileDinhKems>? fileDinhKems;
 
   GiaoXeModel(
@@ -53,6 +54,7 @@ class GiaoXeModel {
       this.nguoiNhan,
       this.fileDinhKems,
       this.tenDiaDiem,
+      this.hinhAnh,
       this.tenPhuongThucVanChuyen,
       this.toaDo,
       this.noigiao,
@@ -86,6 +88,7 @@ class GiaoXeModel {
       tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"],
       noigiao: json["noigiao"],
       dangDiChuyen: json["dangDiChuyen"],
+      hinhAnh: json["hinhAnh"],
       fileDinhKems: (json['phuKien'] as List)
           .map((e) => FileDinhKems.fromJson(e))
           .toList(),
@@ -116,6 +119,7 @@ class GiaoXeModel {
         "tenDiaDiem": tenDiaDiem,
         "toaDo": toaDo,
         "noigiao": noigiao,
+        "hinhAnh": hinhAnh,
       };
 }
 

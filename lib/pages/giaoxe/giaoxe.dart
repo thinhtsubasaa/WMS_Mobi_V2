@@ -4,7 +4,6 @@ import 'package:Thilogi/config/config.dart';
 
 import 'package:sizer/sizer.dart';
 import '../../widgets/custom_appbar.dart';
-import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 

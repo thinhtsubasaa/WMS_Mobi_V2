@@ -1,5 +1,3 @@
-import 'package:Thilogi/pages/dsx_danhan/custom_body_dsx.dart';
-import 'package:Thilogi/pages/lsnhanxe/custom_body_lsdanhan.dart';
 import 'package:Thilogi/pages/lsnhapchuyenbai/custom_body_lsnhapbai.dart';
 import 'package:Thilogi/pages/lsnhapchuyenbai/custom_body_lsnhapchuyen.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +14,7 @@ class LSNhapChuyenPage extends StatefulWidget {
   State<LSNhapChuyenPage> createState() => _LSNhapChuyenPage();
 }
 
-class _LSNhapChuyenPage extends State<LSNhapChuyenPage>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+class _LSNhapChuyenPage extends State<LSNhapChuyenPage> with SingleTickerProviderStateMixin, ChangeNotifier {
   TabController? _tabController;
 
   @override
@@ -52,12 +49,9 @@ class _LSNhapChuyenPage extends State<LSNhapChuyenPage>
               CustomCard(),
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height < 600
-                          ? 10.h
-                          : 5.h),
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 10.h : 5.h),
                   width: 100.w,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       // color: Theme.of(context).colorScheme.onPrimary,
                       ),
                   child: TabBarView(
@@ -79,7 +73,7 @@ class _LSNhapChuyenPage extends State<LSNhapChuyenPage>
                 // crossAxisAlignment: CrossAxisAlignment.stretch,
                 // mainAxisSize: MainAxisSize.min,
                 children: [
-                  CustomCard(),
+                  const CustomCard(),
                   TabBar(
                     controller: _tabController,
                     tabs: const [
@@ -103,7 +97,7 @@ class BottomContent extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height / 11,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       decoration: const BoxDecoration(
         color: AppConfig.bottom,
       ),

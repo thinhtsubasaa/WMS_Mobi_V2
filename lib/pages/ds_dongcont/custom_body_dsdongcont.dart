@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:Thilogi/models/lsu_dongcont.dart';
-import 'package:Thilogi/models/lsu_giaoxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +21,7 @@ class BodyLSXDongContScreen extends StatefulWidget {
   _BodyLSXDongContScreenState createState() => _BodyLSXDongContScreenState();
 }
 
-class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
@@ -48,13 +46,10 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
   Future<void> getDSXDongCont(String? ngay) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeDongCont?Ngay=$ngay');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeDongCont?Ngay=$ngay');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _dn = (decodedData as List)
-            .map((item) => LSXDongContModel.fromJson(item))
-            .toList();
+        _dn = (decodedData as List).map((item) => LSXDongContModel.fromJson(item)).toList();
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -99,10 +94,8 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
     // Sắp xếp danh sách _dn theo giờ nhận mới nhất
     _dn?.sort((a, b) {
       try {
-        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (a.gioNhan ?? "00:00"));
-        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (b.gioNhan ?? "00:00"));
+        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (a.gioNhan ?? "00:00"));
+        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (b.gioNhan ?? "00:00"));
         return bTime.compareTo(aTime); // Sắp xếp giảm dần
       } catch (e) {
         // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
@@ -127,7 +120,7 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
             ),
             Table(
               border: TableBorder.all(),
-              columnWidths: {
+              columnWidths: const {
                 0: FlexColumnWidth(0.15),
                 1: FlexColumnWidth(0.2),
                 2: FlexColumnWidth(0.3),
@@ -140,8 +133,7 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
                   children: [
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                      child: _buildTableCell('Giờ nhận', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -149,24 +141,20 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
+                      child: _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       width: double.infinity,
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số Cont', textColor: Colors.white),
+                      child: _buildTableCell('Số Cont', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số Seal', textColor: Colors.white),
+                      child: _buildTableCell('Số Seal', textColor: Colors.white),
                     ),
                   ],
                 ),
@@ -177,7 +165,7 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
-                  columnWidths: {
+                  columnWidths: const {
                     0: FlexColumnWidth(0.15),
                     1: FlexColumnWidth(0.2),
                     2: FlexColumnWidth(0.3),
@@ -252,8 +240,7 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
                                       'Danh sách xe đã đóng',
@@ -266,24 +253,19 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
                                     GestureDetector(
                                       onTap: () => _selectDate(context),
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 5, vertical: 6),
+                                        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
                                         decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.blue),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.blue),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors.blue),
+                                            Icon(Icons.calendar_today, color: Colors.blue),
                                             SizedBox(width: 8),
                                             Text(
                                               selectedDate ?? 'Chọn ngày',
-                                              style:
-                                                  TextStyle(color: Colors.blue),
+                                              style: TextStyle(color: Colors.blue),
                                             ),
                                           ],
                                         ),
@@ -294,17 +276,15 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(),
                                       Text(
                                         'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: 'Comfortaa',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,

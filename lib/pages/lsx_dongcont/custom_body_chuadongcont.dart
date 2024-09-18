@@ -1,14 +1,8 @@
 import 'dart:convert';
-
-import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/ds_chuadongcont.dart';
-import 'package:Thilogi/models/lsxdongcont.dart';
-
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,8 +20,7 @@ class BodyChuaDongContScreen extends StatefulWidget {
   _BodyChuaDongContScreenState createState() => _BodyChuaDongContScreenState();
 }
 
-class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
@@ -56,15 +49,12 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
   Future<void> getDSXChuaDongCont() async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeDongContAll_KH');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeDongContAll_KH');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
         if (decodedData != null) {
-          _dn = (decodedData as List)
-              .map((item) => DSX_ChuaDongContModel.fromJson(item))
-              .toList();
+          _dn = (decodedData as List).map((item) => DSX_ChuaDongContModel.fromJson(item)).toList();
 
           // Gọi setState để cập nhật giao diện
           setState(() {
@@ -97,12 +87,9 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
   }
 
   Widget _buildTableOptions(BuildContext context) {
-    int index = 0; // Biến đếm số thứ tự
-    // _dn?.sort((a, b) => DateTime.parse(b.gioNhan ?? "")
-    //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
-    const String defaultDate = "1970-01-01 ";
+    int index = 0;
 
-    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
+    const String defaultDate = "1970-01-01 ";
     _dn?.sort((a, b) {
       try {
         DateTime aTime = DateFormat("yyyy-MM-dd").parse(a.ngayTao ?? "");
@@ -131,7 +118,7 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
             ),
             Table(
               border: TableBorder.all(),
-              columnWidths: {
+              columnWidths: const {
                 0: FlexColumnWidth(0.2),
                 1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.35),
@@ -145,13 +132,11 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                   children: [
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Ngày tạo', textColor: Colors.white),
+                      child: _buildTableCell('Ngày tạo', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                      child: _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -159,8 +144,7 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -172,20 +156,18 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Nơi đến', textColor: Colors.white),
+                      child: _buildTableCell('Nơi đến', textColor: Colors.white),
                     ),
                   ],
                 ),
               ],
             ),
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
+              height: MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
-                  columnWidths: {
+                  columnWidths: const {
                     0: FlexColumnWidth(0.2),
                     1: FlexColumnWidth(0.3),
                     2: FlexColumnWidth(0.35),
@@ -261,11 +243,10 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                const Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Danh sách xe chưa đóng cont',
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
@@ -273,40 +254,13 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    // GestureDetector(
-                                    //   onTap: () => _selectDate(context),
-                                    //   child: Container(
-                                    //     padding: EdgeInsets.symmetric(
-                                    //         horizontal: 8, vertical: 6),
-                                    //     decoration: BoxDecoration(
-                                    //       border:
-                                    //           Border.all(color: Colors.blue),
-                                    //       borderRadius:
-                                    //           BorderRadius.circular(8),
-                                    //     ),
-                                    //     child: Row(
-                                    //       mainAxisSize: MainAxisSize.min,
-                                    //       children: [
-                                    //         Icon(Icons.calendar_today,
-                                    //             color: Colors.blue),
-                                    //         SizedBox(width: 8),
-                                    //         Text(
-                                    //           selectedDate ?? 'Chọn ngày',
-                                    //           style:
-                                    //               TextStyle(color: Colors.blue),
-                                    //         ),
-                                    //       ],
-                                    //     ),
-                                    //   ),
-                                    // ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
-                                SizedBox(
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
+                                const SizedBox(
                                   height: 4,
                                 ),
                                 // Container(
@@ -400,15 +354,14 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                                 // ),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 4,
                                       ),
                                       Text(
                                         'Tổng số xe: ${_dn?.length.toString() ?? ''}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: 'Comfortaa',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,

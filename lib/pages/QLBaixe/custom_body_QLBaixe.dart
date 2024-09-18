@@ -1,13 +1,13 @@
 import 'package:Thilogi/pages/dsxchoxuat/dsx_choxuat.dart';
-import 'package:Thilogi/pages/lsdieuchuyen/ls_dieuchuyen.dart';
-import 'package:Thilogi/pages/lsnhapbai/ls_nhapbai.dart';
+
+import 'package:Thilogi/pages/webview.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/widgets/loading.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/baixe/baixe.dart';
 import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
-import 'package:Thilogi/widgets/custom_page_indicator.dart';
+
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
@@ -35,8 +35,7 @@ class BodyQLBaiXeScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
   bool _loading = false;
@@ -150,6 +149,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                         ), () {
                       _handleButtonTap(BaiXePage());
                     }),
+
                   if (userHasPermission(menuRoles, 'dieu-chuyen-xe-mobi'))
                     CustomButton(
                         'CHUYỂN BÃI',
@@ -176,8 +176,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                         ), () {
                       _handleButtonTap(TimXePage());
                     }),
-                  if (userHasPermission(
-                      menuRoles, 'danh-sach-xe-cho-xuat-mobi'))
+                  if (userHasPermission(menuRoles, 'danh-sach-xe-cho-xuat-mobi'))
                     CustomButton(
                         'DANH SÁCH XE CHỜ XUẤT',
                         Stack(
@@ -204,20 +203,19 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                   //       ), () {
                   //     _handleButtonTap(LSNhapBaiPage());
                   //   }),
-                  // if (userHasPermission(
-                  //     menuRoles, 'danh-sach-xe-chuyen-bai-mobi'))
-                  //   CustomButton(
-                  //       'LỊCH SỬ XE CHUYỂN BÃI',
-                  //       Stack(
-                  //         alignment: Alignment.center,
-                  //         children: [
-                  //           Image.asset(
-                  //             'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                  //           ),
-                  //         ],
-                  //       ), () {
-                  //     _handleButtonTap(LSDieuChuyenPage());
-                  //   }),
+                  if (userHasPermission(menuRoles, 'layout-bai-xe-mobi'))
+                    CustomButton(
+                        'LAYOUT BÃI XE',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(MyApp());
+                    }),
                 ],
               ),
 

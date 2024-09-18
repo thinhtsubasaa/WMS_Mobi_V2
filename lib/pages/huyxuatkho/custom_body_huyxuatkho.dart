@@ -2,14 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:Thilogi/blocs/huyxuatkho_bloc.dart';
-import 'package:Thilogi/blocs/xuatkho_bloc.dart';
 import 'package:Thilogi/models/danhsachphuongtien.dart';
 import 'package:Thilogi/models/diadiem.dart';
 import 'package:Thilogi/models/loaiphuongtien.dart';
 import 'package:Thilogi/models/phuongthucvanchuyen.dart';
 import 'package:Thilogi/models/xuatkho.dart';
 import 'package:Thilogi/pages/ds_vanchuyen/ds_vanchuyen.dart';
-import 'package:Thilogi/pages/lsx_vanchuyen/lsx_vanchuyen.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -22,8 +20,7 @@ import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
-import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
-    as GeoLocationAccuracy;
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 
 import '../../config/config.dart';
 import '../../services/app_service.dart';
@@ -45,8 +42,7 @@ class BodyHuyXuatKhoScreen extends StatefulWidget {
   _BodyHuyXuatKhoScreenState createState() => _BodyHuyXuatKhoScreenState();
 }
 
-class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   String? lat;
@@ -64,11 +60,9 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
 
   List<DiaDiemModel>? get diadiemList => _diadiemList;
   List<PhuongThucVanChuyenModel>? _phuongthucvanchuyenList;
-  List<PhuongThucVanChuyenModel>? get phuongthucvanchuyenList =>
-      _phuongthucvanchuyenList;
+  List<PhuongThucVanChuyenModel>? get phuongthucvanchuyenList => _phuongthucvanchuyenList;
   List<DanhSachPhuongTienModel>? _danhsachphuongtienList;
-  List<DanhSachPhuongTienModel>? get danhsachphuongtienList =>
-      _danhsachphuongtienList;
+  List<DanhSachPhuongTienModel>? get danhsachphuongtienList => _danhsachphuongtienList;
   List<LoaiPhuongTienModel>? _loaiphuongtienList;
   List<LoaiPhuongTienModel>? get loaiphuongtienList => _loaiphuongtienList;
 
@@ -79,8 +73,7 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
   String? get message => _message;
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -123,24 +116,19 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
     // Kiểm tra quyền truy cập vị trí
     LocationPermission permission = await Geolocator.checkPermission();
     // Nếu chưa có quyền, yêu cầu quyền truy cập vị trí
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       // Yêu cầu quyền truy cập vị trí
       await Geolocator.requestPermission();
     }
   }
 
-  Future<void> HuyXuatKho(
-      XuatKhoModel? scanData, String soKhung, String toaDo) async {
+  Future<void> HuyXuatKho(XuatKhoModel? scanData, String soKhung, String toaDo) async {
     _isLoading = true;
     try {
       var newScanData = scanData;
-      newScanData?.soKhung =
-          newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      newScanData?.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData?.soKhung}");
-      final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/HuyXuatKho?SoKhung=$soKhung&ViTri=$toaDo',
-          newScanData?.toJson());
+      final http.Response response = await requestHelper.postData('KhoThanhPham/HuyXuatKho?SoKhung=$soKhung&ViTri=$toaDo', newScanData?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -202,14 +190,14 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
           Container(
             width: 20.w,
             height: 11.h,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
               ),
               color: AppConfig.primaryColor,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 'Số khung\n(VIN)',
                 textAlign: TextAlign.center,
@@ -225,16 +213,16 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
           SizedBox(width: 10),
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: TextField(
                 controller: _qrDataController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Nhập hoặc quét mã VIN',
                 ),
                 onSubmitted: (value) {
                   _handleBarcodeScanResult(value);
                 },
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -349,8 +337,7 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          HuyXuatKho(_data!, _data?.soKhung ?? "", _data?.toaDo ?? "")
-              .then((_) {
+          HuyXuatKho(_data!, _data?.soKhung ?? "", _data?.toaDo ?? "").then((_) {
             setState(() {
               _data = null;
               barcodeScanResult = null;
@@ -388,11 +375,11 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
         title: '',
         confirmBtnText: 'Đồng ý',
         cancelBtnText: 'Không',
-        confirmBtnTextStyle: TextStyle(
+        confirmBtnTextStyle: const TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
         ),
-        cancelBtnTextStyle: TextStyle(
+        cancelBtnTextStyle: const TextStyle(
           color: Colors.red,
           fontSize: 19.0,
           fontWeight: FontWeight.bold,
@@ -432,8 +419,7 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
                                     'Thông Tin Xác Nhận',
@@ -467,7 +453,7 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
                                         children: [
                                           Container(
                                             padding: EdgeInsets.only(left: 10),
-                                            child: Text(
+                                            child: const Text(
                                               'Loại xe: ',
                                               style: TextStyle(
                                                 fontFamily: 'Comfortaa',
@@ -478,17 +464,13 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
                                             ),
                                           ),
                                           Container(
-                                            constraints: BoxConstraints(
-                                                maxWidth: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.70),
+                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.70),
                                             child: SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,
                                               child: Text(
                                                 _data?.tenSanPham ?? '',
                                                 textAlign: TextAlign.left,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontFamily: 'Coda Caption',
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w700,
@@ -500,69 +482,54 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
                                         ],
                                       ),
                                     ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                       title: 'Số khung: ',
                                       value: _data?.soKhung,
                                     ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                         title: 'Màu: ',
                                         // value: _data != null
                                         //     ? "${_data?.tenMau} (${_data?.maMau})"
                                         //     : "",
-                                        value: _data != null
-                                            ? (_data?.tenMau != null &&
-                                                    _data?.maMau != null
-                                                ? "${_data?.tenMau} (${_data?.maMau})"
-                                                : "")
-                                            : ""),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                        value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                       title: 'Số máy: ',
                                       value: _data?.soMay,
                                     ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                       title: 'Phương thức vận chuyển: ',
                                       value: _data?.tenPhuongThucVanChuyen,
                                     ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                       title: 'Bên vận chuyển: ',
                                       value: _data?.benVanChuyen,
                                     ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                       title: 'Biển số: ',
                                       value: _data?.soXe,
                                     ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                       title: 'Nơi đi: ',
                                       value: _data?.noidi,
                                     ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                       title: 'Nơi đến: ',
                                       value: _data?.noiden,
                                     ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                       title: 'Người phụ trách: ',
                                       value: _data?.nguoiPhuTrach,
                                     ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                   ],
                                 ),
                               ),
@@ -588,9 +555,7 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen>
                       fontSize: 16,
                     )),
                 controller: _btnController,
-                onPressed: _data?.nguoiPhuTrach != null
-                    ? () => _showConfirmationDialogHuyXuatKho(context)
-                    : null,
+                onPressed: _data?.nguoiPhuTrach != null ? () => _showConfirmationDialogHuyXuatKho(context) : null,
               ),
             ],
           ),
@@ -620,7 +585,7 @@ class Item extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
@@ -629,7 +594,7 @@ class Item extends StatelessWidget {
             ),
             Text(
               value ?? "",
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 16,
                 fontWeight: FontWeight.w700,

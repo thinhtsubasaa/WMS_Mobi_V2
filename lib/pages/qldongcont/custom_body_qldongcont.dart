@@ -1,5 +1,6 @@
 import 'package:Thilogi/pages/ds_dongcont/ds_dongcont.dart';
 import 'package:Thilogi/pages/huydongcont/huydongcont.dart';
+import 'package:Thilogi/pages/huydongseal/huydongseal.dart';
 import 'package:Thilogi/pages/rutcont/rutcont.dart';
 import 'package:Thilogi/pages/themdongcont/themdongcont.dart';
 import 'package:Thilogi/services/app_service.dart';
@@ -35,8 +36,7 @@ class BodyQLDongContScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyQLDongContScreenState extends State<BodyQLDongContScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
@@ -215,7 +215,7 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_QLBaiXe_DongCont.png',
+                            'assets/images/Button_03_DongCont_RutCont2.png',
                           ),
                         ],
                       ),

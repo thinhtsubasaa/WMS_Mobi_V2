@@ -33,9 +33,9 @@ class LoginPage extends StatelessWidget {
                       child: Column(
                         children: [
                           CustomLoginForm(),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           customTitleLogin('DÀNH CHO KHÁCH HÀNG'),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Container(
                             width: 100.w,
                             height: MediaQuery.of(context).size.height / 2,
@@ -43,16 +43,16 @@ class LoginPage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 50),
                             child: Column(
                               children: [
-                                SizedBox(height: 15),
+                                const SizedBox(height: 15),
                                 customBottom(
                                   "Tìm hiểu về THILOGI và các Dịch vụ Theo dõi Thông tin Đơn hàng",
                                 ),
-                                SizedBox(height: 30),
+                                const SizedBox(height: 30),
                                 PageIndicator(
                                   currentPage: currentPage,
                                   pageCount: pageCount,
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 CustomButtonLogin(onPressed: () {
                                   nextScreen(context, GuessPage());
                                 }),
@@ -83,14 +83,14 @@ class CustomButtonLogin extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        fixedSize: Size(AppConfig.buttonWidth, AppConfig.buttonHeight),
-        backgroundColor: Color(0xFF428FCA),
+        fixedSize: const Size(AppConfig.buttonWidth, AppConfig.buttonHeight),
+        backgroundColor: const Color(0xFF428FCA),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
       ),
-      child: Text(
+      child: const Text(
         'TIẾP TỤC',
         style: TextStyle(
           color: AppConfig.textButton,
@@ -124,7 +124,7 @@ Widget customTitleLogin(String text) {
   return Text(
     text,
     textAlign: TextAlign.center,
-    style: TextStyle(
+    style: const TextStyle(
       color: Color(0xFF428FCA),
       fontFamily: 'Roboto',
       fontSize: 16,

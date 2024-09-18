@@ -28,8 +28,7 @@ class BodyQLNhanXeScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyQLNhanXeScreenState extends State<BodyQLNhanXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyQLNhanXeScreenState extends State<BodyQLNhanXeScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;

@@ -12,8 +12,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
-import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
-    as GeoLocationAccuracy;
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 
 import '../../config/config.dart';
 
@@ -34,8 +33,7 @@ class BodyThemDongContScreen extends StatefulWidget {
   _BodyThemDongContScreenState createState() => _BodyThemDongContScreenState();
 }
 
-class _BodyThemDongContScreenState extends State<BodyThemDongContScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyThemDongContScreenState extends State<BodyThemDongContScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   String? SoContId;
@@ -65,8 +63,7 @@ class _BodyThemDongContScreenState extends State<BodyThemDongContScreen>
   String? _message;
   String? get message => _message;
 
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   final TextEditingController textEditingController = TextEditingController();
 
   @override
@@ -83,8 +80,7 @@ class _BodyThemDongContScreenState extends State<BodyThemDongContScreen>
 
   Future<void> postData(ThemDongContModel addData) async {
     try {
-      final http.Response response =
-          await requestHelper.postData('DM_DongCont', addData.toJson());
+      final http.Response response = await requestHelper.postData('DM_DongCont', addData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         notifyListeners();
@@ -241,10 +237,7 @@ class _BodyThemDongContScreenState extends State<BodyThemDongContScreen>
                                   ),
                                   Row(
                                     children: [
-                                      Text('Tình Trạng',
-                                          style: TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 16)),
+                                      Text('Tình Trạng', style: TextStyle(fontFamily: 'Comfortaa', fontSize: 16)),
                                       Switch(
                                         value: _tinhTrang,
                                         onChanged: (bool value) {
@@ -279,9 +272,7 @@ class _BodyThemDongContScreenState extends State<BodyThemDongContScreen>
                       fontSize: 16,
                     )),
                 controller: _btnController,
-                onPressed: _soCont.text != null
-                    ? () => _showConfirmationDialog(context)
-                    : null,
+                onPressed: _soCont.text != null ? () => _showConfirmationDialog(context) : null,
               ),
             ],
           ),

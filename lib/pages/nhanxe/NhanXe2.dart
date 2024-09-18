@@ -91,6 +91,7 @@ class NhanXe2Page extends StatelessWidget {
                       ghiChu: ghiChu ?? "",
                       tenKho: tenKho ?? "",
                       phuKien: phuKien ?? [],
+                      lstFiles: [],
                     ),
                   ),
                 ],
@@ -169,8 +170,7 @@ class CustomCardVIN extends StatelessWidget {
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,
             onPressed: () async {
-              String barcodeScanResult =
-                  await FlutterBarcodeScanner.scanBarcode(
+              String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
                 '#A71C20',
                 'Cancel',
                 false,

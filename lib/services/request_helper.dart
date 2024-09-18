@@ -84,13 +84,33 @@ class RequestHelper {
   //     return null;
   //   }
   // }
-  
+
   uploadFile(File file) async {
     await _getInfo();
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      http.MultipartRequest request = http.MultipartRequest(
-          "POST", Uri.parse('${sp.getString('apiUrl')}/api/upload/UploadLichSu'));
+      http.MultipartRequest request = http.MultipartRequest("POST",
+          Uri.parse('${sp.getString('apiUrl')}/api/upload/UpLoadLichSu'));
+      request.headers.addAll(_setHeaders());
+      http.MultipartFile multipartFile =
+          await http.MultipartFile.fromPath('file', file.path);
+      request.files.add(multipartFile);
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  uploadAvatar(File file) async {
+    await _getInfo();
+    try {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      http.MultipartRequest request = http.MultipartRequest("POST",
+          Uri.parse('${sp.getString('apiUrl')}/api/upload/UpLoadAvatar'));
       request.headers.addAll(_setHeaders());
       http.MultipartFile multipartFile =
           await http.MultipartFile.fromPath('file', file.path);

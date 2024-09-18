@@ -26,8 +26,7 @@ class BodyMainMenu extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyMainMenuState extends State<BodyMainMenu>
-    with SingleTickerProviderStateMixin {
+class _BodyMainMenuState extends State<BodyMainMenu> with SingleTickerProviderStateMixin {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
   bool _loading = false;
@@ -73,12 +72,9 @@ class _BodyMainMenuState extends State<BodyMainMenu>
                               ),
                             ],
                           ),
-                          iconSize: AppConfig
-                              .buttonMainMenuWidth, // Kích thước của biểu tượng
-                          padding: EdgeInsets
-                              .zero, // Xóa padding mặc định của IconButton
-                          alignment: Alignment
-                              .center, // Căn chỉnh hình ảnh vào giữa nút
+                          iconSize: AppConfig.buttonMainMenuWidth, // Kích thước của biểu tượng
+                          padding: EdgeInsets.zero, // Xóa padding mặc định của IconButton
+                          alignment: Alignment.center, // Căn chỉnh hình ảnh vào giữa nút
                         ),
                         const SizedBox(
                           child: Text(
@@ -93,38 +89,23 @@ class _BodyMainMenuState extends State<BodyMainMenu>
                         ),
                       ],
                     ),
-                    const CustomButton(
-                        width: AppConfig.buttonMainMenuWidth,
-                        height: AppConfig.buttonMainMenuHeight,
-                        color: AppConfig.buttonColorMenu),
+                    const CustomButton(width: AppConfig.buttonMainMenuWidth, height: AppConfig.buttonMainMenuHeight, color: AppConfig.buttonColorMenu),
                   ],
                 ),
                 const SizedBox(height: 30),
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    CustomButton(
-                        width: AppConfig.buttonMainMenuWidth,
-                        height: AppConfig.buttonMainMenuHeight,
-                        color: AppConfig.buttonColorMenu),
-                    CustomButton(
-                        width: AppConfig.buttonMainMenuWidth,
-                        height: AppConfig.buttonMainMenuHeight,
-                        color: AppConfig.buttonColorMenu),
+                    CustomButton(width: AppConfig.buttonMainMenuWidth, height: AppConfig.buttonMainMenuHeight, color: AppConfig.buttonColorMenu),
+                    CustomButton(width: AppConfig.buttonMainMenuWidth, height: AppConfig.buttonMainMenuHeight, color: AppConfig.buttonColorMenu),
                   ],
                 ),
                 const SizedBox(height: 30),
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    CustomButton(
-                        width: AppConfig.buttonMainMenuWidth,
-                        height: AppConfig.buttonMainMenuHeight,
-                        color: AppConfig.buttonColorMenu),
-                    CustomButton(
-                        width: AppConfig.buttonMainMenuWidth,
-                        height: AppConfig.buttonMainMenuHeight,
-                        color: AppConfig.buttonColorMenu),
+                    CustomButton(width: AppConfig.buttonMainMenuWidth, height: AppConfig.buttonMainMenuHeight, color: AppConfig.buttonColorMenu),
+                    CustomButton(width: AppConfig.buttonMainMenuWidth, height: AppConfig.buttonMainMenuHeight, color: AppConfig.buttonColorMenu),
                   ],
                 ),
                 const SizedBox(height: 30),

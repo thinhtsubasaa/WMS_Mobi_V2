@@ -7,12 +7,10 @@ import 'package:Thilogi/pages/lsx_racong/lsx_racong.dart';
 import 'package:Thilogi/pages/lsx_rutcont/lsx_rutcont.dart';
 import 'package:Thilogi/pages/lsx_vanchuyen/lsx_vanchuyen.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
-import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -40,8 +38,7 @@ class BodyLSCongViecScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
@@ -95,27 +92,6 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
     });
   }
 
-  // bool userHasPermission(String? url1) {
-  //   print(_mb.menurole);
-  //   print('url5:$url1');
-  //   // Kiểm tra xem _mb.menurole có null không
-  //   if (_mb.menurole != null) {
-  //     url = _mb.menurole!
-  //         .firstWhere((menuRole) => menuRole.url == url1,
-  //             orElse: () => MenuRoleModel())
-  //         ?.url;
-  //     print('url1:$url');
-  //     if (url == url1) {
-  //       print("object:$url");
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } else {
-  //     // Trả về false nếu _mb.menurole là null
-  //     return false;
-  //   }
-  // }
   bool userHasPermission(List<MenuRoleModel> menuRoles, String? url1) {
     // Kiểm tra xem menuRoles có chứa quyền truy cập đến url1 không
     return menuRoles.any((menuRole) => menuRole.url == url1);
@@ -151,8 +127,7 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
-                  if (userHasPermission(
-                      menuRoles, 'lich-su-cong-viec-giao-xe-mobi'))
+                  if (userHasPermission(menuRoles, 'lich-su-cong-viec-giao-xe-mobi'))
                     CustomButton(
                       'LỊCH SỬ CÔNG VIỆC GIAO XE',
                       Stack(
@@ -182,8 +157,7 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                         _handleButtonTap(DSXDaNhanPage());
                       },
                     ),
-                  if (userHasPermission(
-                      menuRoles, 'lich-su-nhap-chuyen-bai-mobi'))
+                  if (userHasPermission(menuRoles, 'lich-su-nhap-chuyen-bai-mobi'))
                     CustomButton(
                       'LỊCH SỬ NHẬP CHUYỂN BÃI',
                       Stack(
@@ -295,7 +269,7 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_GiaoXe.png',
+                            'assets/images/Button_09_KTXeRaCong_LichSuRaCong.png',
                           ),
                         ],
                       ),
@@ -353,7 +327,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
           Text(
             buttonText.tr(),
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'Roboto',
               fontSize: 15,
               fontWeight: FontWeight.w800,

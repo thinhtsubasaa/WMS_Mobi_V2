@@ -85,8 +85,7 @@ class CustomButton extends StatelessWidget {
         nextScreen(context, LoginPage());
       },
       style: ElevatedButton.styleFrom(
-        fixedSize: Size(
-            MediaQuery.of(context).size.width * 1.0, AppConfig.buttonHeight),
+        fixedSize: Size(MediaQuery.of(context).size.width * 1.0, AppConfig.buttonHeight),
         backgroundColor: AppConfig.primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),

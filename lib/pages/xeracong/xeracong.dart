@@ -1,11 +1,8 @@
-import 'package:Thilogi/pages/giaoxe/custom_body_giaoxe.dart';
 import 'package:Thilogi/pages/xeracong/custom_body_xeracong.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
-
 import 'package:sizer/sizer.dart';
 import '../../widgets/custom_appbar.dart';
-import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
@@ -27,7 +24,7 @@ class XeRaCongPage extends StatelessWidget {
               child: CustomBodyXeRaCong(),
             ),
           ),
-          BottomContent(),
+          // BottomContent(),
         ],
       ),
     );

@@ -1,4 +1,3 @@
-import 'package:Thilogi/pages/dsx_danhan/custom_body_dsx.dart';
 import 'package:Thilogi/pages/dsxchoxuat/custom_body_dsxchoxuat.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
@@ -19,12 +18,6 @@ class DSXChoXuatPage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
-              // decoration: const BoxDecoration(
-              //     // image: DecorationImage(
-              //     //   image: AssetImage(AppConfig.backgroundImagePath),
-              //     //   fit: BoxFit.cover,
-              //     // ),
-              //     ),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),

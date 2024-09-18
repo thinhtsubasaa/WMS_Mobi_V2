@@ -1,12 +1,8 @@
 import 'package:Thilogi/pages/huyxuatkho/custom_body_huyxuatkho.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/pages/khoxe/custom_body_khoxe.dart';
-
 import 'package:sizer/sizer.dart';
-
 import '../../widgets/custom_appbar.dart';
-import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
@@ -23,10 +19,6 @@ class HuyXuatKhoPage extends StatelessWidget {
             child: Container(
               width: 100.w,
               decoration: BoxDecoration(
-                //   image: DecorationImage(
-                //     image: AssetImage(AppConfig.backgroundImagePath),
-                //     fit: BoxFit.cover,
-                //   ),
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
               child: CustomBodyHuyXuatKho(),

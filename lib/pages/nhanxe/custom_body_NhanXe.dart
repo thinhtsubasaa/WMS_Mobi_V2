@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:Thilogi/models/dsxdanhan.dart';
 import 'package:Thilogi/pages/lsnhanxe/ls_danhan.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -35,8 +33,7 @@ class BodyNhanxeScreen extends StatefulWidget {
   _BodyNhanxeScreenState createState() => _BodyNhanxeScreenState();
 }
 
-class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyNhanxeScreenState extends State<BodyNhanxeScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
@@ -161,7 +158,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
   }
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
-    print("Sokhungg:${barcodeScanResult}");
     setState(() {
       _qrData = '';
       _qrDataController.text = '';
@@ -214,7 +210,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     return Container(
         child: Column(
       children: [
-        const SizedBox(height: 5),
         CardVin(),
         const SizedBox(height: 5),
         _loading
@@ -274,16 +269,11 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                     ),
                                   ),
                                   Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.68),
+                                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Text(
-                                        _data?.tenSanPham ??
-                                            _model?.tenSanPham ??
-                                            '',
+                                        _data?.tenSanPham ?? _model?.tenSanPham ?? '',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                           fontFamily: 'Coda Caption',
@@ -312,13 +302,8 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                             //     ? "${_data?.tenMau ?? ""}(${_data?.maMau ?? ""})"
                             //     : "${_model?.tenMau ?? ""}'(${_model?.maMau ?? ""})'",
                             _data != null
-                                ? (_data?.tenMau != null && _data?.maMau != null
-                                    ? "${_data?.tenMau} (${_data?.maMau})"
-                                    : "")
-                                : (_model?.tenMau != null &&
-                                        _model?.maMau != null
-                                    ? "${_model?.tenMau} (${_model?.maMau})"
-                                    : "")),
+                                ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "")
+                                : (_model?.tenMau != null && _model?.maMau != null ? "${_model?.tenMau} (${_model?.maMau})" : "")),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         showInfoXe(
                           'Nhà máy: ',
@@ -331,28 +316,19 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                             onPressed: (_data != null || _model != null)
                                 ? () {
                                     _handleButtonTap(NhanXe2Page(
-                                      soKhung: _data?.soKhung ??
-                                          _model?.soKhung ??
-                                          "",
+                                      soKhung: _data?.soKhung ?? _model?.soKhung ?? "",
                                       soMay: _data?.soMay ?? "",
-                                      tenMau:
-                                          _data?.tenMau ?? _model?.maMau ?? "",
-                                      tenSanPham: _data?.tenSanPham ??
-                                          _model?.tenSanPham ??
-                                          "",
+                                      tenMau: _data?.tenMau ?? _model?.maMau ?? "",
+                                      tenSanPham: _data?.tenSanPham ?? _model?.tenSanPham ?? "",
                                       ngayXuatKhoView:
                                           // _data?.ngayXuatKhoView ??
                                           formatCurrentDateTime(),
                                       tenTaiXe:
                                           // _data?.tenTaiXe ??
                                           ub.name ?? "",
-                                      ghiChu:
-                                          _data?.ghiChu ?? _model?.ghiChu ?? "",
-                                      tenKho:
-                                          _data?.tenKho ?? _model?.tenKho ?? "",
-                                      phuKien: _data?.phuKien ??
-                                          _model?.phukien ??
-                                          [],
+                                      ghiChu: _data?.ghiChu ?? _model?.ghiChu ?? "",
+                                      tenKho: _data?.tenKho ?? _model?.tenKho ?? "",
+                                      phuKien: _data?.phuKien ?? _model?.phukien ?? [],
                                     ));
                                   }
                                 : null,

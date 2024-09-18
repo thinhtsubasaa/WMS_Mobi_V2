@@ -36,6 +36,7 @@ class XeRaCongBloc extends ChangeNotifier {
       print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
+        print("data: ${decodedData}");
         if (decodedData != null) {
           _xeracong = XeRaCongModel(
             key: decodedData["key"],
@@ -66,8 +67,16 @@ class XeRaCongBloc extends ChangeNotifier {
             noiden: decodedData['noiden'],
             benVanChuyen: decodedData['benVanChuyen'],
             soXe: decodedData['soXe'],
-            maSoNhanVien: decodedData['maSoNhanVien'],
+            maNhanVien: decodedData['maNhanVien'],
             nguoiPhuTrach: decodedData['nguoiPhuTrach'],
+            hinhAnhUrl: decodedData['hinhAnhUrl'],
+            tenNhanVien: decodedData['tenNhanVien'],
+            sdt: decodedData['sdt'],
+            maPin: decodedData['maPin'],
+            tencong: decodedData['tencong'],
+            noiditaixe: decodedData['noiditaixe'],
+            lyDo: decodedData['lyDo'],
+            hinhAnh: decodedData['hinhAnh'],
           );
         }
       } else {

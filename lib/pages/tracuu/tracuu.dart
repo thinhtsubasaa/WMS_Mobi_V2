@@ -57,8 +57,7 @@ class BodyAccountScreen extends StatefulWidget {
   _BodyAccountScreenState createState() => _BodyAccountScreenState();
 }
 
-class _BodyAccountScreenState extends State<BodyAccountScreen>
-    with SingleTickerProviderStateMixin {
+class _BodyAccountScreenState extends State<BodyAccountScreen> with SingleTickerProviderStateMixin {
   late Scan_NhanVienBloc ub;
   late UserBloc? _us;
   String _qrData = '';
@@ -260,8 +259,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const Divider(
-                                  height: 1, color: Color(0xFFA71C20)),
+                              const Divider(height: 1, color: Color(0xFFA71C20)),
                               const SizedBox(height: 10),
                               Column(
                                 children: [
@@ -298,9 +296,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
+                                        color: Theme.of(context).colorScheme.primary,
                                       ),
                                     ),
                                   ),
@@ -321,9 +317,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
+                                        color: Theme.of(context).colorScheme.primary,
                                       ),
                                     ),
                                   ),
@@ -344,9 +338,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
+                                        color: Theme.of(context).colorScheme.primary,
                                       ),
                                     ),
                                   ),

@@ -4,6 +4,7 @@ import 'package:Thilogi/blocs/dongcont_bloc.dart';
 import 'package:Thilogi/blocs/dongseal_bloc.dart';
 import 'package:Thilogi/blocs/giaoxe_bloc.dart';
 import 'package:Thilogi/blocs/huydongcont_bloc.dart';
+import 'package:Thilogi/blocs/huydongseal_bloc.dart';
 import 'package:Thilogi/blocs/huyxuatkho_bloc.dart';
 import 'package:Thilogi/blocs/khoxe_bloc.dart';
 import 'package:Thilogi/blocs/menu_roles.dart';
@@ -93,6 +94,9 @@ class MyApp extends StatelessWidget {
                 ),
                 ChangeNotifierProvider<HuyDongContBloc>(
                   create: (context) => HuyDongContBloc(),
+                ),
+                ChangeNotifierProvider<HuyDongSealBloc>(
+                  create: (context) => HuyDongSealBloc(),
                 ),
               ],
               child: MaterialApp(

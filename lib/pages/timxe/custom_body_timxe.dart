@@ -31,8 +31,7 @@ class BodyTimXeScreen extends StatefulWidget {
   _BodyTimXeScreenState createState() => _BodyTimXeScreenState();
 }
 
-class _BodyTimXeScreenState extends State<BodyTimXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyTimXeScreenState extends State<BodyTimXeScreen> with TickerProviderStateMixin, ChangeNotifier {
   String _qrData = '';
   // final _qrDataController = TextEditingController();
   late TextEditingController _qrDataController;
@@ -343,8 +342,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
 
   void _showDetailDialog(BuildContext context) {
     final TimXeBloc timXeBloc = Provider.of<TimXeBloc>(context, listen: false);
-    timXeBloc.timxe!.dieuChuyen!
-        .sort((a, b) => b.gioNhan!.compareTo(a.gioNhan!));
+    timXeBloc.timxe!.dieuChuyen!.sort((a, b) => b.gioNhan!.compareTo(a.gioNhan!));
 
     // Sắp xếp nhapKho theo thời gian gioNhan mới nhất đầu tiên
     timXeBloc.timxe!.nhapKho!.sort((a, b) => b.gioNhan!.compareTo(a.gioNhan!));
@@ -384,8 +382,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                 fontFamily: 'Comfortaa', // Font family
                                 fontSize: 13, // Kích thước chữ
                                 fontWeight: FontWeight.w600, // Độ đậm của chữ
-                                color: Color(
-                                    0xFF0469B9), // Màu sắc chữ// Màu sắc chữ
+                                color: Color(0xFF0469B9), // Màu sắc chữ// Màu sắc chữ
                               ),
                             ),
                             subtitle: Text(
@@ -394,8 +391,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                 fontFamily: 'Comfortaa', // Font family
                                 fontSize: 13, // Kích thước chữ
                                 fontWeight: FontWeight.w500, // Độ đậm của chữ
-                                color:
-                                    Colors.black, // Màu sắc chữ// Màu sắc chữ
+                                color: Colors.black, // Màu sắc chữ// Màu sắc chữ
                               ),
                             ),
                           );
@@ -408,8 +404,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                 fontFamily: 'Comfortaa', // Font family
                                 fontSize: 13, // Kích thước chữ
                                 fontWeight: FontWeight.w600, // Độ đậm của chữ
-                                color: Color(
-                                    0xFF0469B9), // Màu sắc chữ// Màu sắc chữ
+                                color: Color(0xFF0469B9), // Màu sắc chữ// Màu sắc chữ
                               ),
                             ),
                             subtitle: Text(
@@ -418,8 +413,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                   fontFamily: 'Comfortaa', // Font family
                                   fontSize: 13, // Kích thước chữ
                                   fontWeight: FontWeight.w500, // Độ đậm của chữ
-                                  color:
-                                      Colors.black // Màu sắc chữ// Màu sắc chữ
+                                  color: Colors.black // Màu sắc chữ// Màu sắc chữ
                                   ),
                             ),
                           );
@@ -436,8 +430,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                 width: 30.w, // Đảm bảo nút chiếm hết chiều rộng của dialog
                 // Đặt margin cho nút
                 decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(15.0), // Đặt border radius cho nút
+                  borderRadius: BorderRadius.circular(15.0), // Đặt border radius cho nút
                   border: Border.all(
                     color: Colors.blue, // Đặt màu viền
                     width: 2.0, // Đặt độ dày của viền
@@ -489,8 +482,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
                                       'Thông Tin Lưu bãi',
@@ -518,74 +510,62 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                 //     fontWeight: FontWeight.w700,
                                 //   ),
                                 // ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 Container(
-                                  margin: EdgeInsets.only(
-                                      right: 10, top: 10, bottom: 10),
+                                  margin: EdgeInsets.only(right: 10),
                                   child: Column(
                                     children: [
                                       CustomItem(
                                         title: 'Số khung: ',
                                         value: _data?.soKhung,
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       CustomItem(
                                         title: 'Đơn vị vận chuyển: ',
                                         value: _data?.donVi,
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       CustomItem(
                                         title: 'Màu xe: ',
                                         value: _data?.tenMau,
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       CustomItem(
                                         title: 'Loại xe: ',
                                         value: _data?.tenSanPham,
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       CustomItem(
                                         title: 'Kho Xe: ',
                                         value: _data?.tenKho,
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       Item(
                                         title: 'Bãi Xe: ',
                                         value: _data?.tenBaiXe,
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       Item(
                                         title: 'Vị Trí Xe: ',
                                         value: _data?.tenViTri,
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       Item(
                                         title: 'Người phụ trách: ',
                                         value: _data?.nguoiPhuTrach,
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       Item(
                                         title: 'Tọa độ: ',
                                         value: _data?.toaDo,
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       Container(
                                         width: 90.w,
                                         height: 45.h,
                                         child: _buildBody(),
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     ],
                                   ),
                                 ),
@@ -632,8 +612,7 @@ class CustomItem extends StatelessWidget {
             ),
           ),
           Container(
-            constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.67),
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.67),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Text(

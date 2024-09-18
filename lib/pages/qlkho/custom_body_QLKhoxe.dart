@@ -25,6 +25,7 @@ import '../../blocs/menu_roles.dart';
 import '../../config/config.dart';
 import '../../models/menurole.dart';
 import '../../widgets/loading.dart';
+import '../webview.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyQLKhoXe extends StatelessWidget {
@@ -42,8 +43,7 @@ class BodyQLKhoXeScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
@@ -222,8 +222,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(QLDongContPage());
                       },
                     ),
-                  if (userHasPermission(
-                      menuRoles, 'tracking-xe-thanh-pham-mobi'))
+                  if (userHasPermission(menuRoles, 'tracking-xe-thanh-pham-mobi'))
                     CustomButton(
                       'TRACKING XE THÀNH PHẨM',
                       Stack(
@@ -253,36 +252,36 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(LSCongViecPage());
                       },
                     ),
-                  if (userHasPermission(menuRoles, 'thong-tin-nhan-vien-mobi'))
-                    CustomButton(
-                      'TRA CỨU THÔNG TIN NHÂN VIÊN',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_TTTheNhanVien.png',
-                          ),
-                        ],
-                      ),
-                      () {
-                        _handleButtonTap(TraCuuPage());
-                      },
-                    ),
-                  if (userHasPermission(menuRoles, 'thong-tin-xe-ra-cong-mobi'))
-                    CustomButton(
-                      'THÔNG TIN XE RA CỔNG',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_TTTheNhanVien.png',
-                          ),
-                        ],
-                      ),
-                      () {
-                        _handleButtonTap(XeRaCongPage());
-                      },
-                    ),
+                  // if (userHasPermission(menuRoles, 'thong-tin-nhan-vien-mobi'))
+                  //   CustomButton(
+                  //     'TRA CỨU THÔNG TIN NHÂN VIÊN',
+                  //     Stack(
+                  //       alignment: Alignment.center,
+                  //       children: [
+                  //         Image.asset(
+                  //           'assets/images/Button_TTTheNhanVien.png',
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     () {
+                  //       _handleButtonTap(TraCuuPage());
+                  //     },
+                  //   ),
+                  // if (userHasPermission(menuRoles, 'thong-tin-xe-ra-cong-mobi'))
+                  //   CustomButton(
+                  //     'THÔNG TIN XE RA CỔNG',
+                  //     Stack(
+                  //       alignment: Alignment.center,
+                  //       children: [
+                  //         Image.asset(
+                  //           'assets/images/Button_TTTheNhanVien.png',
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     () {
+                  //       _handleButtonTap(XeRaCongPage());
+                  //     },
+                  //   ),
                 ],
               ),
             ),

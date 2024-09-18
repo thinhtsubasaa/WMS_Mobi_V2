@@ -1,4 +1,4 @@
-import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
+import 'package:Thilogi/pages/Bms/bms.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
@@ -128,18 +128,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           );
         } else {
           final AuthService asb = context.read<AuthService>();
-          await asb
-              .login(
-                  context, userNameCtrl.text, passwordCtrl.text, selectedDomain)
-              .then((_) {
+          await asb.login(context, userNameCtrl.text, passwordCtrl.text, selectedDomain).then((_) {
             if (asb.user != null) {
-              _ub
-                  .saveUserData(asb.user!)
-                  .then((_) => _ub.setSignIn())
-                  .then((_) {
+              _ub.saveUserData(asb.user!).then((_) => _ub.setSignIn()).then((_) {
                 _btnController.success();
 
-                nextScreenCloseOthers(context, QLKhoXePage());
+                nextScreenCloseOthers(context, BMSPage());
 
                 // _handleButtonTap(QLKhoXePage());
               });
@@ -184,17 +178,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 8.h,
                   child: TextFormField(
                     controller: userNameCtrl,
-                    autofillHints: [AutofillHints.username],
+                    autofillHints: const [AutofillHints.username],
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(color: Colors.black),
+                        borderSide: const BorderSide(color: Colors.black),
                       ),
                     ),
                   ),
@@ -215,18 +208,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 8.h,
                   child: TextFormField(
                     controller: passwordCtrl,
-                    autofillHints: [AutofillHints.password],
+                    autofillHints: const [AutofillHints.password],
                     obscureText: obscureText,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(color: Colors.black),
+                        borderSide: const BorderSide(color: Colors.black),
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -259,14 +251,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: DropdownButtonFormField(
                     value: selectedDomain,
                     decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(color: Colors.black),
+                        borderSide: const BorderSide(color: Colors.black),
                       ),
                     ),
                     items: items.map((String item) {

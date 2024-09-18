@@ -55,6 +55,7 @@ class NhapBaiBloc extends ChangeNotifier {
             BaiXe_Id: decodedData['BaiXe_Id'],
             viTri_Id: decodedData['viTri_Id'],
             toaDo: decodedData['toaDo'],
+            hinhAnh: decodedData['hinhAnh'],
           );
         }
       } else {

@@ -1,5 +1,3 @@
-import 'package:Thilogi/pages/tracuu/tracuu.dart';
-import 'package:Thilogi/utils/next_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 

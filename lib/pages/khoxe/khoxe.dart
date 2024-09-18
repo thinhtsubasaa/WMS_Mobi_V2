@@ -22,10 +22,6 @@ class KhoXePage extends StatelessWidget {
             child: Container(
               width: 100.w,
               decoration: BoxDecoration(
-                //   image: DecorationImage(
-                //     image: AssetImage(AppConfig.backgroundImagePath),
-                //     fit: BoxFit.cover,
-                //   ),
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
               child: CustomBodyKhoXe(),

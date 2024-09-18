@@ -6,16 +6,9 @@ import 'package:sizer/sizer.dart';
 import '../../config/config.dart';
 import '../../widgets/custom_page_indicator.dart';
 
-import 'package:flutter/material.dart';
-import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/pages/qlkho/custom_body_QLKhoxe.dart';
-
 import 'package:sizer/sizer.dart';
 
 import '../../widgets/custom_appbar.dart';
-import '../../widgets/custom_bottom.dart';
-import '../../widgets/custom_card.dart';
-import '../../widgets/custom_title.dart';
 
 class GuessPage extends StatelessWidget {
   int currentPage = 0; // Đặt giá trị hiện tại của trang

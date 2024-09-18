@@ -22,8 +22,7 @@ class BodyLSVanChuyenScreen extends StatefulWidget {
   _BodyLSVanChuyenScreenState createState() => _BodyLSVanChuyenScreenState();
 }
 
-class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
@@ -48,13 +47,10 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
   Future<void> getDSXVanChuyen(String? ngay) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeVanChuyen?Ngay=$ngay');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeVanChuyen?Ngay=$ngay');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _dn = (decodedData as List)
-            .map((item) => LSXVanChuyenModel.fromJson(item))
-            .toList();
+        _dn = (decodedData as List).map((item) => LSXVanChuyenModel.fromJson(item)).toList();
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -99,10 +95,8 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
     // Sắp xếp danh sách _dn theo giờ nhận mới nhất
     _dn?.sort((a, b) {
       try {
-        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (a.gioNhan ?? "00:00"));
-        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (b.gioNhan ?? "00:00"));
+        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (a.gioNhan ?? "00:00"));
+        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (b.gioNhan ?? "00:00"));
         return bTime.compareTo(aTime); // Sắp xếp giảm dần
       } catch (e) {
         // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
@@ -139,29 +133,24 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                   children: [
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                      child: _buildTableCell('Giờ nhận', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
+                      child: _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       width: double.infinity,
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Thông tin vận chuyển',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Thông tin vận chuyển', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Thông tin chi tiết',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Thông tin chi tiết', textColor: Colors.white),
                     ),
                   ],
                 ),
@@ -245,8 +234,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
                                       'Danh sách xe vận chuyển',
@@ -259,24 +247,19 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                                     GestureDetector(
                                       onTap: () => _selectDate(context),
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 5, vertical: 6),
+                                        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
                                         decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.blue),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.blue),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors.blue),
+                                            Icon(Icons.calendar_today, color: Colors.blue),
                                             SizedBox(width: 8),
                                             Text(
                                               selectedDate ?? 'Chọn ngày',
-                                              style:
-                                                  TextStyle(color: Colors.blue),
+                                              style: TextStyle(color: Colors.blue),
                                             ),
                                           ],
                                         ),
@@ -284,15 +267,13 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(),
                                       Text(

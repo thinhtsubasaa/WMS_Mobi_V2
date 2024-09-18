@@ -1,7 +1,4 @@
 import 'package:Thilogi/pages/ds_vanchuyen/custom_body_dsvanchuyen.dart';
-import 'package:Thilogi/pages/dsgiaoxe/custom_body_dsgiaoxe.dart';
-import 'package:Thilogi/pages/dsx_danhan/custom_body_dsx.dart';
-import 'package:Thilogi/pages/lsnhanxe/custom_body_lsdanhan.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';
@@ -21,12 +18,6 @@ class DSVanChuyenPage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
-              // decoration: const BoxDecoration(
-              //     // image: DecorationImage(
-              //     //   image: AssetImage(AppConfig.backgroundImagePath),
-              //     //   fit: BoxFit.cover,
-              //     // ),
-              //     ),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),

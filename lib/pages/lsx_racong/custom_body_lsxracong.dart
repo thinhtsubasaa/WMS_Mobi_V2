@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/models/doitac.dart';
-import 'package:Thilogi/models/lsu_giaoxe.dart';
+import 'package:Thilogi/models/congbaove.dart';
+import 'package:Thilogi/models/dialy_vungmien.dart';
 import 'package:Thilogi/models/lsx_racong.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../widgets/loading.dart';
@@ -27,8 +28,7 @@ class BodyLSRaCongScreen extends StatefulWidget {
   _BodyLSRaCongScreenState createState() => _BodyLSRaCongScreenState();
 }
 
-class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
@@ -36,9 +36,15 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
   String? id;
   String? KhoXeId;
   String? doiTac_Id;
+  String? vungMien_Id;
+  String? congBaoVe_Id;
 
   List<LSX_RaCongModel>? _dn;
   List<LSX_RaCongModel>? get dn => _dn;
+  List<VungMienModel>? _vm;
+  List<VungMienModel>? get vm => _vm;
+  List<CongBaoVeModel>? _baove;
+  List<CongBaoVeModel>? get baove => _baove;
   bool _hasError = false;
   bool get hasError => _hasError;
   String? selectedDate;
@@ -52,26 +58,74 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
   @override
   void initState() {
     super.initState();
-
+    setState(() {
+      vungMien_Id = "646c0969-773d-448f-8df1-6d7c8044613f";
+      getRaCong(vungMien_Id ?? "");
+      _loading = false;
+    });
+    getVungMien();
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
-    selectedToDate =
-        DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
-    getDSXRaCong(selectedFromDate, selectedToDate, maNhanVienController.text);
+    selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
+    // getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", congBaoVe_Id ?? "", maNhanVienController.text);
   }
 
-  Future<void> getDSXRaCong(
-      String? tuNgay, String? denNgay, String? keyword) async {
-    _dn = [];
+  Future<void> getVungMien() async {
+    _vm = [];
     try {
-      final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeRaCongAll?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('DM_DiaLy_VungMien');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
         if (decodedData != null) {
-          _dn = (decodedData as List)
-              .map((item) => LSX_RaCongModel.fromJson(item))
-              .toList();
+          _vm = (decodedData as List).map((item) => VungMienModel.fromJson(item)).where((item) => item.parent_Id == null).toList();
+
+          // Gọi setState để cập nhật giao diện
+          setState(() {
+            vungMien_Id = "646c0969-773d-448f-8df1-6d7c8044613f";
+            _loading = false;
+          });
+        }
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  Future<void> getRaCong(String? VungMien_Id) async {
+    _baove = [];
+    try {
+      final http.Response response = await requestHelper.getData('BaoVe/GetAllTable?VungMien_Id=$VungMien_Id');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data: " + decodedData.toString());
+        if (decodedData != null) {
+          _baove = (decodedData as List).map((item) => CongBaoVeModel.fromJson(item)).toList();
+          _baove!.insert(0, CongBaoVeModel(id: '', tenCong: 'Tất cả'));
+
+          // Gọi setState để cập nhật giao diện
+          setState(() {
+            congBaoVe_Id = '';
+            _loading = false;
+          });
+          getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", congBaoVe_Id ?? "", maNhanVienController.text);
+        }
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  Future<void> getDSXRaCong(String? tuNgay, String? denNgay, String? VungMien_Id, String? CongBaoVe_Id, String? keyword) async {
+    _dn = [];
+    try {
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeRaCongAll?TuNgay=$tuNgay&DenNgay=$denNgay&VungMien_Id=$VungMien_Id&CongBaoVe_Id=$CongBaoVe_Id&keyword=$keyword');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data: " + decodedData.toString());
+        if (decodedData != null) {
+          _dn = (decodedData as List).map((item) => LSX_RaCongModel.fromJson(item)).toList();
 
           // Gọi setState để cập nhật giao diện
           setState(() {
@@ -103,8 +157,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
       });
       print("TuNgay: $selectedFromDate");
       print("DenNgay: $selectedToDate");
-      await getDSXRaCong(
-          selectedFromDate, selectedToDate, maNhanVienController.text);
+      await getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", congBaoVe_Id ?? "", maNhanVienController.text);
     }
   }
 
@@ -114,24 +167,10 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
     //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
     const String defaultDate = "1970-01-01 ";
 
-    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
-    // _dn?.sort((a, b) {
-    //   try {
-    //     DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-    //         .parse(defaultDate + (a.gioNhan ?? "00:00"));
-    //     DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-    //         .parse(defaultDate + (b.gioNhan ?? "00:00"));
-    //     return bTime.compareTo(aTime); // Sắp xếp giảm dần
-    //   } catch (e) {
-    //     // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
-    //     return 0;
-    //   }
-    // });
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 3,
+        width: MediaQuery.of(context).size.width * 4,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -147,29 +186,31 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
               border: TableBorder.all(),
               columnWidths: {
                 0: FlexColumnWidth(0.3),
-                1: FlexColumnWidth(0.35),
+                1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
-                4: FlexColumnWidth(0.35),
+                4: FlexColumnWidth(0.3),
                 5: FlexColumnWidth(0.3),
+                6: FlexColumnWidth(0.3),
+                7: FlexColumnWidth(0.3),
+                8: FlexColumnWidth(0.3),
+                9: FlexColumnWidth(0.3),
+                10: FlexColumnWidth(0.3),
               },
               children: [
                 TableRow(
                   children: [
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Ngày ra cổng',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Ngày ra cổng', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                      child: _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -177,45 +218,72 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Tên tài xế',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Tên tài xế', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Tên bảo vệ',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Nơi đi', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Nơi đến', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Ghi chú', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Lý do', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Tên bảo vệ', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Hình ảnh', textColor: Colors.white),
                     ),
                   ],
                 ),
               ],
             ),
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
+              height: MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
                   columnWidths: {
                     0: FlexColumnWidth(0.3),
-                    1: FlexColumnWidth(0.35),
+                    1: FlexColumnWidth(0.3),
                     2: FlexColumnWidth(0.3),
                     3: FlexColumnWidth(0.3),
-                    4: FlexColumnWidth(0.35),
+                    4: FlexColumnWidth(0.3),
                     5: FlexColumnWidth(0.3),
+                    6: FlexColumnWidth(0.3),
+                    7: FlexColumnWidth(0.3),
+                    8: FlexColumnWidth(0.3),
+                    9: FlexColumnWidth(0.3),
+                    10: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn?.map((item) {
                           index++; // Tăng số thứ tự sau mỗi lần lặp
-
+                          bool highlightRed = item.tenTaiXe == "-" || item.lyDo != null;
                           return TableRow(
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
-                              _buildTableCell(item.ngayRaCong ?? ""),
-                              _buildTableCell(item.soKhung ?? ""),
-                              _buildTableCell(item.loaiXe ?? ""),
-                              _buildTableCell(item.mauXe ?? ""),
-                              _buildTableCell(item.tenTaiXe ?? ""),
-                              _buildTableCell(item.tenBaoVe ?? ""),
+                              _buildTableCell(item.ngayRaCong ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.soKhung ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.loaiXe ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.mauXe ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.tenTaiXe ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.noiDi ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.noiDen ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.ghiChu ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.lyDo ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.tenBaoVe ?? "", highlightRed: highlightRed),
+                              _buildTableHinhAnh(item.hinhAnh ?? ""),
                             ],
                           );
                         }).toList() ??
@@ -230,7 +298,10 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
     );
   }
 
-  Widget _buildTableCell(String content, {Color textColor = Colors.black}) {
+  Widget _buildTableCell(String content, {Color textColor = Colors.black, bool highlightRed = false}) {
+    if (highlightRed) {
+      textColor = Colors.red;
+    }
     return Container(
       padding: const EdgeInsets.all(8),
       child: Text(
@@ -241,6 +312,49 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
           fontSize: 12,
           fontWeight: FontWeight.w500,
           color: textColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTableHinhAnh(String content, {Color textColor = Colors.black}) {
+    // Tách chuỗi URL thành danh sách các link ảnh
+    List<String> imageUrls = content.split(',');
+
+    return Container(
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal, // Cho phép cuộn ngang nếu có nhiều ảnh
+        itemCount: imageUrls.length,
+        itemBuilder: (context, index) {
+          String imageUrl = imageUrls[index];
+          return GestureDetector(
+            onTap: () {
+              _showFullImageDialog(imageUrl); // Hiển thị ảnh đầy đủ khi bấm vào
+            },
+            child: Container(
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.contain,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showFullImageDialog(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: PhotoView(
+            imageProvider: NetworkImage(imageUrl),
+            backgroundDecoration: BoxDecoration(color: Colors.black),
+          ),
         ),
       ),
     );
@@ -265,23 +379,14 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                     _loading
                         ? LoadingWidget(context)
                         : Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe ra cổng',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
                                 GestureDetector(
                                   onTap: () => _selectDate(context),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 6),
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.blue),
                                       borderRadius: BorderRadius.circular(8),
@@ -289,12 +394,10 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.calendar_today,
-                                            color: Colors.blue),
+                                        Icon(Icons.calendar_today, color: Colors.blue),
                                         SizedBox(width: 8),
                                         Text(
-                                          selectedFromDate != null &&
-                                                  selectedToDate != null
+                                          selectedFromDate != null && selectedToDate != null
                                               ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
                                               : 'Chọn ngày',
                                           style: TextStyle(color: Colors.blue),
@@ -306,16 +409,227 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 SizedBox(
                                   height: 4,
                                 ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: const Color(0xFFBC2925),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              items: _vm?.map((item) {
+                                                return DropdownMenuItem<String>(
+                                                  value: item.id,
+                                                  child: Container(
+                                                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                    child: SingleChildScrollView(
+                                                      scrollDirection: Axis.horizontal,
+                                                      child: Text(
+                                                        item.tenVungMien ?? "",
+                                                        textAlign: TextAlign.center,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Comfortaa',
+                                                          fontSize: 13,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: AppConfig.textInput,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: vungMien_Id,
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  vungMien_Id = newValue;
+                                                });
+                                                if (newValue != null) {
+                                                  getRaCong(newValue);
+                                                  getDSXRaCong(selectedFromDate, selectedToDate, newValue, congBaoVe_Id ?? "", maNhanVienController.text);
+                                                  print("object : ${vungMien_Id}");
+                                                }
+                                              },
+                                              buttonStyleData: const ButtonStyleData(
+                                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                                height: 40,
+                                                width: 200,
+                                              ),
+                                              dropdownStyleData: const DropdownStyleData(
+                                                maxHeight: 200,
+                                              ),
+                                              menuItemStyleData: const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                              dropdownSearchData: DropdownSearchData(
+                                                searchController: textEditingController,
+                                                searchInnerWidgetHeight: 50,
+                                                searchInnerWidget: Container(
+                                                  height: 50,
+                                                  padding: const EdgeInsets.only(
+                                                    top: 8,
+                                                    bottom: 4,
+                                                    right: 8,
+                                                    left: 8,
+                                                  ),
+                                                  child: TextFormField(
+                                                    expands: true,
+                                                    maxLines: null,
+                                                    controller: textEditingController,
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
+                                                      ),
+                                                      hintText: 'Tìm vùng miền',
+                                                      hintStyle: const TextStyle(fontSize: 12),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                searchMatchFn: (item, searchValue) {
+                                                  if (item is DropdownMenuItem<String>) {
+                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                    String itemId = item.value ?? "";
+                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                    return _vm?.any((baiXe) => baiXe.id == itemId && baiXe.tenVungMien?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                  } else {
+                                                    return false;
+                                                  }
+                                                },
+                                              ),
+                                              onMenuStateChange: (isOpen) {
+                                                if (!isOpen) {
+                                                  textEditingController.clear();
+                                                }
+                                              },
+                                            ),
+                                          )),
+                                    ),
+                                    SizedBox(
+                                      width: 3,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: const Color(0xFFBC2925),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              items: _baove?.map((item) {
+                                                return DropdownMenuItem<String>(
+                                                  value: item.id,
+                                                  child: Container(
+                                                    child: Text(
+                                                      item.tenCong ?? "",
+                                                      textAlign: TextAlign.center,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Comfortaa',
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: AppConfig.textInput,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: congBaoVe_Id,
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  congBaoVe_Id = newValue;
+                                                });
+                                                if (newValue != null) {
+                                                  if (newValue == '') {
+                                                    getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", '', maNhanVienController.text);
+                                                  } else {
+                                                    getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", newValue, maNhanVienController.text);
+                                                    print("objectcong : ${newValue}");
+                                                  }
+                                                }
+                                              },
+                                              buttonStyleData: const ButtonStyleData(
+                                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                                height: 40,
+                                                width: 200,
+                                              ),
+                                              dropdownStyleData: const DropdownStyleData(
+                                                maxHeight: 200,
+                                              ),
+                                              menuItemStyleData: const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                              dropdownSearchData: DropdownSearchData(
+                                                searchController: textEditingController,
+                                                searchInnerWidgetHeight: 50,
+                                                searchInnerWidget: Container(
+                                                  height: 50,
+                                                  padding: const EdgeInsets.only(
+                                                    top: 8,
+                                                    bottom: 4,
+                                                    right: 8,
+                                                    left: 8,
+                                                  ),
+                                                  child: TextFormField(
+                                                    expands: true,
+                                                    maxLines: null,
+                                                    controller: textEditingController,
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
+                                                      ),
+                                                      hintText: 'Tìm cổng',
+                                                      hintStyle: const TextStyle(fontSize: 12),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                searchMatchFn: (item, searchValue) {
+                                                  if (item is DropdownMenuItem<String>) {
+                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                    String itemId = item.value ?? "";
+                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                    return _baove?.any((viTri) => viTri.id == itemId && viTri.tenCong?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                  } else {
+                                                    return false;
+                                                  }
+                                                },
+                                              ),
+                                              onMenuStateChange: (isOpen) {
+                                                if (!isOpen) {
+                                                  textEditingController.clear();
+                                                }
+                                              },
+                                            ),
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
                                 Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -352,24 +666,14 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                       Expanded(
                                         flex: 1,
                                         child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: MediaQuery.of(context)
-                                                          .size
-                                                          .height <
-                                                      600
-                                                  ? 0
-                                                  : 5),
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
                                           child: TextField(
                                             controller: maNhanVienController,
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
                                               isDense: true,
-                                              hintText:
-                                                  'Nhập số khung, người lái xe',
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 15),
+                                              hintText: 'Nhập số khung, người lái xe',
+                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                                             ),
                                             style: const TextStyle(
                                               fontFamily: 'Comfortaa',
@@ -390,10 +694,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXRaCong(
-                                              selectedFromDate,
-                                              selectedToDate,
-                                              maNhanVienController.text);
+                                          getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", congBaoVe_Id ?? "", maNhanVienController.text);
                                           setState(() {
                                             _loading = false;
                                           });
@@ -402,10 +703,12 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                     ],
                                   ),
                                 ),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         height: 4,

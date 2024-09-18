@@ -1,5 +1,5 @@
 import 'package:Thilogi/pages/qlnhanxe/custom_body_qlnhanxe.dart';
-import 'package:Thilogi/pages/vanchuyen/giaoxe/custom_body_vanchuyen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';

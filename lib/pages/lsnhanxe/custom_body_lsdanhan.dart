@@ -23,8 +23,7 @@ class BodyLSDaNhanScreen extends StatefulWidget {
   _BodyLSDaNhanScreenState createState() => _BodyLSDaNhanScreenState();
 }
 
-class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
@@ -55,13 +54,10 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
   void getDSXDaNhan(String? ngay, String? keyword) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeDaNhan?Ngay=$ngay&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeDaNhan?Ngay=$ngay&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _dn = (decodedData as List)
-            .map((item) => DS_DaNhanModel.fromJson(item))
-            .toList();
+        _dn = (decodedData as List).map((item) => DS_DaNhanModel.fromJson(item)).toList();
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -97,21 +93,15 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
   }
 
   Widget _buildTableOptions(BuildContext context) {
-    int index = 0; // Biến đếm số thứ tự
-    // _dn?.sort((a, b) => DateTime.parse(b.gioNhan ?? "")
-    //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
+    int index = 0;
     const String defaultDate = "1970-01-01 ";
 
-    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
     _dn?.sort((a, b) {
       try {
-        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (a.gioNhan ?? "00:00"));
-        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-            .parse(defaultDate + (b.gioNhan ?? "00:00"));
+        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (a.gioNhan ?? "00:00"));
+        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm").parse(defaultDate + (b.gioNhan ?? "00:00"));
         return bTime.compareTo(aTime); // Sắp xếp giảm dần
       } catch (e) {
-        // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
         return 0;
       }
     });
@@ -133,7 +123,7 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
             ),
             Table(
               border: TableBorder.all(),
-              columnWidths: {
+              columnWidths: const {
                 0: FlexColumnWidth(0.15),
                 1: FlexColumnWidth(0.35),
                 2: FlexColumnWidth(0.35),
@@ -143,31 +133,27 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                   children: [
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                      child: _buildTableCell('Giờ nhận', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
+                      child: _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       width: double.infinity,
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                   ],
                 ),
               ],
             ),
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
+              height: MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
-                  columnWidths: {
+                  columnWidths: const {
                     0: FlexColumnWidth(0.15),
                     1: FlexColumnWidth(0.35),
                     2: FlexColumnWidth(0.35),
@@ -236,8 +222,7 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
                                       'Danh sách xe đã nhận',
@@ -250,24 +235,19 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                                     GestureDetector(
                                       onTap: () => _selectDate(context),
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 6),
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                         decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.blue),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.blue),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors.blue),
-                                            SizedBox(width: 8),
+                                            const Icon(Icons.calendar_today, color: Colors.blue),
+                                            const SizedBox(width: 8),
                                             Text(
                                               selectedDate ?? 'Chọn ngày',
-                                              style:
-                                                  TextStyle(color: Colors.blue),
+                                              style: const TextStyle(color: Colors.blue),
                                             ),
                                           ],
                                         ),
@@ -275,17 +255,13 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 const SizedBox(height: 4),
                                 Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -306,11 +282,11 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                                             ),
                                           ),
                                         ),
-                                        child: Center(
+                                        child: const Center(
                                           child: Text(
                                             "Tìm kiếm",
                                             textAlign: TextAlign.left,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontFamily: 'Comfortaa',
                                               fontSize: 16,
                                               fontWeight: FontWeight.w400,
@@ -322,24 +298,14 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                                       Expanded(
                                         flex: 1,
                                         child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: MediaQuery.of(context)
-                                                          .size
-                                                          .height <
-                                                      600
-                                                  ? 0
-                                                  : 5),
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
                                           child: TextField(
                                             controller: soKhungController,
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
                                               isDense: true,
-                                              hintText:
-                                                  'Nhập số khung để tìm kiếm',
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 15),
+                                              hintText: 'Nhập số khung để tìm kiếm',
+                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                                             ),
                                             style: const TextStyle(
                                               fontFamily: 'Comfortaa',
@@ -360,10 +326,7 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-
-                                          getDSXDaNhan(selectedDate,
-                                              soKhungController.text);
-
+                                          getDSXDaNhan(selectedDate, soKhungController.text);
                                           setState(() {
                                             _loading = false;
                                           });
@@ -374,15 +337,14 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                                 ),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 4,
                                       ),
                                       Text(
                                         'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: 'Comfortaa',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,

@@ -1,17 +1,31 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/models/checksheet.dart';
+import 'package:Thilogi/models/scan.dart';
+import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
+import 'package:Thilogi/services/request_helper.dart';
+import 'package:Thilogi/utils/delete_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/chucnang.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:responsive_grid/responsive_grid.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../../widgets/checksheet_upload_anh.dart';
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
+import 'package:http/http.dart' as http;
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class PopUp extends StatefulWidget {
+  final List<CheckSheetFileModel?> lstFiles;
   String soKhung;
   String soMay;
   String tenMau;
@@ -31,18 +45,49 @@ class PopUp extends StatefulWidget {
       required this.tenTaiXe,
       required this.ghiChu,
       required this.tenKho,
-      required this.phuKien});
+      required this.phuKien,
+      required this.lstFiles});
 
   @override
   _PopUpState createState() => _PopUpState();
 }
 
-class _PopUpState extends State<PopUp> {
+class _PopUpState extends State<PopUp> with SingleTickerProviderStateMixin, ChangeNotifier {
+  static RequestHelper requestHelper = RequestHelper();
   late TextEditingController ghiChuController;
+  PickedFile? _pickedFile;
+  List<FileItem?> _lstFiles = [];
+  final _picker = ImagePicker();
+
+  ScanModel? _scan;
+  ScanModel? get scan => _scan;
+
+  bool _hasError = false;
+  bool get hasError => _hasError;
+
+  String? _errorCode;
+  String? get errorCode => _errorCode;
+
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
+  bool _success = false;
+  bool get success => _success;
+
+  String? _message;
+  String? get message => _message;
   @override
   void initState() {
     super.initState();
     ghiChuController = TextEditingController(text: widget.ghiChu);
+    for (var file in widget.lstFiles) {
+      _lstFiles.add(FileItem(
+        uploaded: true,
+        file: file!.path,
+        local: false,
+        isRemoved: file.isRemoved,
+      ));
+    }
   }
 
   @override
@@ -51,18 +96,191 @@ class _PopUpState extends State<PopUp> {
     super.dispose();
   }
 
+  Future imageSelector(BuildContext context, String pickerType) async {
+    switch (pickerType) {
+      case "gallery":
+
+        /// GALLERY IMAGE PICKER
+        _pickedFile = await _picker.getImage(source: ImageSource.gallery);
+        break;
+
+      case "camera":
+
+        /// CAMERA CAPTURE CODE
+        _pickedFile = await _picker.getImage(source: ImageSource.camera);
+        break;
+    }
+
+    if (_pickedFile != null) {
+      setState(() {
+        _lstFiles.add(FileItem(
+          uploaded: false,
+          file: _pickedFile!.path,
+          local: true,
+          isRemoved: false,
+        ));
+      });
+    }
+  }
+
+  // Upload image to server and return path(url)
+
+  bool _allowUploadFile() {
+    var item = _lstFiles.firstWhere(
+      (file) => file!.uploaded == false,
+      orElse: () => null,
+    );
+    if (item == null) {
+      return false;
+    }
+    return true;
+  }
+
+  _removeImage(FileItem image) {
+    // find and remove
+    // if don't have
+    setState(() {
+      _lstFiles.removeWhere((img) => img!.file == image.file);
+      // check item exists in widget.lstFiles
+      if (image.local == true) {
+        widget.lstFiles.removeWhere((img) => img!.path == image.file);
+      } else {
+        widget.lstFiles.map((file) {
+          if (file!.path == image.file) {
+            file.isRemoved = true;
+            return file;
+          }
+        }).toList();
+      }
+
+      Navigator.pop(context);
+    });
+  }
+
+  bool _isEmptyLstFile() {
+    var isRemoved = false;
+    if (_lstFiles.isEmpty) {
+      isRemoved = true;
+    } else {
+      // find in list don't have isRemoved = false and have isRemoved = true
+      var tmp = _lstFiles.firstWhere((file) => file!.isRemoved == false, orElse: () => null);
+      if (tmp == null) {
+        isRemoved = true;
+      }
+    }
+    return isRemoved;
+  }
+
+  Future<void> getData(BuildContext context, RoundedLoadingButtonController controller, String soKhung, String toaDo, String? ghiChu, String? hinhAnh) async {
+    _isLoading = true;
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      // Yêu cầu quyền truy cập vị trí
+      await Geolocator.requestPermission();
+    }
+    // Lấy vị trí hiện tại
+    Position? currentPosition;
+    List<String> imageUrls = [];
+
+    for (var fileItem in _lstFiles) {
+      if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
+        File file = File(fileItem!.file!);
+        var response = await RequestHelper().uploadFile(file);
+        widget.lstFiles.add(CheckSheetFileModel(
+          isRemoved: response["isRemoved"],
+          id: response["id"],
+          fileName: response["fileName"],
+          path: response["path"],
+        ));
+        fileItem.uploaded = true;
+        // setState(() {
+        //   _loading = false;
+        // });
+
+        fileItem.uploaded = true; // Đánh dấu file đã được upload
+
+        if (response["path"] != null) {
+          imageUrls.add(response["path"]);
+        }
+        // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
+        //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+      }
+    }
+
+// Chuyển đổi danh sách URL thành chuỗi cách nhau bởi dấu phẩy
+    String? imageUrlsString = imageUrls.join(',');
+
+    try {
+      currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
+      );
+      double lat = currentPosition.latitude;
+      double long = currentPosition.longitude;
+      toaDo = "${lat},${long}";
+      hinhAnh = imageUrlsString;
+
+      final http.Response response = await requestHelper.getData('GetDataXeThaPham?keyword=$soKhung&ToaDo=$toaDo&GhiChu=$ghiChu&File=$hinhAnh');
+      print("statusCode: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data:${decodedData}");
+        print("hinhAnh:${hinhAnh}");
+
+        notifyListeners();
+        controller.success();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: 'Thành công',
+            text: "Nhận xe thành công",
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              clear(context);
+            });
+        controller.reset();
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        controller.error();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: errorMessage,
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              clear(context);
+            });
+        print("Toa Do : $toaDo");
+        controller.reset();
+      }
+    } catch (e) {
+      _hasError = true;
+      _isLoading = false;
+      _message = e.toString();
+      _errorCode = e.toString();
+      notifyListeners();
+    }
+  }
+
+  void clear(context) async {
+    final AppBloc ab = Provider.of<AppBloc>(context, listen: false);
+    await ab.clearData().then((_) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+      nextScreenReplace(context, NhanXePage());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-
+    final AppBloc ab = context.watch<AppBloc>();
     return Center(
       child: Container(
         alignment: Alignment.bottomCenter,
         constraints: BoxConstraints(
-          maxHeight: screenHeight < 600
-              ? screenHeight * 0.85
-              : screenHeight *
-                  0.9, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
+          maxHeight: screenHeight < 600 ? screenHeight * 0.85 : screenHeight * 0.9, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
 
           // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
         ),
@@ -89,9 +307,123 @@ class _PopUpState extends State<PopUp> {
                   children: [
                     _buildInputFields(),
                     _buildCarDetails(context),
-                    CheckSheetUploadAnh(
-                      lstFiles: [],
+                    Container(
+                      margin: const EdgeInsets.only(right: 5),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.87),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orangeAccent,
+                                    ),
+                                    onPressed: () => imageSelector(context, 'gallery'),
+                                    icon: const Icon(Icons.photo_library),
+                                    label: const Text(""),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                        // backgroundColor: Theme.of(context).primaryColor,
+                                        ),
+                                    onPressed: () => imageSelector(context, 'camera'),
+                                    icon: const Icon(Icons.camera_alt),
+                                    label: const Text(""),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  // ElevatedButton.icon(
+                                  //   style: ElevatedButton.styleFrom(
+                                  //     backgroundColor:
+                                  //         Color(0xFF00B528),
+                                  //   ),
+                                  //   onPressed: (_loading ||
+                                  //           _allowUploadFile() ==
+                                  //               false)
+                                  //       ? null
+                                  //       : () => _uploadAnh(),
+                                  //   icon: const Icon(
+                                  //       Icons.cloud_upload),
+                                  //   label: const Text("Tải ảnh"),
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Ảnh đã chọn",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          if (_isEmptyLstFile())
+                            const SizedBox(
+                              height: 100,
+                              // child: Center(child: Text("Chưa có ảnh nào")),
+                            ),
+                          // Display list image
+                          ResponsiveGridRow(
+                            children: _lstFiles.map((image) {
+                              if (image!.isRemoved == false) {
+                                return ResponsiveGridCol(
+                                  xs: 6,
+                                  md: 3,
+                                  child: InkWell(
+                                    onLongPress: () {
+                                      deleteDialog(
+                                        context,
+                                        "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
+                                        "Xoá ảnh",
+                                        () => _removeImage(image),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(left: 5),
+                                      child: image.local == true
+                                          ? Image.file(File(image.file!))
+                                          : Image.network(
+                                              '${ab.apiUrl}/${image.file}',
+                                              errorBuilder: ((context, error, stackTrace) {
+                                                return Container(
+                                                  height: 100,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(color: Colors.redAccent),
+                                                  ),
+                                                  child: const Center(
+                                                      child: Text(
+                                                    "Error Image (404)",
+                                                    style: TextStyle(color: Colors.redAccent),
+                                                  )),
+                                                );
+                                              }),
+                                            ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return ResponsiveGridCol(
+                                child: const SizedBox.shrink(),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
                     ),
+                    // CheckSheetUploadAnh(
+                    //   lstFiles: [],
+                    // ),
                   ],
                 ),
               ),
@@ -194,8 +526,7 @@ class _PopUpState extends State<PopUp> {
               Row(
                 children: [
                   Container(
-                    constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.9),
+                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Text(
@@ -251,36 +582,12 @@ class _PopUpState extends State<PopUp> {
 
   Widget _buildButtons(BuildContext context) {
     String? toaDo;
+    String? hinhAnh;
     final ChucnangBloc _cv = ChucnangBloc();
-    final RoundedLoadingButtonController _btnController =
-        RoundedLoadingButtonController();
+    final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
     return Container(
       child: Column(
         children: [
-          // RoundedLoadingButton(
-          //   width: MediaQuery.of(context).size.width * 1,
-          //   color: Color(0xFF00B528),
-          //   child: Text('KIỂM TRA OPTION THEO XE',
-          //       style: TextStyle(
-          //         fontFamily: 'Comfortaa',
-          //         color: Colors.white,
-          //         fontWeight: FontWeight.w700,
-          //         fontSize: 17,
-          //       )),
-          //   controller: _btnController,
-          //   onPressed: () {
-          //     nextScreen(
-          //       context,
-          //       NhanXe3Page(
-          //         soKhung: soKhung,
-          //         tenMau: tenMau,
-          //         tenSanPham: tenSanPham,
-          //         phuKien: phuKien,
-          //       ),
-          //     );
-          //     _btnController.reset();
-          //   },
-          // ),
           ElevatedButton(
             onPressed: () {
               nextScreen(
@@ -363,12 +670,11 @@ class _PopUpState extends State<PopUp> {
                   },
                   onConfirmBtnTap: () {
                     Navigator.of(context).pop();
-                    _cv.getData(context, _btnController, widget.soKhung,
-                        toaDo ?? "", ghiChuController.text);
+                    getData(context, _btnController, widget.soKhung, toaDo ?? "", ghiChuController.text, hinhAnh ?? "");
                   });
             },
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 10),
         ],
       ),
     );
@@ -549,4 +855,18 @@ Widget showInfoXe(String title, String value) {
       ],
     ),
   );
+}
+
+class FileItem {
+  bool? uploaded = false;
+  String? file;
+  bool? local = true;
+  bool? isRemoved = false;
+
+  FileItem({
+    required this.uploaded,
+    required this.file,
+    required this.local,
+    required this.isRemoved,
+  });
 }

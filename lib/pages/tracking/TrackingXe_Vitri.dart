@@ -34,8 +34,7 @@ class TrackingXeVitriPage extends StatefulWidget {
   State<TrackingXeVitriPage> createState() => _TrackingXeVitriPageState();
 }
 
-class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTickerProviderStateMixin, ChangeNotifier {
   TabController? _tabController;
 
   late TrackingBloc _bl;
@@ -119,8 +118,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
   }
 
   void addItemToList(DateTime? dateTime, Widget customImage, String textLine) {
-    combinedItems.add(CombinedItem(
-        dateTime: dateTime, customImage: customImage, textLine: textLine));
+    combinedItems.add(CombinedItem(dateTime: dateTime, customImage: customImage, textLine: textLine));
   }
 
   _moveToPosition(LatLng latLng) async {
@@ -337,12 +335,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
     _bl.getTrackingXe(context, value).then((_) {
       setState(() {
         _qrData = value;
-        if (_bl.lsxequa == null &&
-            _bl.lsnhapbai == null &&
-            _bl.lsxuatxe == null &&
-            _bl.lsgiaoxe == null &&
-            _bl.trackingchuyentiep == null &&
-            _bl.trackingxuatxe == null) {
+        if (_bl.lsxequa == null && _bl.lsnhapbai == null && _bl.lsxuatxe == null && _bl.lsgiaoxe == null && _bl.trackingchuyentiep == null && _bl.trackingxuatxe == null) {
           // QuickAlert.show(
           //   // ignore: use_build_context_synchronously
           //   context: context,
@@ -391,14 +384,10 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
 
   @override
   Widget build(BuildContext context) {
-    _xuatxe?.sort((a, b) =>
-        DateTime.parse(b.ngay ?? "").compareTo(DateTime.parse(a.ngay ?? "")));
-    _trackingxuatxe?.sort((a, b) =>
-        DateTime.parse(b.ngay ?? "").compareTo(DateTime.parse(a.ngay ?? "")));
-    _nhapbai?.sort((a, b) => DateTime.parse(b.ngayVao ?? "")
-        .compareTo(DateTime.parse(a.ngayVao ?? "")));
-    _trackingchuyentiep?.sort((a, b) => DateTime.parse(b.ngayVao ?? "")
-        .compareTo(DateTime.parse(a.ngayVao ?? "")));
+    _xuatxe?.sort((a, b) => DateTime.parse(b.ngay ?? "").compareTo(DateTime.parse(a.ngay ?? "")));
+    _trackingxuatxe?.sort((a, b) => DateTime.parse(b.ngay ?? "").compareTo(DateTime.parse(a.ngay ?? "")));
+    _nhapbai?.sort((a, b) => DateTime.parse(b.ngayVao ?? "").compareTo(DateTime.parse(a.ngayVao ?? "")));
+    _trackingchuyentiep?.sort((a, b) => DateTime.parse(b.ngayVao ?? "").compareTo(DateTime.parse(a.ngayVao ?? "")));
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -431,10 +420,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
             children: [
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height < 600
-                          ? 25.h
-                          : 20.h),
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 25.h : 20.h),
                   padding: EdgeInsets.only(left: 10, right: 10),
                   width: 100.w,
                   decoration: const BoxDecoration(
@@ -452,9 +438,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                           width: 100.w,
                           alignment: Alignment.bottomCenter,
                           constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height < 600
-                                ? MediaQuery.of(context).size.height * 1.65
-                                : MediaQuery.of(context).size.height * 0.95,
+                            maxHeight: MediaQuery.of(context).size.height < 600 ? MediaQuery.of(context).size.height * 1.65 : MediaQuery.of(context).size.height * 0.95,
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
@@ -486,14 +470,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                     padding: EdgeInsets.only(top: 0, bottom: 0),
                                     child: Image.asset(
                                       'assets/images/road.png',
-                                      height: MediaQuery.of(context)
-                                                  .size
-                                                  .height <
-                                              600
-                                          ? MediaQuery.of(context).size.height *
-                                              1.62
-                                          : MediaQuery.of(context).size.height *
-                                              0.92,
+                                      height: MediaQuery.of(context).size.height < 600 ? MediaQuery.of(context).size.height * 1.62 : MediaQuery.of(context).size.height * 0.92,
                                     ),
                                   ),
                                 ),
@@ -504,25 +481,15 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                 top: 0,
                                 child: SingleChildScrollView(
                                   child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       if (_giaoxe != null)
                                         Column(
                                           children: _giaoxe!.map((item) {
                                             return buildRowItem(
                                               customImage: CustomImage1(),
-                                              textLine: (item.ngay != null
-                                                      ? formatDateTime(
-                                                          item.ngay ?? "")
-                                                      : "") +
-                                                  '\n' +
-                                                  (item.noiGiao ?? "") +
-                                                  '\n' +
-                                                  'Số TBGX: ' +
-                                                  (item.soTBGX ?? "") +
-                                                  '\n' +
-                                                  (item.nguoiPhuTrach ?? ""),
+                                              textLine:
+                                                  (item.ngay != null ? formatDateTime(item.ngay ?? "") : "") + '\n' + (item.noiGiao ?? "") + '\n' + 'Số TBGX: ' + (item.soTBGX ?? "") + '\n' + (item.nguoiPhuTrach ?? ""),
                                             );
                                           }).toList(),
                                         ),
@@ -552,39 +519,25 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                       //   ),
                                       if (_trackingxuatxe != null)
                                         Column(
-                                          children:
-                                              _trackingxuatxe!.map((item) {
+                                          children: _trackingxuatxe!.map((item) {
                                             List<String> textLines = [];
 
                                             // Kiểm tra và thêm chuỗi không rỗng
-                                            if (item.ngay != null &&
-                                                item.ngay!.isNotEmpty) {
-                                              textLines.add(formatDateTime(
-                                                  item.ngay ?? ""));
+                                            if (item.ngay != null && item.ngay!.isNotEmpty) {
+                                              textLines.add(formatDateTime(item.ngay ?? ""));
                                             }
-                                            if (item.thongTinChiTiet != null &&
-                                                item.thongTinChiTiet!
-                                                    .isNotEmpty) {
-                                              textLines.add(
-                                                  item.thongTinChiTiet ?? "");
+                                            if (item.thongTinChiTiet != null && item.thongTinChiTiet!.isNotEmpty) {
+                                              textLines.add(item.thongTinChiTiet ?? "");
                                             }
-                                            if (item.thongtinvanchuyen !=
-                                                    null &&
-                                                item.thongtinvanchuyen!
-                                                    .isNotEmpty) {
-                                              textLines.add(
-                                                  item.thongtinvanchuyen ?? "");
+                                            if (item.thongtinvanchuyen != null && item.thongtinvanchuyen!.isNotEmpty) {
+                                              textLines.add(item.thongtinvanchuyen ?? "");
                                             }
-                                            if (item.nguoiPhuTrach != null &&
-                                                item.nguoiPhuTrach!
-                                                    .isNotEmpty) {
-                                              textLines.add(
-                                                  item.nguoiPhuTrach ?? "");
+                                            if (item.nguoiPhuTrach != null && item.nguoiPhuTrach!.isNotEmpty) {
+                                              textLines.add(item.nguoiPhuTrach ?? "");
                                             }
 
                                             // Nối các chuỗi với ký tự xuống dòng
-                                            String textLine =
-                                                textLines.join('\n');
+                                            String textLine = textLines.join('\n');
 
                                             return buildRowItem(
                                               customImage: CustomImage2(),
@@ -594,21 +547,13 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                         ),
                                       if (_trackingchuyentiep != null)
                                         Column(
-                                          children:
-                                              _trackingchuyentiep!.map((item) {
-                                            bool isNewKho =
-                                                item.kho != previousKho;
+                                          children: _trackingchuyentiep!.map((item) {
+                                            bool isNewKho = item.kho != previousKho;
                                             previousKho = item.kho;
                                             return buildRowItem(
-                                                customImage: isNewKho
-                                                    ? CustomImage5()
-                                                    : SizedBox(width: 120),
+                                                customImage: isNewKho ? CustomImage5() : SizedBox(width: 120),
                                                 // customImage: CustomImage3(),
-                                                textLine: (item.thoiGianVao !=
-                                                            null
-                                                        ? (item.thoiGianVao ??
-                                                            "")
-                                                        : "") +
+                                                textLine: (item.thoiGianVao != null ? (item.thoiGianVao ?? "") : "") +
                                                     '\n' +
                                                     (item.kho ?? "") +
                                                     ' - ' +
@@ -625,41 +570,24 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                             List<String> textLines = [];
 
                                             // Kiểm tra và thêm chuỗi không rỗng
-                                            if (item.ngay != null &&
-                                                item.ngay!.isNotEmpty) {
-                                              textLines.add(formatDateTime(
-                                                  item.ngay ?? ""));
+                                            if (item.ngay != null && item.ngay!.isNotEmpty) {
+                                              textLines.add(formatDateTime(item.ngay ?? ""));
                                             }
-                                            if (item.thongTinChiTiet != null &&
-                                                item.thongTinChiTiet!
-                                                    .isNotEmpty) {
-                                              textLines.add(
-                                                  item.thongTinChiTiet ?? "");
+                                            if (item.thongTinChiTiet != null && item.thongTinChiTiet!.isNotEmpty) {
+                                              textLines.add(item.thongTinChiTiet ?? "");
                                             }
-                                            if (item.thongtinvanchuyen !=
-                                                    null &&
-                                                item.thongtinvanchuyen!
-                                                    .isNotEmpty) {
-                                              textLines.add(
-                                                  item.thongtinvanchuyen ?? "");
+                                            if (item.thongtinvanchuyen != null && item.thongtinvanchuyen!.isNotEmpty) {
+                                              textLines.add(item.thongtinvanchuyen ?? "");
                                             }
-                                            if (item.nguoiPhuTrach != null &&
-                                                item.nguoiPhuTrach!
-                                                    .isNotEmpty) {
-                                              textLines.add(
-                                                  item.nguoiPhuTrach ?? "");
+                                            if (item.nguoiPhuTrach != null && item.nguoiPhuTrach!.isNotEmpty) {
+                                              textLines.add(item.nguoiPhuTrach ?? "");
                                             }
 
                                             // Nối các chuỗi với ký tự xuống dòng
-                                            String textLine =
-                                                textLines.join('\n');
+                                            String textLine = textLines.join('\n');
 
                                             return buildRowItem(
-                                              customImage: !item
-                                                      .thongtinvanchuyen!
-                                                      .contains("Cont")
-                                                  ? CustomImage2()
-                                                  : CustomImage6(),
+                                              customImage: !item.thongtinvanchuyen!.contains("Cont") ? CustomImage2() : CustomImage6(),
                                               textLine: textLine,
                                             );
                                           }).toList(),
@@ -667,19 +595,12 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                       if (_nhapbai != null)
                                         Column(
                                           children: _nhapbai!.map((item) {
-                                            bool isNewKho =
-                                                item.kho != previousKho;
+                                            bool isNewKho = item.kho != previousKho;
                                             previousKho = item.kho;
                                             return buildRowItem(
-                                                customImage: isNewKho
-                                                    ? CustomImage3()
-                                                    : SizedBox(width: 120),
+                                                customImage: isNewKho ? CustomImage3() : SizedBox(width: 120),
                                                 // customImage: CustomImage3(),
-                                                textLine: (item.thoiGianVao !=
-                                                            null
-                                                        ? (item.thoiGianVao ??
-                                                            "")
-                                                        : "") +
+                                                textLine: (item.thoiGianVao != null ? (item.thoiGianVao ?? "") : "") +
                                                     '\n' +
                                                     (item.kho ?? "") +
                                                     ' - ' +
@@ -696,22 +617,16 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                             List<String> textLines = [];
 
                                             // Kiểm tra và thêm chuỗi không rỗng
-                                            if (item.ngayNhan != null &&
-                                                item.ngayNhan!.isNotEmpty) {
-                                              textLines.add(formatDateTime(
-                                                  item.ngayNhan ?? ""));
+                                            if (item.ngayNhan != null && item.ngayNhan!.isNotEmpty) {
+                                              textLines.add(formatDateTime(item.ngayNhan ?? ""));
                                             }
-                                            if (item.noiNhan != null &&
-                                                item.noiNhan!.isNotEmpty) {
+                                            if (item.noiNhan != null && item.noiNhan!.isNotEmpty) {
                                               textLines.add(item.noiNhan ?? "");
                                             }
-                                            if (item.nguoiNhan != null &&
-                                                item.nguoiNhan!.isNotEmpty) {
-                                              textLines
-                                                  .add(item.nguoiNhan ?? "");
+                                            if (item.nguoiNhan != null && item.nguoiNhan!.isNotEmpty) {
+                                              textLines.add(item.nguoiNhan ?? "");
                                             }
-                                            String textLine =
-                                                textLines.join('\n');
+                                            String textLine = textLines.join('\n');
 
                                             return buildRowItem(
                                               customImage: CustomImage4(),
@@ -722,10 +637,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
 
                                       // buildDivider(),
                                       // buildDivider(),
-                                      if (_xequa == null &&
-                                          _nhapbai == null &&
-                                          _xuatxe == null &&
-                                          _giaoxe == null)
+                                      if (_xequa == null && _nhapbai == null && _xuatxe == null && _giaoxe == null)
                                         Container(
                                           padding: EdgeInsets.only(left: 30.w),
                                           child: Text(

@@ -14,8 +14,7 @@ class LSVanChuyenPage extends StatefulWidget {
   State<LSVanChuyenPage> createState() => _LSVanChuyenPage();
 }
 
-class _LSVanChuyenPage extends State<LSVanChuyenPage>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+class _LSVanChuyenPage extends State<LSVanChuyenPage> with SingleTickerProviderStateMixin, ChangeNotifier {
   TabController? _tabController;
   @override
   void initState() {
@@ -49,10 +48,7 @@ class _LSVanChuyenPage extends State<LSVanChuyenPage>
               CustomCard(),
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height < 600
-                          ? 10.h
-                          : 5.h),
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 10.h : 5.h),
                   width: 100.w,
                   decoration: BoxDecoration(
                       // color: Theme.of(context).colorScheme.onPrimary,
@@ -60,10 +56,7 @@ class _LSVanChuyenPage extends State<LSVanChuyenPage>
                   child: TabBarView(
                     physics: const NeverScrollableScrollPhysics(),
                     controller: _tabController,
-                    children: [
-                      CustomBodyLSXVanChuyen(),
-                      CustomBodyDSXChoVanChuyen()
-                    ],
+                    children: [CustomBodyLSXVanChuyen(), CustomBodyDSXChoVanChuyen()],
                   ),
                 ),
               ),

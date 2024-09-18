@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-import 'package:Thilogi/pages/ds_vanchuyen/ds_vanchuyen.dart';
-import 'package:Thilogi/pages/dsgiaoxe/ds_giaoxe.dart';
 import 'package:Thilogi/pages/dsxchovanchuyen/dsx_chovc.dart';
-import 'package:Thilogi/pages/dsxchoxuat/dsx_choxuat.dart';
 import 'package:Thilogi/pages/huyxuatkho/huyxuatkho.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -39,8 +36,7 @@ class BodyQLKhoXeScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
@@ -211,8 +207,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                   //       _handleButtonTap(LSDaGiaoPage());
                   //     },
                   //   ),
-                  if (userHasPermission(
-                      menuRoles, 'danh-sach-xe-cho-van-chuyen-mobi'))
+                  if (userHasPermission(menuRoles, 'danh-sach-xe-cho-van-chuyen-mobi'))
                     CustomButton(
                         'DANH SÁCH XE CHỜ VẬN CHUYỂN',
                         Stack(

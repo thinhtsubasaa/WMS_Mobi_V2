@@ -22,6 +22,7 @@ class KhoThanhPhamModel {
   String? nguoiNhan;
   String? ngayNhan;
   String? toaDo;
+  String? hinhAnh;
 
   KhoThanhPhamModel(
       {this.key,
@@ -45,6 +46,7 @@ class KhoThanhPhamModel {
       this.tenTaiXe,
       this.ghiChu,
       this.nguoiNhan,
+      this.hinhAnh,
       this.ngayNhan,
       this.toaDo});
 
@@ -73,6 +75,7 @@ class KhoThanhPhamModel {
       ngayNhan: json["ngayNhan"],
       nguoiNhan: json["nguoiNhan"],
       toaDo: json["toaDo"],
+      hinhAnh: json["hinhAnh"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -95,5 +98,6 @@ class KhoThanhPhamModel {
         'lat': lat,
         'long': long,
         'toaDo': toaDo,
+        'hinhAnh': hinhAnh,
       };
 }

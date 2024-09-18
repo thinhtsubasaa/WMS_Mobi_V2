@@ -1,9 +1,5 @@
-import 'package:Thilogi/pages/dsx_danhan/custom_body_dsx.dart';
-import 'package:Thilogi/pages/lsdieuchuyen/custom_body_lsdieuchuyen.dart';
 import 'package:Thilogi/pages/lsx_dongcont/custom_body_chuadongcont.dart';
 import 'package:Thilogi/pages/lsx_dongcont/custom_body_lsdongcont.dart';
-import 'package:Thilogi/pages/lsnhanxe/custom_body_lsdanhan.dart';
-import 'package:Thilogi/pages/lsnhapbai/custom_body_lsnhapbai.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';
@@ -18,8 +14,7 @@ class LSDongContPage extends StatefulWidget {
   State<LSDongContPage> createState() => _LSDongContPage();
 }
 
-class _LSDongContPage extends State<LSDongContPage>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+class _LSDongContPage extends State<LSDongContPage> with SingleTickerProviderStateMixin, ChangeNotifier {
   TabController? _tabController;
   @override
   void initState() {
@@ -53,10 +48,7 @@ class _LSDongContPage extends State<LSDongContPage>
               CustomCard(),
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height < 600
-                          ? 10.h
-                          : 5.h),
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 10.h : 5.h),
                   // padding: EdgeInsets.only(left: 10, right: 10),
                   width: 100.w,
                   decoration: BoxDecoration(
@@ -65,10 +57,7 @@ class _LSDongContPage extends State<LSDongContPage>
                   child: TabBarView(
                     physics: const NeverScrollableScrollPhysics(),
                     controller: _tabController,
-                    children: [
-                      CustomBodyLSDongCont(),
-                      CustomBodyChuaDongCont()
-                    ],
+                    children: [CustomBodyLSDongCont(), CustomBodyChuaDongCont()],
                   ),
                 ),
               ),

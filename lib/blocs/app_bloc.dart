@@ -7,7 +7,7 @@ import '../models/scan.dart';
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
-  // String _apiUrl = "https://172.20.42.140:5001";
+  // String _apiUrl = "https://10.17.42.111:5001";
   String _apiUrl = "https://apiwms.thilogi.vn";
 
   String get apiUrl => _apiUrl;
@@ -48,9 +48,7 @@ class AppBloc extends ChangeNotifier {
 
   Future getApiUrl() async {
     await _initPrefs();
-    _apiUrl = _pref!.getString('apiUrl') != null
-        ? _pref!.getString('apiUrl')!
-        : _apiUrl;
+    _apiUrl = _pref!.getString('apiUrl') != null ? _pref!.getString('apiUrl')! : _apiUrl;
     notifyListeners();
   }
 
@@ -61,8 +59,7 @@ class AppBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future saveData(String? iD, String kiD, String sK, String tK, String tSp,
-      String tM) async {
+  Future saveData(String? iD, String kiD, String sK, String tK, String tSp, String tM) async {
     await _initPrefs();
     await _pref!.setString('id', iD!.toString());
     await _pref!.setString('Kho_Id', kiD!.toString());
