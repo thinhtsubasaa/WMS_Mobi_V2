@@ -344,27 +344,6 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
     }
   }
 
-  // Future imageSelector(BuildContext context, String pickerType) async {
-
-  //   switch (pickerType) {
-  //     case "gallery":
-  //       // Tải ảnh từ thư viện
-  //       pickedFile = await picker.getImage(source: ImageSource.gallery);
-  //       break;
-  //     case "camera":
-  //       // Chụp ảnh bằng camera
-  //       pickedFile = await picker.getImage(source: ImageSource.camera);
-  //       break;
-  //   }
-
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       _imageFile = File(pickedFile!.path);
-  //       print("url: ${_imageFile}"); // Cập nhật đường dẫn file ảnh
-  //     });
-  //   }
-  // }
-
   Future<void> postData(XeRaCongModel? scanData, String? file) async {
     _isLoading = true;
 
@@ -378,6 +357,13 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         notifyListeners();
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.success,
+          title: 'Thành công',
+          text: "Đổi Avatar thành công",
+          confirmBtnText: 'Đồng ý',
+        );
       } else {}
     } catch (e) {
       _message = e.toString();
@@ -386,22 +372,17 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
     }
   }
 
+  void clear(context) async {
+    Navigator.pop(context);
+    Navigator.pop(context);
+    nextScreenReplace(context, AccountPage());
+  }
+
   _onSave() async {
     setState(() {
       _loading = true;
     });
 
-    // if (_lstFiles.isNotEmpty) {
-    //   for (var fileItem in _lstFiles) {
-    //     if (fileItem?.uploaded == true) {
-    //       // Giả sử rằng bạn đã lấy URL từ phương thức uploadFile
-    //       var response =
-    //           await RequestHelper().uploadAvatar(File(fileItem!.file!));
-    //       imageUrl = response["path"]; // Lấy URL từ phản hồi
-    //       break; // Chỉ cần một URL nếu có nhiều file
-    //     }
-    //   }
-    // }
     List<String> imageUrls = [];
 
     for (var fileItem in _lstFiles) {
@@ -419,7 +400,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
           _loading = false;
         });
 
-        fileItem.uploaded = true; // Đánh dấu file đã được upload
+        // fileItem.uploaded = true; // Đánh dấu file đã được upload
 
         if (response["path"] != null) {
           imageUrls.add(response["path"]);
@@ -450,16 +431,8 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
           print("loading: ${_loading}");
           setState(() {
             _lstFiles.clear();
-            // _data = null;
-            // barcodeScanResult = null;
-            // _ghiChu.text = "";
-            // _textController.text = "";
-            // _lido.text = "";
-            // _qrData = '';
-            // _qrDataController.text = '';
+
             _loading = false;
-            // _Isred = false;
-            // _Iskehoach = false;
           });
         });
       }
@@ -486,19 +459,6 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
         });
       }
     }
-
-    // if (_lstFiles.isNotEmpty) {
-    //   for (var fileItem in _lstFiles) {
-    //     if (fileItem?.uploaded == true) {
-    //       // Giả sử rằng bạn đã lấy URL từ phương thức uploadFile
-    //       var response =
-    //           await RequestHelper().uploadAvatar(File(fileItem!.file!));
-    //       imageUrl = response["path"]; // Lấy URL từ phản hồi
-    //       break; // Chỉ cần một URL nếu có nhiều file
-    //     }
-    //   }
-    // }
-    // print("url: ${imageUrl}");
   }
 
   bool _allowUploadFile() {
@@ -576,30 +536,12 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
                       icon: const Icon(Icons.camera_alt),
                       label: const Text(""),
                     ),
-                    // ElevatedButton.icon(
-                    //   style: ElevatedButton.styleFrom(
-                    //       // backgroundColor: Theme.of(context).primaryColor,
-                    //       ),
-                    //   onPressed: (_loading || _allowUploadFile() == false)
-                    //       ? () async {
-                    //           await imageSelector(context, 'camera');
-                    //           if (!_loading && _allowUploadFile()) {
-                    //             await _uploadAnh(); // Thực hiện hành động upload ảnh
-                    //           }
-                    //         }
-                    //       : null,
-                    //   // onPressed: (_loading || _allowUploadFile() == false)
-                    //   //     ? null
-                    //   //     : () => _uploadAnh(),
-                    //   icon: const Icon(Icons.camera_alt),
-                    //   label: const Text(""),
-                    // ),
                     const SizedBox(width: 10),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF00B528),
                       ),
-                      onPressed: (!_loading && _allowUploadFile() == true) ? () => _onSave() : null,
+                      onPressed: (_loading || _allowUploadFile() == false) ? null : () => _onSave(),
                       // onPressed: () => _onSave(),
                       icon: const Icon(Icons.cloud_upload),
                       label: const Text("Lưu"),

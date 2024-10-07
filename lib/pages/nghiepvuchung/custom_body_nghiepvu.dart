@@ -135,7 +135,7 @@ class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen> with 
                 children: [
                   if (userHasPermission(menuRoles, 'quan-ly-xe-ra-cong-mobi'))
                     CustomButton(
-                      'QUẢN LÝ XE RA CỔNG',
+                      'KIỂM SÁT XE RA CỔNG',
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -201,7 +201,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 40.w,
+      width: 35.w,
       // height: 35.h,
       child: Column(
         children: [

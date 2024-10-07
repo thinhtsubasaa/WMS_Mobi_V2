@@ -561,7 +561,7 @@ class Item extends StatelessWidget {
                 color: Color(0xFF818180),
               ),
             ),
-            Text(
+            SelectableText(
               value ?? "",
               style: const TextStyle(
                 fontFamily: 'Comfortaa',

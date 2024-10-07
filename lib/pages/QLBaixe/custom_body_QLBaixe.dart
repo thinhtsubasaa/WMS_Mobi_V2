@@ -17,6 +17,7 @@ import '../../blocs/menu_roles.dart';
 import '../../config/config.dart';
 import '../../models/menurole.dart';
 import '../../services/request_helper.dart';
+import '../qrcoderutxe/qrcoderutxe.dart';
 import '../timxe/timxe.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -216,6 +217,19 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen> with TickerProvid
                         ), () {
                       _handleButtonTap(MyApp());
                     }),
+                  if (userHasPermission(menuRoles, 'qrcode-rut-xe-auto-mobi'))
+                    CustomButtonRutXe(
+                        'QRCODE_RÚT XE TẠI NHÀ MÁY',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_09_Barcode_maNV.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(qrCodeRutXe());
+                    }),
                 ],
               ),
 
@@ -241,7 +255,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 35.w,
+      width: 32.w,
       child: Column(
         children: [
           Container(
@@ -258,6 +272,35 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
               fontSize: 13,
               fontWeight: FontWeight.w800,
               color: AppConfig.titleColor,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget CustomButtonRutXe(String buttonText, Widget page, VoidCallback onTap) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: 32.w,
+      child: Column(
+        children: [
+          Container(
+            //  width: 28.w,
+            // height: 35.h,
+            alignment: Alignment.center,
+            child: page,
+          ),
+          Text(
+            buttonText.tr(),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: Colors.blue,
             ),
           ),
         ],

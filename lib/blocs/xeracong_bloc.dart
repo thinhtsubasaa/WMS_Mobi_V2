@@ -31,8 +31,7 @@ class XeRaCongBloc extends ChangeNotifier {
     _isLoading = true;
     _xeracong = null;
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetThongTinXeRaCong?SoKhung=$qrcode');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetThongTinXeRaCong?SoKhung=$qrcode');
       print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -80,17 +79,16 @@ class XeRaCongBloc extends ChangeNotifier {
           );
         }
       } else {
-        String errorMessage = response.body.replaceAll('"', '');
-        notifyListeners();
-
-        QuickAlert.show(
-          // ignore: use_build_context_synchronously
-          context: context,
-          type: QuickAlertType.info,
-          title: '',
-          text: errorMessage,
-          confirmBtnText: 'Đồng ý',
-        );
+        // String errorMessage = response.body.replaceAll('"', '');
+        // notifyListeners();
+        // QuickAlert.show(
+        //   // ignore: use_build_context_synchronously
+        //   context: context,
+        //   type: QuickAlertType.info,
+        //   title: '',
+        //   text: errorMessage,
+        //   confirmBtnText: 'Đồng ý',
+        // );
         _xeracong = null;
         _isLoading = false;
       }

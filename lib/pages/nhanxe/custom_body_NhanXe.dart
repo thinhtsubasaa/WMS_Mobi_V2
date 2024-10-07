@@ -57,7 +57,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen> with TickerProvider
     super.initState();
 
     _sb = Provider.of<ScanBloc>(context, listen: false);
-
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
@@ -186,13 +185,9 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen> with TickerProvider
       setState(() {
         _qrData = value;
         print(_sb.data);
-        print(_sb.scan);
 
         if (_sb.data != null) {
           _model = _sb.data;
-          _loading = false;
-        } else if (_sb.scan != null) {
-          _data = _sb.scan;
           _loading = false;
         } else {
           _qrData = '';
@@ -272,8 +267,8 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen> with TickerProvider
                                     constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
-                                      child: Text(
-                                        _data?.tenSanPham ?? _model?.tenSanPham ?? '',
+                                      child: SelectableText(
+                                        _model?.tenSanPham ?? '',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                           fontFamily: 'Coda Caption',
@@ -292,7 +287,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen> with TickerProvider
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         showInfoXe(
                           'Số khung: ',
-                          _data?.soKhung ?? _model?.soKhung ?? "",
+                          _model?.soKhung ?? "",
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         showInfoXe(
@@ -301,34 +296,33 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen> with TickerProvider
                             // _data != null
                             //     ? "${_data?.tenMau ?? ""}(${_data?.maMau ?? ""})"
                             //     : "${_model?.tenMau ?? ""}'(${_model?.maMau ?? ""})'",
-                            _data != null
-                                ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "")
-                                : (_model?.tenMau != null && _model?.maMau != null ? "${_model?.tenMau} (${_model?.maMau})" : "")),
+
+                            (_model?.tenMau != null && _model?.maMau != null ? "${_model?.tenMau} (${_model?.maMau})" : "")),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         showInfoXe(
                           'Nhà máy: ',
-                          _data?.tenKho ?? _model?.tenKho ?? "",
+                          _model?.tenKho ?? "",
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         Container(
                           padding: EdgeInsets.all(10),
                           child: ElevatedButton(
-                            onPressed: (_data != null || _model != null)
+                            onPressed: (_model != null)
                                 ? () {
                                     _handleButtonTap(NhanXe2Page(
-                                      soKhung: _data?.soKhung ?? _model?.soKhung ?? "",
-                                      soMay: _data?.soMay ?? "",
-                                      tenMau: _data?.tenMau ?? _model?.maMau ?? "",
-                                      tenSanPham: _data?.tenSanPham ?? _model?.tenSanPham ?? "",
+                                      soKhung: _model?.soKhung ?? "",
+                                      soMay: _model?.soMay ?? "",
+                                      tenMau: _model?.maMau ?? "",
+                                      tenSanPham: _model?.tenSanPham ?? "",
                                       ngayXuatKhoView:
                                           // _data?.ngayXuatKhoView ??
                                           formatCurrentDateTime(),
                                       tenTaiXe:
                                           // _data?.tenTaiXe ??
                                           ub.name ?? "",
-                                      ghiChu: _data?.ghiChu ?? _model?.ghiChu ?? "",
-                                      tenKho: _data?.tenKho ?? _model?.tenKho ?? "",
-                                      phuKien: _data?.phuKien ?? _model?.phukien ?? [],
+                                      ghiChu: _model?.ghiChu ?? "",
+                                      tenKho: _model?.tenKho ?? "",
+                                      phuKien: _model?.phukien ?? [],
                                     ));
                                   }
                                 : null,
@@ -388,7 +382,7 @@ Widget showInfoXe(String title, String value) {
               color: Color(0xFF818180),
             ),
           ),
-          Text(
+          SelectableText(
             value,
             style: TextStyle(
               fontFamily: 'Comfortaa',

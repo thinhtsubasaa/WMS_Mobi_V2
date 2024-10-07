@@ -271,7 +271,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
   Widget _buildTableCell(String content, {Color textColor = Colors.black}) {
     return Container(
       padding: const EdgeInsets.all(8),
-      child: Text(
+      child: SelectableText(
         content,
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -290,318 +290,77 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          const SizedBox(height: 10),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _loading
-                        ? LoadingWidget(context)
-                        : Container(
-                            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => _selectDate(context),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.blue),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(Icons.calendar_today, color: Colors.blue),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          selectedFromDate != null && selectedToDate != null
-                                              ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
-                                              : 'Chọn ngày',
-                                          style: const TextStyle(color: Colors.blue),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                const Divider(height: 1, color: Color(0xFFA71C20)),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            border: Border.all(
-                                              color: const Color(0xFFBC2925),
-                                              width: 1.5,
-                                            ),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton2<String>(
-                                              isExpanded: true,
-                                              items: _khoxeList?.map((item) {
-                                                return DropdownMenuItem<String>(
-                                                  value: item.id,
-                                                  child: Container(
-                                                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
-                                                    child: SingleChildScrollView(
-                                                      scrollDirection: Axis.horizontal,
-                                                      child: Text(
-                                                        item.tenKhoXe ?? "",
-                                                        textAlign: TextAlign.center,
-                                                        style: const TextStyle(
-                                                          fontFamily: 'Comfortaa',
-                                                          fontSize: 13,
-                                                          fontWeight: FontWeight.w600,
-                                                          color: AppConfig.textInput,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              value: KhoXeId,
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  KhoXeId = newValue;
-                                                });
-                                                if (newValue != null) {
-                                                  getBaiXeList(newValue);
-                                                  getDataDongXe();
-                                                  getLSNhap(selectedFromDate, selectedToDate, newValue, BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
-                                                  print("object : ${newValue}");
-                                                }
-                                              },
-                                              buttonStyleData: const ButtonStyleData(
-                                                padding: EdgeInsets.symmetric(horizontal: 16),
-                                                height: 40,
-                                                width: 200,
-                                              ),
-                                              dropdownStyleData: const DropdownStyleData(
-                                                maxHeight: 200,
-                                              ),
-                                              menuItemStyleData: const MenuItemStyleData(
-                                                height: 40,
-                                              ),
-                                              dropdownSearchData: DropdownSearchData(
-                                                searchController: textEditingController,
-                                                searchInnerWidgetHeight: 50,
-                                                searchInnerWidget: Container(
-                                                  height: 50,
-                                                  padding: const EdgeInsets.only(
-                                                    top: 8,
-                                                    bottom: 4,
-                                                    right: 8,
-                                                    left: 8,
-                                                  ),
-                                                  child: TextFormField(
-                                                    expands: true,
-                                                    maxLines: null,
-                                                    controller: textEditingController,
-                                                    decoration: InputDecoration(
-                                                      isDense: true,
-                                                      contentPadding: const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 8,
-                                                      ),
-                                                      hintText: 'Tìm kho xe',
-                                                      hintStyle: const TextStyle(fontSize: 12),
-                                                      border: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(8),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                searchMatchFn: (item, searchValue) {
-                                                  if (item is DropdownMenuItem<String>) {
-                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                    String itemId = item.value ?? "";
-                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                    return _khoxeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenKhoXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
-                                                  } else {
-                                                    return false;
-                                                  }
-                                                },
-                                              ),
-                                              onMenuStateChange: (isOpen) {
-                                                if (!isOpen) {
-                                                  textEditingController.clear();
-                                                }
-                                              },
-                                            ),
-                                          )),
-                                    ),
-                                    SizedBox(
-                                      width: 3,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            border: Border.all(
-                                              color: const Color(0xFFBC2925),
-                                              width: 1.5,
-                                            ),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton2<String>(
-                                              isExpanded: true,
-                                              items: _dongxeList?.map((item) {
-                                                return DropdownMenuItem<String>(
-                                                  value: item.id,
-                                                  child: Container(
-                                                    child: Text(
-                                                      item.tenDongXe ?? "",
-                                                      textAlign: TextAlign.center,
-                                                      style: const TextStyle(
-                                                        fontFamily: 'Comfortaa',
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w600,
-                                                        color: AppConfig.textInput,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              value: DongXeId,
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  DongXeId = newValue;
-                                                });
-                                                if (newValue != null) {
-                                                  if (newValue == '') {
-                                                    getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", BaiXeId ?? "", '', maNhanVienController.text);
-                                                  } else {
-                                                    getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", BaiXeId ?? "", newValue, maNhanVienController.text);
-                                                    print("objectcong : ${newValue}");
-                                                  }
-                                                }
-                                              },
-                                              buttonStyleData: const ButtonStyleData(
-                                                padding: EdgeInsets.symmetric(horizontal: 16),
-                                                height: 40,
-                                                width: 200,
-                                              ),
-                                              dropdownStyleData: const DropdownStyleData(
-                                                maxHeight: 200,
-                                              ),
-                                              menuItemStyleData: const MenuItemStyleData(
-                                                height: 40,
-                                              ),
-                                              dropdownSearchData: DropdownSearchData(
-                                                searchController: textEditingController,
-                                                searchInnerWidgetHeight: 50,
-                                                searchInnerWidget: Container(
-                                                  height: 50,
-                                                  padding: const EdgeInsets.only(
-                                                    top: 8,
-                                                    bottom: 4,
-                                                    right: 8,
-                                                    left: 8,
-                                                  ),
-                                                  child: TextFormField(
-                                                    expands: true,
-                                                    maxLines: null,
-                                                    controller: textEditingController,
-                                                    decoration: InputDecoration(
-                                                      isDense: true,
-                                                      contentPadding: const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 8,
-                                                      ),
-                                                      hintText: 'Tìm bãi xe',
-                                                      hintStyle: const TextStyle(fontSize: 12),
-                                                      border: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(8),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                searchMatchFn: (item, searchValue) {
-                                                  if (item is DropdownMenuItem<String>) {
-                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                    String itemId = item.value ?? "";
-                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                    return _dongxeList?.any((viTri) => viTri.id == itemId && viTri.tenDongXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
-                                                  } else {
-                                                    return false;
-                                                  }
-                                                },
-                                              ),
-                                              onMenuStateChange: (isOpen) {
-                                                if (!isOpen) {
-                                                  textEditingController.clear();
-                                                }
-                                              },
-                                            ),
-                                          )),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Container(
-                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                      color: const Color(0xFFBC2925),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 20.w,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF6C6C7),
-                                          border: Border(
-                                            right: BorderSide(
-                                              color: Color(0xFF818180),
-                                              width: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: const Center(
-                                          child: Text(
-                                            "Bãi xe",
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppConfig.textInput,
-                                            ),
-                                          ),
-                                        ),
+    return RefreshIndicator(
+      onRefresh: () async {
+        await getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+      }, // Gọi hàm tải lại dữ liệu
+      child: Container(
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _loading
+                          ? LoadingWidget(context)
+                          : Container(
+                              padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => _selectDate(context),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.blue),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.calendar_today, color: Colors.blue),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            selectedFromDate != null && selectedToDate != null
+                                                ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
+                                                : 'Chọn ngày',
+                                            style: const TextStyle(color: Colors.blue),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                  const Divider(height: 1, color: Color(0xFFA71C20)),
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                  Row(
+                                    children: [
                                       Expanded(
-                                        flex: 1,
                                         child: Container(
                                             padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(5),
+                                              border: Border.all(
+                                                color: const Color(0xFFBC2925),
+                                                width: 1.5,
+                                              ),
+                                            ),
                                             child: DropdownButtonHideUnderline(
                                               child: DropdownButton2<String>(
                                                 isExpanded: true,
-                                                items: _baixeList?.map((item) {
+                                                items: _khoxeList?.map((item) {
                                                   return DropdownMenuItem<String>(
                                                     value: item.id,
                                                     child: Container(
@@ -609,7 +368,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                                       child: SingleChildScrollView(
                                                         scrollDirection: Axis.horizontal,
                                                         child: Text(
-                                                          item.tenBaiXe ?? "",
+                                                          item.tenKhoXe ?? "",
                                                           textAlign: TextAlign.center,
                                                           style: const TextStyle(
                                                             fontFamily: 'Comfortaa',
@@ -622,19 +381,120 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                                     ),
                                                   );
                                                 }).toList(),
-                                                value: BaiXeId,
+                                                value: KhoXeId,
                                                 onChanged: (newValue) {
                                                   setState(() {
-                                                    BaiXeId = newValue;
-                                                    // doiTac_Id = null;
+                                                    KhoXeId = newValue;
                                                   });
-
+                                                  if (newValue != null) {
+                                                    getBaiXeList(newValue);
+                                                    getDataDongXe();
+                                                    getLSNhap(selectedFromDate, selectedToDate, newValue, BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+                                                    print("object : ${newValue}");
+                                                  }
+                                                },
+                                                buttonStyleData: const ButtonStyleData(
+                                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                                  height: 40,
+                                                  width: 200,
+                                                ),
+                                                dropdownStyleData: const DropdownStyleData(
+                                                  maxHeight: 200,
+                                                ),
+                                                menuItemStyleData: const MenuItemStyleData(
+                                                  height: 40,
+                                                ),
+                                                dropdownSearchData: DropdownSearchData(
+                                                  searchController: textEditingController,
+                                                  searchInnerWidgetHeight: 50,
+                                                  searchInnerWidget: Container(
+                                                    height: 50,
+                                                    padding: const EdgeInsets.only(
+                                                      top: 8,
+                                                      bottom: 4,
+                                                      right: 8,
+                                                      left: 8,
+                                                    ),
+                                                    child: TextFormField(
+                                                      expands: true,
+                                                      maxLines: null,
+                                                      controller: textEditingController,
+                                                      decoration: InputDecoration(
+                                                        isDense: true,
+                                                        contentPadding: const EdgeInsets.symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 8,
+                                                        ),
+                                                        hintText: 'Tìm kho xe',
+                                                        hintStyle: const TextStyle(fontSize: 12),
+                                                        border: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  searchMatchFn: (item, searchValue) {
+                                                    if (item is DropdownMenuItem<String>) {
+                                                      // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                      String itemId = item.value ?? "";
+                                                      // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                      return _khoxeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenKhoXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                    } else {
+                                                      return false;
+                                                    }
+                                                  },
+                                                ),
+                                                onMenuStateChange: (isOpen) {
+                                                  if (!isOpen) {
+                                                    textEditingController.clear();
+                                                  }
+                                                },
+                                              ),
+                                            )),
+                                      ),
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(5),
+                                              border: Border.all(
+                                                color: const Color(0xFFBC2925),
+                                                width: 1.5,
+                                              ),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton2<String>(
+                                                isExpanded: true,
+                                                items: _dongxeList?.map((item) {
+                                                  return DropdownMenuItem<String>(
+                                                    value: item.id,
+                                                    child: Container(
+                                                      child: Text(
+                                                        item.tenDongXe ?? "",
+                                                        textAlign: TextAlign.center,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Comfortaa',
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: AppConfig.textInput,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                value: DongXeId,
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    DongXeId = newValue;
+                                                  });
                                                   if (newValue != null) {
                                                     if (newValue == '') {
-                                                      getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", '', DongXeId ?? "", maNhanVienController.text);
+                                                      getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", BaiXeId ?? "", '', maNhanVienController.text);
                                                     } else {
-                                                      getDataDongXe();
-                                                      getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", newValue, DongXeId ?? "", maNhanVienController.text);
+                                                      getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", BaiXeId ?? "", newValue, maNhanVienController.text);
                                                       print("objectcong : ${newValue}");
                                                     }
                                                   }
@@ -671,7 +531,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                                           horizontal: 10,
                                                           vertical: 8,
                                                         ),
-                                                        hintText: 'Tìm dòng xe',
+                                                        hintText: 'Tìm bãi xe',
                                                         hintStyle: const TextStyle(fontSize: 12),
                                                         border: OutlineInputBorder(
                                                           borderRadius: BorderRadius.circular(8),
@@ -684,7 +544,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                                       // Truy cập vào thuộc tính value để lấy ID của ViTriModel
                                                       String itemId = item.value ?? "";
                                                       // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                      return _baixeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenBaiXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                      return _dongxeList?.any((viTri) => viTri.id == itemId && viTri.tenDongXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
                                                     } else {
                                                       return false;
                                                     }
@@ -700,113 +560,258 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                       ),
                                     ],
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Container(
-                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                      color: const Color(0xFFBC2925),
-                                      width: 1.5,
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Container(
+                                    height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: const Color(0xFFBC2925),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 20.w,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFF6C6C7),
+                                            border: Border(
+                                              right: BorderSide(
+                                                color: Color(0xFF818180),
+                                                width: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              "Bãi xe",
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppConfig.textInput,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Container(
+                                              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  items: _baixeList?.map((item) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: item.id,
+                                                      child: Container(
+                                                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                        child: SingleChildScrollView(
+                                                          scrollDirection: Axis.horizontal,
+                                                          child: Text(
+                                                            item.tenBaiXe ?? "",
+                                                            textAlign: TextAlign.center,
+                                                            style: const TextStyle(
+                                                              fontFamily: 'Comfortaa',
+                                                              fontSize: 13,
+                                                              fontWeight: FontWeight.w600,
+                                                              color: AppConfig.textInput,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  value: BaiXeId,
+                                                  onChanged: (newValue) {
+                                                    setState(() {
+                                                      BaiXeId = newValue;
+                                                      // doiTac_Id = null;
+                                                    });
+
+                                                    if (newValue != null) {
+                                                      if (newValue == '') {
+                                                        getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", '', DongXeId ?? "", maNhanVienController.text);
+                                                      } else {
+                                                        getDataDongXe();
+                                                        getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", newValue, DongXeId ?? "", maNhanVienController.text);
+                                                        print("objectcong : ${newValue}");
+                                                      }
+                                                    }
+                                                  },
+                                                  buttonStyleData: const ButtonStyleData(
+                                                    padding: EdgeInsets.symmetric(horizontal: 16),
+                                                    height: 40,
+                                                    width: 200,
+                                                  ),
+                                                  dropdownStyleData: const DropdownStyleData(
+                                                    maxHeight: 200,
+                                                  ),
+                                                  menuItemStyleData: const MenuItemStyleData(
+                                                    height: 40,
+                                                  ),
+                                                  dropdownSearchData: DropdownSearchData(
+                                                    searchController: textEditingController,
+                                                    searchInnerWidgetHeight: 50,
+                                                    searchInnerWidget: Container(
+                                                      height: 50,
+                                                      padding: const EdgeInsets.only(
+                                                        top: 8,
+                                                        bottom: 4,
+                                                        right: 8,
+                                                        left: 8,
+                                                      ),
+                                                      child: TextFormField(
+                                                        expands: true,
+                                                        maxLines: null,
+                                                        controller: textEditingController,
+                                                        decoration: InputDecoration(
+                                                          isDense: true,
+                                                          contentPadding: const EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 8,
+                                                          ),
+                                                          hintText: 'Tìm dòng xe',
+                                                          hintStyle: const TextStyle(fontSize: 12),
+                                                          border: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    searchMatchFn: (item, searchValue) {
+                                                      if (item is DropdownMenuItem<String>) {
+                                                        // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                        String itemId = item.value ?? "";
+                                                        // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                        return _baixeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenBaiXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                      } else {
+                                                        return false;
+                                                      }
+                                                    },
+                                                  ),
+                                                  onMenuStateChange: (isOpen) {
+                                                    if (!isOpen) {
+                                                      textEditingController.clear();
+                                                    }
+                                                  },
+                                                ),
+                                              )),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 30.w,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF6C6C7),
-                                          border: Border(
-                                            right: BorderSide(
-                                              color: Color(0xFF818180),
-                                              width: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: const Center(
-                                          child: Text(
-                                            "Tìm kiếm",
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppConfig.textInput,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
-                                          child: TextField(
-                                            controller: maNhanVienController,
-                                            decoration: const InputDecoration(
-                                              border: InputBorder.none,
-                                              isDense: true,
-                                              hintText: 'Nhập mã nhân viên hoặc tên đầy đủ',
-                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-                                            ),
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.search),
-                                        onPressed: () {
-                                          setState(() {
-                                            _loading = true;
-                                          });
-                                          // Gọi API với từ khóa tìm kiếm
-                                          getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
-                                          setState(() {
-                                            _loading = false;
-                                          });
-                                        },
-                                      ),
-                                    ],
+                                  SizedBox(
+                                    height: 5,
                                   ),
-                                ),
-                                Container(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(
-                                        height: 4,
+                                  Container(
+                                    height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: const Color(0xFFBC2925),
+                                        width: 1.5,
                                       ),
-                                      Text(
-                                        'Tổng số xe đã thực hiện: ${getTotalNumberOfXe()}',
-                                        style: const TextStyle(
-                                          fontFamily: 'Comfortaa',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 30.w,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFF6C6C7),
+                                            border: Border(
+                                              right: BorderSide(
+                                                color: Color(0xFF818180),
+                                                width: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              "Tìm kiếm",
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppConfig.textInput,
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      _buildTableOptions(context),
-                                    ],
+                                        Expanded(
+                                          flex: 1,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                            child: TextField(
+                                              controller: maNhanVienController,
+                                              decoration: const InputDecoration(
+                                                border: InputBorder.none,
+                                                isDense: true,
+                                                hintText: 'Nhập mã nhân viên hoặc tên đầy đủ',
+                                                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                                              ),
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.search),
+                                          onPressed: () {
+                                            setState(() {
+                                              _loading = true;
+                                            });
+                                            // Gọi API với từ khóa tìm kiếm
+                                            getLSNhap(selectedFromDate, selectedToDate, KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+                                            setState(() {
+                                              _loading = false;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  Container(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 4,
+                                        ),
+                                        Text(
+                                          'Tổng số xe đã thực hiện: ${getTotalNumberOfXe()}',
+                                          style: const TextStyle(
+                                            fontFamily: 'Comfortaa',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        _buildTableOptions(context),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

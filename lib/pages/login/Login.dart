@@ -13,61 +13,86 @@ class LoginPage extends StatelessWidget {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: customAppBar(context),
+  //     body: LayoutBuilder(
+  //       builder: (context, constraints) {
+  //         return SingleChildScrollView(
+  //           child: ConstrainedBox(
+  //             constraints: BoxConstraints(
+  //               minHeight: constraints.maxHeight,
+  //             ),
+  //             child: Container(
+  //               color: Color.fromRGBO(246, 198, 199, 0.2),
+  //               width: 100.w,
+  //               height: 100.h,
+  //               child: Column(
+  //                 children: [
+  //                   Container(
+  //                     width: 100.w,
+  //                     height: 100.h,
+  //                     child: Column(
+  //                       children: [
+  //                         CustomLoginForm(),
+  //                         const SizedBox(height: 20),
+  //                         // customTitleLogin('DÀNH CHO KHÁCH HÀNG'),
+  //                         // const SizedBox(height: 20),
+  //                         // Container(
+  //                         //   width: 100.w,
+  //                         //   height: MediaQuery.of(context).size.height / 2,
+  //                         //   color: const Color(0x21428FCA),
+  //                         //   padding: const EdgeInsets.symmetric(horizontal: 50),
+  //                         //   child: Column(
+  //                         //     children: [
+  //                         //       const SizedBox(height: 15),
+  //                         //       customBottom(
+  //                         //         "Tìm hiểu về THILOGI và các Dịch vụ Theo dõi Thông tin Đơn hàng",
+  //                         //       ),
+  //                         //       const SizedBox(height: 30),
+  //                         //       PageIndicator(
+  //                         //         currentPage: currentPage,
+  //                         //         pageCount: pageCount,
+  //                         //       ),
+  //                         //       const SizedBox(height: 20),
+  //                         //       CustomButtonLogin(onPressed: () {
+  //                         //         nextScreen(context, GuessPage());
+  //                         //       }),
+  //                         //     ],
+  //                         //   ),
+  //                         // ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: customAppBar(context),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              width: 100.w,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: Container(
-                width: 100.w,
-                child: Column(
-                  children: [
-                    Container(
-                      width: 100.w,
-                      child: Column(
-                        children: [
-                          CustomLoginForm(),
-                          const SizedBox(height: 20),
-                          customTitleLogin('DÀNH CHO KHÁCH HÀNG'),
-                          const SizedBox(height: 20),
-                          Container(
-                            width: 100.w,
-                            height: MediaQuery.of(context).size.height / 2,
-                            color: const Color(0x21428FCA),
-                            padding: const EdgeInsets.symmetric(horizontal: 50),
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 15),
-                                customBottom(
-                                  "Tìm hiểu về THILOGI và các Dịch vụ Theo dõi Thông tin Đơn hàng",
-                                ),
-                                const SizedBox(height: 30),
-                                PageIndicator(
-                                  currentPage: currentPage,
-                                  pageCount: pageCount,
-                                ),
-                                const SizedBox(height: 20),
-                                CustomButtonLogin(onPressed: () {
-                                  nextScreen(context, GuessPage());
-                                }),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              child: CustomLoginForm(),
             ),
-          );
-        },
+          ),
+          BottomContent(),
+        ],
       ),
     );
   }

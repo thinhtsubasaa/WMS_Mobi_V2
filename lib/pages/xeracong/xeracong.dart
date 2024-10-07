@@ -14,7 +14,17 @@ class XeRaCongPage extends StatelessWidget {
       appBar: customAppBar(context),
       body: Column(
         children: [
-          CustomCard(),
+          // CustomCard(),
+          // Container(
+          //   padding: EdgeInsets.only(left: 8, top: 10),
+          //   alignment: Alignment.topLeft,
+          //   child: BackButton(
+          //     color: Colors.black,
+          //     onPressed: () {
+          //       Navigator.pop(context);
+          //     },
+          //   ),
+          // ),
           Expanded(
             child: Container(
               width: 100.w,

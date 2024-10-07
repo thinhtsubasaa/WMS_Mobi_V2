@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../config/config.dart';
 
 Widget customTitle(String text) {
-  return Text(
+  return SelectableText(
     text.tr(),
     textAlign: TextAlign.center,
     style: TextStyle(

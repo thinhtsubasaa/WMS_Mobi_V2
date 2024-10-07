@@ -197,26 +197,22 @@ class ScanBloc extends ChangeNotifier {
   String? get message => _message;
 
   var headers = {
-    'ApiKey': 'qtsx2023',
+    'ApiKey': 'thilogi2024',
   };
   Future<void> get(BuildContext context, String qrcode) async {
     _data = null;
     _scan = null;
     _isLoading = true;
     try {
-      final http.Response response = await requestHelper
-          .getData('GetDataXeThaPham/GetDuLieuXe?keyword=$qrcode');
+      final http.Response response = await requestHelper.getData('GetDataXeThaPham/GetDuLieuXe_New?keyword=$qrcode');
 
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data2: ${decodedData}");
         if (decodedData != null) {
           List<HuKien> huKienList = [];
-          if (decodedData['phukien'] != null &&
-              decodedData['phukien'] is List) {
-            huKienList = (decodedData['phukien'] as List<dynamic>)
-                .map((item) => HuKien.fromJson(item))
-                .toList();
+          if (decodedData['phukien'] != null && decodedData['phukien'] is List) {
+            huKienList = (decodedData['phukien'] as List<dynamic>).map((item) => HuKien.fromJson(item)).toList();
           }
           print("phu kien: ${decodedData['phukien']}");
           _data = DataModel(
@@ -244,7 +240,19 @@ class ScanBloc extends ChangeNotifier {
           );
         }
       } else {
-        await getData(context, qrcode);
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        if (errorMessage.isEmpty) {
+          errorMessage = "Số khung ${qrcode}  không có thông tin, vui lòng kiểm tra lại!";
+        }
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: errorMessage,
+          confirmBtnText: 'Đồng ý',
+        );
       }
       _isLoading = false;
       notifyListeners();
@@ -263,8 +271,7 @@ class ScanBloc extends ChangeNotifier {
       //     .getData('GetDataXeThaPham/GetDuLieuXe?SoKhung=$qrcode');
 
       final response = await http.get(
-        Uri.parse(
-            "https://qtsxautoapi.thacochulai.vn/api/KhoThanhPham/TraCuuXeThanhPham_Thilogi1?SoKhung=$qrcode"),
+        Uri.parse("https://qtsxauto-wms.thacochulai.vn/api/KhoThanhPham/TraCuuXeThanhPham_Thilogi1?SoKhung=$qrcode"),
         headers: headers,
       );
       print(response.statusCode);
@@ -273,11 +280,8 @@ class ScanBloc extends ChangeNotifier {
         print("data: ${decodedData}");
         if (decodedData != null) {
           List<PhuKien> phuKienList = [];
-          if (decodedData['phuKien'] != null &&
-              decodedData['phuKien'] is List) {
-            phuKienList = (decodedData['phuKien'] as List<dynamic>)
-                .map((item) => PhuKien.fromJson(item))
-                .toList();
+          if (decodedData['phuKien'] != null && decodedData['phuKien'] is List) {
+            phuKienList = (decodedData['phuKien'] as List<dynamic>).map((item) => PhuKien.fromJson(item)).toList();
           }
           _scan = ScanModel(
             key: decodedData["key"],
@@ -311,8 +315,7 @@ class ScanBloc extends ChangeNotifier {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
         if (errorMessage.isEmpty) {
-          errorMessage =
-              "Số khung ${qrcode}  không có thông tin, vui lòng kiểm tra lại!";
+          errorMessage = "Số khung ${qrcode}  không có thông tin, vui lòng kiểm tra lại!";
         }
         QuickAlert.show(
           // ignore: use_build_context_synchronously

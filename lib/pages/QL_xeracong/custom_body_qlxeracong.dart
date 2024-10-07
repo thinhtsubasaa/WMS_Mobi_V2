@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:Thilogi/pages/checkxeracong/check_racong.dart';
 import 'package:Thilogi/pages/login/Login.dart';
 import 'package:Thilogi/pages/lsx_racong/lsx_racong.dart';
 import 'package:Thilogi/pages/qrcode.dart';
@@ -132,6 +133,21 @@ class _BodyQLXeRaCongScreenState extends State<BodyQLXeRaCongScreen> with Ticker
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
+                  if (userHasPermission(menuRoles, 'kiem-tra-xe-len-long-mobi'))
+                    CustomButton(
+                      'KIỂM TRA XE LÊN LỒNG',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_KTXeRaCong_KTXeLenLong.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(CheckXeRaCongPage());
+                      },
+                    ),
                   if (userHasPermission(menuRoles, 'kiem-tra-xe-ra-cong-mobi'))
                     CustomButton(
                       'KIỂM TRA XE RA CỔNG',

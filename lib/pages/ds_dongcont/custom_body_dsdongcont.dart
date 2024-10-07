@@ -86,9 +86,8 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen> with Tick
   }
 
   Widget _buildTableOptions(BuildContext context) {
-    int index = 0; // Biến đếm số thứ tự
-    // _dn?.sort((a, b) => DateTime.parse(b.gioNhan ?? "")
-    //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
+    int index = 0;
+
     const String defaultDate = "1970-01-01 ";
 
     // Sắp xếp danh sách _dn theo giờ nhận mới nhất
@@ -203,7 +202,7 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen> with Tick
   Widget _buildTableCell(String content, {Color textColor = Colors.black}) {
     return Container(
       padding: const EdgeInsets.all(8),
-      child: Text(
+      child: SelectableText(
         content,
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -218,91 +217,96 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen> with Tick
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          const SizedBox(height: 5),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _loading
-                        ? LoadingWidget(context)
-                        : Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Danh sách xe đã đóng',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => _selectDate(context),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.blue),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.calendar_today, color: Colors.blue),
-                                            SizedBox(width: 8),
-                                            Text(
-                                              selectedDate ?? 'Chọn ngày',
-                                              style: TextStyle(color: Colors.blue),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                const Divider(height: 1, color: Color(0xFFA71C20)),
-                                Container(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+    return RefreshIndicator(
+      onRefresh: () async {
+        await getDSXDongCont(selectedDate);
+      }, // Gọi hàm tải lại dữ liệu
+      child: Container(
+        child: Column(
+          children: [
+            const SizedBox(height: 5),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _loading
+                          ? LoadingWidget(context)
+                          : Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      SizedBox(),
-                                      Text(
-                                        'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
-                                        style: const TextStyle(
+                                      const Text(
+                                        'Danh sách xe đã đóng',
+                                        style: TextStyle(
                                           fontFamily: 'Comfortaa',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      _buildTableOptions(context),
+                                      GestureDetector(
+                                        onTap: () => _selectDate(context),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.blue),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.calendar_today, color: Colors.blue),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                selectedDate ?? 'Chọn ngày',
+                                                style: TextStyle(color: Colors.blue),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                ),
-                              ],
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  const Divider(height: 1, color: Color(0xFFA71C20)),
+                                  Container(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(),
+                                        Text(
+                                          'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
+                                          style: const TextStyle(
+                                            fontFamily: 'Comfortaa',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        _buildTableOptions(context),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

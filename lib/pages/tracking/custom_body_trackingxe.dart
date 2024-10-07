@@ -417,8 +417,8 @@ class CustomImage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 80,
+      width: 100,
+      height: 60,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_GiaoXe.png',
         width: 120, // Đảm bảo kích thước không vượt quá Container
@@ -433,8 +433,8 @@ class CustomImage2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 80,
+      width: 100,
+      height: 60,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_VCDuongBo.png',
         fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
@@ -447,8 +447,10 @@ class CustomImage3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 80,
+      // width: 120,
+      // height: 80,
+      width: 100,
+      height: 60,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_LuuBai.png',
         fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
@@ -461,8 +463,8 @@ class CustomImage4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 80,
+      width: 100,
+      height: 60,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_KiemTraNhanXe.png',
         fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
@@ -475,8 +477,8 @@ class CustomImage5 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 80,
+      width: 100,
+      height: 60,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_KhoTrungChuyen.png',
         fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
@@ -489,8 +491,8 @@ class CustomImage6 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 80,
+      width: 100,
+      height: 60,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_VCDuongBien.png',
         fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
@@ -503,8 +505,8 @@ class CustomImage7 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 80,
+      width: 100,
+      height: 60,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_VCDuongBo_1.png',
         fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị
@@ -517,8 +519,8 @@ class CustomImage8 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 80,
+      width: 100,
+      height: 60,
       child: Image.asset(
         'assets/images/A-Tracking3D/A_Tracking_LuuBai_1.png',
         fit: BoxFit.cover, // Hoặc BoxFit.fill tùy thuộc vào cách bạn muốn ảnh được hiển thị

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/dieuchuyen_bloc.dart';
@@ -14,12 +15,15 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -137,51 +141,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
       _handleBarcodeScanResult(barcodeScanResult ?? "");
     });
   }
-
-  // Future<void> _loadSavedValues() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? savedKhoXeId = prefs.getString('B1');
-
-  //   String? savedBaiXeId = prefs.getString('B2');
-
-  //   await getData();
-  //   if (savedKhoXeId != null) {
-  //     setState(() {
-  //       KhoXeId = savedKhoXeId;
-  //     });
-  //     await getBaiXeList(savedKhoXeId);
-  //   }
-
-  //   if (savedBaiXeId != null) {
-  //     setState(() {
-  //       BaiXeId = savedBaiXeId;
-  //     });
-  //     await getViTriList(savedBaiXeId);
-  //   }
-  //   // if (savedViTriId != null) {
-  //   //   if (_vitriList != null &&
-  //   //       _vitriList!.any((item) => item.id == savedViTriId)) {
-  //   //     setState(() {
-  //   //       ViTriId = savedViTriId;
-  //   //     });
-  //   //   } else {
-  //   //     setState(() {
-  //   //       ViTriId = null;
-  //   //     });
-  //   //   }
-  //   // }
-  //   // if (savedViTriId != null) {
-  //   //   setState(() {
-  //   //     ViTriId = savedViTriId;
-  //   //   });
-  //   // }
-  // }
-
-  // Future<void> _saveValues() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString('B1', KhoXeId ?? '');
-  //   await prefs.setString('B2', BaiXeId ?? '');
-  // }
 
   void onKhoXeChanged(String? newValue) {
     setState(() {
@@ -360,30 +319,90 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     }
   }
 
+  // Future imageSelector(BuildContext context, String pickerType) async {
+  //   switch (pickerType) {
+  //     case "gallery":
+
+  //       /// GALLERY IMAGE PICKER
+  //       _pickedFile = await _picker.getImage(source: ImageSource.gallery);
+  //       break;
+
+  //     case "camera":
+
+  //       /// CAMERA CAPTURE CODE
+  //       _pickedFile = await _picker.getImage(source: ImageSource.camera);
+  //       break;
+  //   }
+
+  //   if (_pickedFile != null) {
+  //     setState(() {
+  //       _lstFiles.add(FileItem(
+  //         uploaded: false,
+  //         file: _pickedFile!.path,
+  //         local: true,
+  //         isRemoved: false,
+  //       ));
+  //     });
+  //   }
+  // }
   Future imageSelector(BuildContext context, String pickerType) async {
-    switch (pickerType) {
-      case "gallery":
+    if (pickerType == "gallery") {
+      // Chọn nhiều ảnh từ thư viện
+      List<Asset> resultList = <Asset>[];
 
-        /// GALLERY IMAGE PICKER
-        _pickedFile = await _picker.getImage(source: ImageSource.gallery);
-        break;
+      try {
+        resultList = await MultiImagePicker.pickImages(
+          maxImages: 100, // Số lượng ảnh tối đa bạn có thể chọn
+          enableCamera: false, // Bật tính năng chụp ảnh nếu cần
+          selectedAssets: [], // Các ảnh đã chọn (nếu có)
+          materialOptions: const MaterialOptions(
+            actionBarTitle: "Chọn ảnh",
+            allViewTitle: "Tất cả ảnh",
+            useDetailsView: false,
+            selectCircleStrokeColor: "#000000",
+          ),
+        );
 
-      case "camera":
+        if (resultList.isNotEmpty) {
+          // Thêm các ảnh đã chọn vào danh sách _lstFiles
 
-        /// CAMERA CAPTURE CODE
-        _pickedFile = await _picker.getImage(source: ImageSource.camera);
-        break;
-    }
+          for (var asset in resultList) {
+            ByteData byteData = await asset.getByteData();
+            List<int> imageData = byteData.buffer.asUint8List();
 
-    if (_pickedFile != null) {
-      setState(() {
-        _lstFiles.add(FileItem(
-          uploaded: false,
-          file: _pickedFile!.path,
-          local: true,
-          isRemoved: false,
-        ));
-      });
+            // Lưu ảnh vào thư mục tạm
+            final tempDir = await getTemporaryDirectory();
+            final file = await File('${tempDir.path}/${asset.name}').create();
+            file.writeAsBytesSync(imageData);
+
+            print('file: ${file.path}');
+            setState(() {
+              _lstFiles.add(FileItem(
+                uploaded: false,
+                file: file.path, // Đường dẫn file tạm
+                local: true,
+                isRemoved: false,
+              ));
+            });
+          }
+        }
+      } on Exception catch (e) {
+        print(e);
+      }
+    } else if (pickerType == "camera") {
+      // Sử dụng image_picker để chụp ảnh từ camera
+      _pickedFile = await _picker.getImage(source: ImageSource.camera);
+
+      if (_pickedFile != null) {
+        setState(() {
+          _lstFiles.add(FileItem(
+            uploaded: false,
+            file: _pickedFile!.path,
+            local: true,
+            isRemoved: false,
+          ));
+        });
+      }
     }
   }
 
@@ -507,8 +526,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 880 ? 11.h : 8.h,
-      margin: const EdgeInsets.only(top: 10),
+      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
+      margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
@@ -522,7 +541,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
         children: [
           Container(
             width: 20.w,
-            height: 11.h,
+            height: 10.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
@@ -557,7 +576,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -630,6 +649,50 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
         }
       });
     });
+  }
+
+  Future<File> compressImage(File file) async {
+    setState(() {
+      _loading = true;
+    });
+
+    final bytes = await file.readAsBytes();
+    final String extension = file.path.split('.').last.toLowerCase();
+    CompressFormat format;
+
+    // Xác định định dạng dựa trên phần mở rộng của tệp
+    switch (extension) {
+      case 'png':
+        format = CompressFormat.png; // Định dạng PNG
+        break;
+
+      case 'jpeg':
+        format = CompressFormat.jpeg; // Định dạng JPEG
+        break;
+
+      case 'jpg':
+        format = CompressFormat.jpeg; // Định dạng JPG cũng coi như JPEG
+        break;
+
+      default:
+        throw Exception('Unsupported file format'); // Nếu không hỗ trợ
+    }
+
+    try {
+      final compressedBytes = await FlutterImageCompress.compressWithList(
+        bytes,
+        minWidth: 800,
+        minHeight: 800,
+        quality: 90,
+        format: format, // Sử dụng định dạng đã xác định
+      );
+
+      final newFile = File(file.path)..writeAsBytesSync(compressedBytes);
+      return newFile;
+    } catch (e) {
+      print("Error compressing image: $e"); // Ghi log lỗi
+      return file; // Trả về tệp gốc nếu gặp lỗi
+    }
   }
 
   _onSave() {
@@ -732,25 +795,31 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     for (var fileItem in _lstFiles) {
       if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
         File file = File(fileItem!.file!);
-        var response = await RequestHelper().uploadFile(file);
-        widget.lstFiles.add(CheckSheetFileModel(
-          isRemoved: response["isRemoved"],
-          id: response["id"],
-          fileName: response["fileName"],
-          path: response["path"],
-        ));
-        fileItem.uploaded = true;
-        setState(() {
-          _loading = false;
-        });
-
-        fileItem.uploaded = true;
-
-        if (response["path"] != null) {
-          imageUrls.add(response["path"]);
+        if (file.existsSync()) {
+          file = await compressImage(file);
         }
-        // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
-        //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+        var response = await RequestHelper().uploadFile(file);
+        print("Response: $response");
+        if (response != null) {
+          widget.lstFiles.add(CheckSheetFileModel(
+            isRemoved: response["isRemoved"],
+            id: response["id"],
+            fileName: response["fileName"],
+            path: response["path"],
+          ));
+          fileItem.uploaded = true;
+          setState(() {
+            _loading = false;
+          });
+
+          fileItem.uploaded = true;
+
+          if (response["path"] != null) {
+            imageUrls.add(response["path"]);
+          }
+          // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
+          //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+        }
       }
     }
 
@@ -963,7 +1032,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                                                 ),
                                               ),
                                             ),
-                                            child: Center(
+                                            child: const Center(
                                               child: Text(
                                                 "Kho đến",
                                                 textAlign: TextAlign.left,
@@ -1353,8 +1422,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                               Column(
                                 children: [
                                   Container(
-                                    // margin:
-                                    //     EdgeInsets.only(top: 10, bottom: 10),
                                     child: Column(
                                       children: [
                                         Container(
@@ -1671,7 +1738,7 @@ class Item extends StatelessWidget {
                 color: Color(0xFF818180),
               ),
             ),
-            Text(
+            SelectableText(
               value ?? "",
               style: TextStyle(
                 fontFamily: 'Comfortaa',

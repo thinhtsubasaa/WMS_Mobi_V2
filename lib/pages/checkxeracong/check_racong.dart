@@ -1,4 +1,4 @@
-import 'package:Thilogi/pages/lsx_racong/custom_body_lsxracong.dart';
+import 'package:Thilogi/pages/checkxeracong/custom_body_checkracong.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';
@@ -6,7 +6,7 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-class LSXeRaCongPage extends StatelessWidget {
+class CheckXeRaCongPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,18 +16,28 @@ class LSXeRaCongPage extends StatelessWidget {
         children: [
           // CustomCard(),
           SizedBox(
-            height: 30,
+            height: 20,
           ),
+          // Container(
+          //   padding: EdgeInsets.only(left: 8, top: 10),
+          //   alignment: Alignment.topLeft,
+          //   child: BackButton(
+          //     color: Colors.black,
+          //     onPressed: () {
+          //       Navigator.pop(context);
+          //     },
+          //   ),
+          // ),
           Expanded(
             child: Container(
               width: 100.w,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyLSXRaCong(),
+              child: CustomBodyCheckRaCong(),
             ),
           ),
-          BottomContent(),
+          // BottomContent(),
         ],
       ),
     );
@@ -46,7 +56,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'LỊCH SỬ XE RA CỔNG',
+          'XE RA CỔNG',
         ),
       ),
     );

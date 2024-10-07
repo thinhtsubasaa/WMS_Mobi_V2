@@ -193,7 +193,7 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen> with TickerPr
   Widget _buildTableCell(String content, {Color textColor = Colors.black}) {
     return Container(
       padding: const EdgeInsets.all(8),
-      child: Text(
+      child: SelectableText(
         content,
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -208,93 +208,98 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen> with TickerPr
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          const SizedBox(height: 5),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _loading
-                        ? LoadingWidget(context)
-                        : Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Danh sách xe đã nhập',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => _selectDate(context),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.blue),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Icon(Icons.calendar_today, color: Colors.blue),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              selectedDate ?? 'Chọn ngày',
-                                              style: const TextStyle(color: Colors.blue),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                const Divider(height: 1, color: Color(0xFFA71C20)),
-                                Container(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+    return RefreshIndicator(
+      onRefresh: () async {
+        await getDSXNhapBai(selectedDate);
+      }, // Gọi hàm tải lại dữ liệu
+      child: Container(
+        child: Column(
+          children: [
+            const SizedBox(height: 5),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _loading
+                          ? LoadingWidget(context)
+                          : Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const SizedBox(
-                                        height: 4,
-                                      ),
-                                      Text(
-                                        'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
-                                        style: const TextStyle(
+                                      const Text(
+                                        'Danh sách xe đã nhập',
+                                        style: TextStyle(
                                           fontFamily: 'Comfortaa',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      _buildTableOptions(context),
+                                      GestureDetector(
+                                        onTap: () => _selectDate(context),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.blue),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(Icons.calendar_today, color: Colors.blue),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                selectedDate ?? 'Chọn ngày',
+                                                style: const TextStyle(color: Colors.blue),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                  const Divider(height: 1, color: Color(0xFFA71C20)),
+                                  Container(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 4,
+                                        ),
+                                        Text(
+                                          'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
+                                          style: const TextStyle(
+                                            fontFamily: 'Comfortaa',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        _buildTableOptions(context),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/config/config.dart';
@@ -15,6 +16,8 @@ import 'package:Thilogi/utils/next_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -96,30 +99,91 @@ class _PopUpState extends State<PopUp> with SingleTickerProviderStateMixin, Chan
     super.dispose();
   }
 
+  // Future imageSelector(BuildContext context, String pickerType) async {
+  //   switch (pickerType) {
+  //     case "gallery":
+
+  //       /// GALLERY IMAGE PICKER
+  //       _pickedFile = await _picker.getImage(source: ImageSource.gallery);
+  //       break;
+
+  //     case "camera":
+
+  //       /// CAMERA CAPTURE CODE
+  //       _pickedFile = await _picker.getImage(source: ImageSource.camera);
+  //       break;
+  //   }
+
+  //   if (_pickedFile != null) {
+  //     setState(() {
+  //       _lstFiles.add(FileItem(
+  //         uploaded: false,
+  //         file: _pickedFile!.path,
+  //         local: true,
+  //         isRemoved: false,
+  //       ));
+  //     });
+  //   }
+  // }
+
   Future imageSelector(BuildContext context, String pickerType) async {
-    switch (pickerType) {
-      case "gallery":
+    if (pickerType == "gallery") {
+      // Chọn nhiều ảnh từ thư viện
+      List<Asset> resultList = <Asset>[];
 
-        /// GALLERY IMAGE PICKER
-        _pickedFile = await _picker.getImage(source: ImageSource.gallery);
-        break;
+      try {
+        resultList = await MultiImagePicker.pickImages(
+          maxImages: 100, // Số lượng ảnh tối đa bạn có thể chọn
+          enableCamera: false, // Bật tính năng chụp ảnh nếu cần
+          selectedAssets: [], // Các ảnh đã chọn (nếu có)
+          materialOptions: const MaterialOptions(
+            actionBarTitle: "Chọn ảnh",
+            allViewTitle: "Tất cả ảnh",
+            useDetailsView: false,
+            selectCircleStrokeColor: "#000000",
+          ),
+        );
 
-      case "camera":
+        if (resultList.isNotEmpty) {
+          // Thêm các ảnh đã chọn vào danh sách _lstFiles
 
-        /// CAMERA CAPTURE CODE
-        _pickedFile = await _picker.getImage(source: ImageSource.camera);
-        break;
-    }
+          for (var asset in resultList) {
+            ByteData byteData = await asset.getByteData();
+            List<int> imageData = byteData.buffer.asUint8List();
 
-    if (_pickedFile != null) {
-      setState(() {
-        _lstFiles.add(FileItem(
-          uploaded: false,
-          file: _pickedFile!.path,
-          local: true,
-          isRemoved: false,
-        ));
-      });
+            // Lưu ảnh vào thư mục tạm
+            final tempDir = await getTemporaryDirectory();
+            final file = await File('${tempDir.path}/${asset.name}').create();
+            file.writeAsBytesSync(imageData);
+
+            print('file: ${file.path}');
+            setState(() {
+              _lstFiles.add(FileItem(
+                uploaded: false,
+                file: file.path, // Đường dẫn file tạm
+                local: true,
+                isRemoved: false,
+              ));
+            });
+          }
+        }
+      } on Exception catch (e) {
+        print(e);
+      }
+    } else if (pickerType == "camera") {
+      // Sử dụng image_picker để chụp ảnh từ camera
+      _pickedFile = await _picker.getImage(source: ImageSource.camera);
+
+      if (_pickedFile != null) {
+        setState(() {
+          _lstFiles.add(FileItem(
+            uploaded: false,
+            file: _pickedFile!.path,
+            local: true,
+            isRemoved: false,
+          ));
+        });
+      }
     }
   }
 
@@ -429,6 +493,9 @@ class _PopUpState extends State<PopUp> with SingleTickerProviderStateMixin, Chan
               ),
             ),
             _buildButtons(context),
+            SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),

@@ -52,7 +52,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
     getDSXRaCong(selectedDate, soKhungController.text);
   }
 
-  void getDSXRaCong(String? ngay, String? keyword) async {
+  Future<void> getDSXRaCong(String? ngay, String? keyword) async {
     _dn = [];
     try {
       final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeRaCong?Ngay=$ngay&keyword=$keyword');
@@ -85,7 +85,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
         _loading = false;
       });
       print("Selected Date: $selectedDate");
-      getDSXRaCong(selectedDate, soKhungController.text);
+      await getDSXRaCong(selectedDate, soKhungController.text);
 
       setState(() {
         _loading = false;
@@ -245,7 +245,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
     }
     return Container(
       padding: const EdgeInsets.all(8),
-      child: Text(
+      child: SelectableText(
         content,
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -258,46 +258,6 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
     );
   }
 
-  // Widget _buildTableHinhAnh(String content, {Color textColor = Colors.black}) {
-  //   return Container(
-  //       width: 120,
-  //       height: 120,
-  //       child: Image.network(
-  //         content,
-  //         fit: BoxFit.contain,
-  //       ));
-  // }
-  // Widget _buildTableHinhAnh(String content, {Color textColor = Colors.black}) {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       _showFullImageDialog(content);
-  //     },
-  //     child: Container(
-  //       width: 120,
-  //       height: 120,
-  //       child: Image.network(
-  //         content,
-  //         fit: BoxFit.contain,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // void _showFullImageDialog(String imageUrl) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => Dialog(
-  //       child: Container(
-  //         width: double.infinity,
-  //         height: double.infinity,
-  //         child: PhotoView(
-  //           imageProvider: NetworkImage(imageUrl),
-  //           backgroundDecoration: BoxDecoration(color: Colors.black),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildTableHinhAnh(String content, {Color textColor = Colors.black}) {
     // Tách chuỗi URL thành danh sách các link ảnh
     List<String> imageUrls = content.split(',');
@@ -343,169 +303,174 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          const SizedBox(height: 5),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _loading
-                        ? LoadingWidget(context)
-                        : Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Danh sách xe ra cổng',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => _selectDate(context),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.blue),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Icon(Icons.calendar_today, color: Colors.blue),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              selectedDate ?? 'Chọn ngày',
-                                              style: const TextStyle(color: Colors.blue),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                const Divider(height: 1, color: Color(0xFFA71C20)),
-                                const SizedBox(height: 4),
-                                Container(
-                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                      color: const Color(0xFFBC2925),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Row(
+    return RefreshIndicator(
+      onRefresh: () async {
+        await getDSXRaCong(selectedDate, soKhungController.text);
+      }, // Gọi hàm tải lại dữ liệu
+      child: Container(
+        child: Column(
+          children: [
+            const SizedBox(height: 5),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _loading
+                          ? LoadingWidget(context)
+                          : Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Container(
-                                        width: 30.w,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF6C6C7),
-                                          border: Border(
-                                            right: BorderSide(
-                                              color: Color(0xFF818180),
-                                              width: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: const Center(
-                                          child: Text(
-                                            "Tìm kiếm",
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppConfig.textInput,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
-                                          child: TextField(
-                                            controller: soKhungController,
-                                            decoration: const InputDecoration(
-                                              border: InputBorder.none,
-                                              isDense: true,
-                                              hintText: 'Nhập số khung để tìm kiếm',
-                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-                                            ),
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.search),
-                                        onPressed: () {
-                                          setState(() {
-                                            _loading = true;
-                                          });
-                                          // Gọi API với từ khóa tìm kiếm
-                                          getDSXRaCong(selectedDate, soKhungController.text);
-                                          setState(() {
-                                            _loading = false;
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(
-                                        height: 4,
-                                      ),
-                                      Text(
-                                        'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
-                                        style: const TextStyle(
+                                      const Text(
+                                        'Danh sách xe ra cổng',
+                                        style: TextStyle(
                                           fontFamily: 'Comfortaa',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      _buildTableOptions(context),
+                                      GestureDetector(
+                                        onTap: () => _selectDate(context),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.blue),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(Icons.calendar_today, color: Colors.blue),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                selectedDate ?? 'Chọn ngày',
+                                                style: const TextStyle(color: Colors.blue),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                  const Divider(height: 1, color: Color(0xFFA71C20)),
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: const Color(0xFFBC2925),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 30.w,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFF6C6C7),
+                                            border: Border(
+                                              right: BorderSide(
+                                                color: Color(0xFF818180),
+                                                width: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              "Tìm kiếm",
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppConfig.textInput,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                            child: TextField(
+                                              controller: soKhungController,
+                                              decoration: const InputDecoration(
+                                                border: InputBorder.none,
+                                                isDense: true,
+                                                hintText: 'Nhập số khung để tìm kiếm',
+                                                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                                              ),
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.search),
+                                          onPressed: () {
+                                            setState(() {
+                                              _loading = true;
+                                            });
+                                            // Gọi API với từ khóa tìm kiếm
+                                            getDSXRaCong(selectedDate, soKhungController.text);
+                                            setState(() {
+                                              _loading = false;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 4,
+                                        ),
+                                        Text(
+                                          'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
+                                          style: const TextStyle(
+                                            fontFamily: 'Comfortaa',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        _buildTableOptions(context),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

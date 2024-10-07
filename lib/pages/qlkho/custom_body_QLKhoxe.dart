@@ -1,13 +1,11 @@
 import 'dart:convert';
 
-import 'package:Thilogi/pages/Home.dart';
 import 'package:Thilogi/pages/login/Login.dart';
 import 'package:Thilogi/pages/lscongviec/LSCongviec.dart';
 import 'package:Thilogi/pages/qldongcont/qldongcont.dart';
-import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
-import 'package:Thilogi/pages/tracuu/tracuu.dart';
+
 import 'package:Thilogi/pages/vanchuyen/giaoxe/VanChuyen.dart';
-import 'package:Thilogi/pages/xeracong/xeracong.dart';
+
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -20,12 +18,10 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
-
 import '../../blocs/menu_roles.dart';
 import '../../config/config.dart';
 import '../../models/menurole.dart';
 import '../../widgets/loading.dart';
-import '../webview.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyQLKhoXe extends StatelessWidget {
@@ -305,7 +301,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 40.w,
+      width: 35.w,
       // height: 35.h,
       child: Column(
         children: [

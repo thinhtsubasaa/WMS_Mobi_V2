@@ -1,17 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:typed_data';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/xeracong_bloc.dart';
 import 'package:Thilogi/models/checksheet.dart';
 import 'package:Thilogi/models/lydo.dart';
 import 'package:Thilogi/models/noiden.dart';
 import 'package:Thilogi/models/xeracong.dart';
+import 'package:Thilogi/models/xeraconglist.dart';
 import 'package:Thilogi/pages/lsuxeracong/ls_racong.dart';
 import 'package:Thilogi/utils/delete_dialog.dart';
 import 'package:Thilogi/widgets/custom_title.dart';
+import 'package:Thilogi/widgets/loading_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+
+import 'package:image/image.dart' as img;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -21,6 +28,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -31,6 +40,7 @@ import '../../config/config.dart';
 import '../../services/app_service.dart';
 import '../../utils/next_screen.dart';
 import '../../widgets/loading.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class CustomBodyXeRaCong extends StatelessWidget {
   @override
@@ -50,7 +60,7 @@ class BodyXeRaCongScreen extends StatefulWidget {
   _BodyXeRaCongScreenState createState() => _BodyXeRaCongScreenState();
 }
 
-class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTickerProviderStateMixin, ChangeNotifier {
+class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   String? lat;
@@ -58,14 +68,12 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
   String _qrData = '';
   final _qrDataController = TextEditingController();
   XeRaCongModel? _data;
-
+  List<XeRaCongModel>? _listData;
   bool _loading = false;
 
   String? barcodeScanResult;
   String? viTri;
-
   late XeRaCongBloc _bl;
-
   String? _errorCode;
   String? get errorCode => _errorCode;
 
@@ -93,11 +101,18 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
   List<NoiDenModel>? get noidenList => _noidenList;
   List<LyDoModel>? _lydoList;
   List<LyDoModel>? get lydoList => _lydoList;
+  List<XeRaCongModel>? _xeracongList;
+  List<XeRaCongModel>? get xeracongList => _xeracongList;
   late UserBloc? _ub;
+  XeRaCongListModel? _datalist;
+  String? bienSo;
 
   PickedFile? _pickedFile;
   List<FileItem?> _lstFiles = [];
   final _picker = ImagePicker();
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+  late Animation<double> _opacityAnimation;
 
   @override
   void initState() {
@@ -122,36 +137,84 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
       print(barcodeScanResult);
       _handleBarcodeScanResult(barcodeScanResult ?? "");
     });
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    )..repeat(reverse: true); // Lặp lại
+    // Animation đổi màu
+    // _colorAnimation = ColorTween(
+    //   begin: Colors.redAccent.withOpacity(1), // Màu bắt đầu
+    //   end: Colors.green.withOpacity(1), // Màu kết thúc
+    // ).animate(_controller);
+
+    // Animation điều khiển độ mờ (opacity)
+    _opacityAnimation = Tween<double>(
+      begin: 0.0, // Ẩn hoàn toàn
+      end: 1.0, // Hiện hoàn toàn
+    ).animate(_controller);
   }
 
   Future imageSelector(BuildContext context, String pickerType) async {
-    switch (pickerType) {
-      case "gallery":
+    if (pickerType == "gallery") {
+      // Chọn nhiều ảnh từ thư viện
+      List<Asset> resultList = <Asset>[];
 
-        /// GALLERY IMAGE PICKER
-        _pickedFile = await _picker.getImage(source: ImageSource.gallery);
-        break;
+      try {
+        resultList = await MultiImagePicker.pickImages(
+          maxImages: 300, // Số lượng ảnh tối đa bạn có thể chọn
+          enableCamera: false, // Bật tính năng chụp ảnh nếu cần
+          selectedAssets: [], // Các ảnh đã chọn (nếu có)
+          materialOptions: const MaterialOptions(
+            actionBarTitle: "Chọn ảnh",
+            allViewTitle: "Tất cả ảnh",
+            useDetailsView: false,
+            selectCircleStrokeColor: "#000000",
+          ),
+        );
 
-      case "camera":
+        if (resultList.isNotEmpty) {
+          // Thêm các ảnh đã chọn vào danh sách _lstFiles
 
-        /// CAMERA CAPTURE CODE
-        _pickedFile = await _picker.getImage(source: ImageSource.camera);
-        break;
-    }
+          for (var asset in resultList) {
+            ByteData byteData = await asset.getByteData();
+            List<int> imageData = byteData.buffer.asUint8List();
 
-    if (_pickedFile != null) {
-      setState(() {
-        _lstFiles.add(FileItem(
-          uploaded: false,
-          file: _pickedFile!.path,
-          local: true,
-          isRemoved: false,
-        ));
-      });
+            // Lưu ảnh vào thư mục tạm
+            final tempDir = await getTemporaryDirectory();
+            final file = await File('${tempDir.path}/${asset.name}').create();
+            file.writeAsBytesSync(imageData);
+
+            print('file: ${file.path}');
+            setState(() {
+              _lstFiles.add(FileItem(
+                uploaded: false,
+                file: file.path, // Đường dẫn file tạm
+                local: true,
+                isRemoved: false,
+              ));
+            });
+          }
+        }
+      } on Exception catch (e) {
+        print(e);
+      }
+    } else if (pickerType == "camera") {
+      // Sử dụng image_picker để chụp ảnh từ camera
+      _pickedFile = await _picker.getImage(source: ImageSource.camera);
+
+      if (_pickedFile != null) {
+        setState(() {
+          _lstFiles.add(FileItem(
+            uploaded: false,
+            file: _pickedFile!.path,
+            local: true,
+            isRemoved: false,
+          ));
+        });
+      }
     }
   }
 
-  // Upload image to server and return path(url)
   Future<void> _uploadAnh() async {
     for (var fileItem in _lstFiles) {
       if (fileItem!.uploaded == false && fileItem.isRemoved == false) {
@@ -265,30 +328,70 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
     }
   }
 
+  Future<void> getListXeRaCong(String? BienSo) async {
+    setState(() {
+      _isLoading = true;
+      _xeracongList = []; // Làm sạch danh sách cũ trước khi tải mới
+    });
+    try {
+      final http.Response response = await requestHelper.getData('Kho/GetThongTinXeRaCongList?BienSo=$BienSo');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        if (decodedData != null) {
+          _xeracongList = (decodedData as List).map((item) => XeRaCongModel.fromJson(item)).toList();
+
+          // Gọi setState để cập nhật giao diện
+          setState(() {
+            _loading = false;
+          });
+        }
+      } else {
+        // String errorMessage = response.body.replaceAll('"', '');
+        // notifyListeners();
+        // QuickAlert.show(
+        //   // ignore: use_build_context_synchronously
+        //   context: context,
+        //   type: QuickAlertType.info,
+        //   title: '',
+        //   text: errorMessage,
+        //   confirmBtnText: 'Đồng ý',
+        // );
+        _xeracongList = [];
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+      notifyListeners();
+    }
+  }
+
   @override
   void dispose() {
     _lido.dispose();
     _textController.dispose();
     textEditingController.dispose();
     _noiden.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
-  Future<void> postData(XeRaCongModel scanData, String? nhanvien, String? noiDi, String? noiDen, String? ghiChu, String? maPin, String? liDo, String? file, String? hinhAnh) async {
+  Future<void> postData(String? SoKhung, String? BienSo, String? nhanvien, String? noiDi, String? noiDen, String? ghiChu, String? maPin, String? liDo, String? file, String? hinhAnh) async {
     _isLoading = true;
-
+    XeRaCongModel? scanData;
     try {
       var newScanData = scanData;
-      newScanData.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
-      print("print data: ${newScanData.soKhung}");
-      final http.Response response =
-          await requestHelper.postData('KhoThanhPham/XeRaCong?MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin&LyDo=$liDo&File=$file&HinhAnh=$hinhAnh', newScanData.toJson());
+      newScanData?.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      print("print data: ${newScanData?.soKhung}");
+      final http.Response response = await requestHelper.postData(
+          'KhoThanhPham/XeRaCong?SoKhung=$SoKhung&BienSo=$BienSo&MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin&LyDo=$liDo&File=$file&HinhAnh=$hinhAnh', newScanData?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         notifyListeners();
-        if (_data?.maNhanVien == null || _lido.text != '') {
+        if (_lido.text != '') {
           _btnController.success();
           QuickAlert.show(
             context: context,
@@ -317,6 +420,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
           _noiden.text = 'Thêm mới';
           _lido.text = 'Nhập lý do';
           _qrData = '';
+          _xeracongList = [];
+          _datalist = null;
           _qrDataController.text = '';
           _lstFiles.clear();
           _loading = false;
@@ -346,9 +451,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      // height: 11.h,
-      height: MediaQuery.of(context).size.height < 880 ? 11.h : 8.h,
-      margin: const EdgeInsets.only(top: 10),
+      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
@@ -362,17 +465,17 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
         children: [
           Container(
             width: 20.w,
-            height: 11.h,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
+            height: 10.h,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
               ),
               color: AppConfig.primaryColor,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
-                'Số khung\n(VIN)',
+                'Số khung/Biển số',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
@@ -389,7 +492,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: TextField(
                 controller: _qrDataController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Nhập hoặc quét mã VIN',
                 ),
                 onSubmitted: (value) {
@@ -397,7 +500,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -447,31 +550,152 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
       _loading = true;
       _Iskehoach = false;
       _Isred = false;
+      _xeracongList = [];
+      _datalist = XeRaCongListModel(); // Reset _datalist
+      _listData = [];
     });
     _bl.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
         if (_bl.xeracong == null) {
-          barcodeScanResult = null;
-          _qrData = '';
-          _qrDataController.text = '';
-          _Iskehoach = false;
-          _Isred = false;
+          getListXeRaCong(value).then((_) {
+            setState(() {
+              _qrData = value;
+              _listData = _xeracongList;
+              if (_listData == null || _listData!.isEmpty) {
+                _loading = false;
+                if (value != null && value?.length >= 3 && RegExp(r'[a-zA-Z]').hasMatch(value?[2])) {
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.info,
+                    title: '',
+                    text: 'Biển số: ${value} chưa có thông tin, vui lòng kiểm tra lại ',
+                    confirmBtnText: 'Đồng ý',
+                  );
+                } else {
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.info,
+                    title: '',
+                    text: 'Số khung: ${value} chưa có thông tin, vui lòng kiểm tra lại ',
+                    confirmBtnText: 'Đồng ý',
+                  ); // Thực hiện scan sau khi kiểm tra điều kiện
+                }
+                barcodeScanResult = null;
+                _qrData = '';
+                _qrDataController.text = '';
+                _Iskehoach = false;
+                _Isred = false;
+              } else {
+                var xeracong = _listData?.first;
+
+                if (_datalist == null) {
+                  _datalist = XeRaCongListModel();
+                }
+                _datalist?.tenPhuongThucVanChuyen = xeracong?.tenPhuongThucVanChuyen;
+                _datalist?.benVanChuyen = xeracong?.benVanChuyen;
+                _datalist?.noidi = xeracong?.noidi;
+                _datalist?.noiden = xeracong?.noiden;
+                _datalist?.tenNhanVien = xeracong?.tenNhanVien;
+                _datalist?.sdt = xeracong?.sdt;
+                _datalist?.hinhAnhUrl = xeracong?.hinhAnhUrl;
+                _datalist?.maNhanVien = xeracong?.maNhanVien;
+                _datalist?.soXe = xeracong?.soXe;
+                _datalist?.tencong = xeracong?.tencong;
+                _datalist?.hinhAnhKH = xeracong?.hinhAnhKH;
+                _datalist?.maNhanVienKH = xeracong?.maNhanVienKH;
+                _datalist?.tenNhanVienKH = xeracong?.tenNhanVienKH;
+                _datalist?.sdtKH = xeracong?.sdtKH;
+                _datalist?.soXe = xeracong?.soXe;
+                _datalist?.benVanChuyen = xeracong?.benVanChuyen;
+                _datalist?.isCheck == xeracong?.isCheck;
+
+                _loading = false;
+                _listData = _xeracongList;
+                print("MaNhanVienList: ${_datalist?.maNhanVien}");
+                print("NoiDenList: ${_datalist?.noiden}");
+                print("PTVC: ${_datalist?.tenPhuongThucVanChuyen}");
+                print("NV: ${_datalist?.tenNhanVien}");
+                print("Hình ảnh KH: ${_datalist?.hinhAnhKH}");
+
+                if (xeracong?.maNhanVien == null) {
+                  _Isred = true;
+                }
+                if (xeracong?.noiden == null) {
+                  _Iskehoach = true;
+                }
+              }
+            });
+          });
+        } else {
+          _loading = false;
+          _data = _bl.xeracong;
+          print("MaNhanVien: ${_bl.xeracong?.maNhanVien}");
+          print("NoiDen: ${_bl.xeracong?.noiden}");
+          if (_bl.xeracong?.maNhanVien == null) {
+            _Isred = true;
+          }
+          if (_bl.xeracong?.noiden == null) {
+            _Iskehoach = true;
+          }
         }
-        _loading = false;
-        _data = _bl.xeracong;
-        print("MaNhanVien: ${_bl.xeracong?.maNhanVien}");
-        print("NoiDen: ${_bl.xeracong?.noiden}");
-        if (_bl.xeracong?.maNhanVien == null) {
-          _Isred = true;
-        }
-        if (_bl.xeracong?.noiden == null) {
-          _Iskehoach = true;
-        }
-        print("isred: ${_Isred}");
-        print("iskehoach: ${_Iskehoach}");
       });
     });
+  }
+
+// Hàm chạy trong background isolate
+  // Future<File> compressImage(File file) async {
+  //   setState(() {
+  //     _loading = true;
+  //   });
+  //   final image = img.decodeImage(file.readAsBytesSync());
+  //   final compressedImage = img.encodeJpg(image!, quality: 80);
+  //   final newFile = File(file.path)..writeAsBytesSync(compressedImage);
+
+  //   return newFile;
+  // }
+  Future<File> compressImage(File file) async {
+    setState(() {
+      _loading = true;
+    });
+
+    final bytes = await file.readAsBytes();
+    final String extension = file.path.split('.').last.toLowerCase();
+    CompressFormat format;
+
+    // Xác định định dạng dựa trên phần mở rộng của tệp
+    switch (extension) {
+      case 'png':
+        format = CompressFormat.png; // Định dạng PNG
+        break;
+
+      case 'jpeg':
+        format = CompressFormat.jpeg; // Định dạng JPEG
+        break;
+
+      case 'jpg':
+        format = CompressFormat.jpeg; // Định dạng JPG cũng coi như JPEG
+        break;
+
+      default:
+        throw Exception('Unsupported file format'); // Nếu không hỗ trợ
+    }
+
+    try {
+      final compressedBytes = await FlutterImageCompress.compressWithList(
+        bytes,
+        minWidth: 800,
+        minHeight: 800,
+        quality: 90,
+        format: format, // Sử dụng định dạng đã xác định
+      );
+
+      final newFile = File(file.path)..writeAsBytesSync(compressedBytes);
+      return newFile;
+    } catch (e) {
+      print("Error compressing image: $e"); // Ghi log lỗi
+      return file; // Trả về tệp gốc nếu gặp lỗi
+    }
   }
 
   _onSave() async {
@@ -480,44 +704,32 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
     });
 
     List<String> imageUrls = [];
-
-    // if (_lstFiles.isNotEmpty) {
-    //   for (var fileItem in _lstFiles) {
-    //     if (fileItem?.uploaded == true) {
-    //       // Giả sử rằng bạn đã lấy URL từ phương thức uploadFile
-    //       var response =
-    //           await RequestHelper().uploadFile(File(fileItem!.file!));
-
-    //       String? url = response["path"]; // Lấy URL từ phản hồi
-    //       // String? url = fileItem?.file;
-    //       if (url != null) {
-    //         imageUrls.add(url); // Thêm URL vào danh sách
-    //       }
-    //     }
-    //   }
-    // }
+    // int countNotUploaded = _lstFiles.where((fileItem) => fileItem?.uploaded == false && fileItem?.isRemoved == false).length;
+    // print("Tổng số: ${countNotUploaded}");
     for (var fileItem in _lstFiles) {
       if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
         File file = File(fileItem!.file!);
-        var response = await RequestHelper().uploadFile(file);
-        widget.lstFiles.add(CheckSheetFileModel(
-          isRemoved: response["isRemoved"],
-          id: response["id"],
-          fileName: response["fileName"],
-          path: response["path"],
-        ));
-        fileItem.uploaded = true;
-        // setState(() {
-        //   _loading = false;
-        // });
 
-        fileItem.uploaded = true; // Đánh dấu file đã được upload
-
-        if (response["path"] != null) {
-          imageUrls.add(response["path"]);
+        if (file.existsSync()) {
+          file = await compressImage(file);
         }
-        // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
-        //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+
+        var response = await RequestHelper().uploadFile(file);
+        print("Response: $response");
+        if (response != null) {
+          widget.lstFiles.add(CheckSheetFileModel(
+            isRemoved: response["isRemoved"],
+            id: response["id"],
+            fileName: response["fileName"],
+            path: response["path"],
+          ));
+          fileItem.uploaded = true; // Đánh dấu file đã được upload
+          if (response["path"] != null) {
+            imageUrls.add(response["path"]);
+          }
+          // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
+          //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+        }
       }
     }
 
@@ -565,9 +777,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
 
     AppService().checkInternet().then((hasInternet) {
       if (!hasInternet!) {
-        // openSnackBar(context, 'no internet'.tr());
         QuickAlert.show(
-          // ignore: use_build_context_synchronously
           context: context,
           type: QuickAlertType.error,
           title: 'Thất bại',
@@ -575,7 +785,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postData(_data!, _data?.maNhanVien ?? "", _data?.tencong ?? "", _data?.noiden ?? _noiden.text, _ghiChu.text, _textController.text, _lido.text, _data?.hinhAnh ?? "", _data?.hinhAnhUrl ?? "").then((_) {
+        postData(_data?.soKhung ?? "", _datalist?.soXe, _data?.maNhanVien ?? _datalist?.maNhanVien ?? "", _data?.tencong ?? _datalist?.tencong ?? "", _data?.noiden ?? _datalist?.noiden ?? _noiden.text, _ghiChu.text,
+                _textController.text, _lido.text, imageUrlsString, _data?.hinhAnhUrl ?? _datalist?.hinhAnhUrl ?? "")
+            .then((_) {
           print("loading: ${_loading}");
           setState(() {
             // _data = null;
@@ -585,6 +797,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
             // _lido.text = "";
             // _qrData = '';
             // _qrDataController.text = '';
+            _xeracongList = [];
+            _datalist = null;
             _loading = false;
             _noiden.text = 'Thêm mới';
             _lido.text = 'Nhập lý do';
@@ -1108,6 +1322,23 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                               ),
                             ),
                           ),
+
+                          // RoundedLoadingButton(
+                          //   child: Text(
+                          //     'Đồng ý',
+                          //     style: TextStyle(
+                          //       fontFamily: 'Comfortaa',
+                          //       fontSize: 13,
+                          //       color: Colors.white,
+                          //       fontWeight: FontWeight.w700,
+                          //     ),
+                          //   ),
+                          //   width: 40.w,
+                          //   controller: _btnController, // Controller cho nút
+                          //   color: Colors.green,
+                          //   onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPin(context) : null,
+                          // ),
+
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
@@ -1164,145 +1395,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                               Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: Colors.grey,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: 100.w,
-                                      decoration: const BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight,
-                                          colors: [
-                                            Color(0xFFE96327),
-                                            Color(0xFFBC2925),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(5),
-                                          topRight: Radius.circular(5),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(
-                                            'Thông tin xe ra cổng',
-                                            style: TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.visibility),
-                                            color: Colors.blue,
-                                            onPressed: () {
-                                              nextScreen(context, LSRaCongPage());
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Divider(
-                                      height: 1,
-                                      color: AppConfig.primaryColor,
-                                    ),
-                                    Container(
-                                      child: Column(
-                                        children: [
-                                          Item(
-                                            title: 'Loại xe: ',
-                                            value: _data?.tenSanPham,
-                                          ),
-                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          Item(
-                                            title: 'Số khung: ',
-                                            value: _data?.soKhung,
-                                          ),
-                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          Item(title: 'Màu: ', value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
-                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: _Iskehoach == true ? Colors.red : Colors.grey,
-                                    width: _Iskehoach == true ? 5 : 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 100.w,
-                                      decoration: const BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight,
-                                          colors: [
-                                            Color(0xFFE96327),
-                                            Color(0xFFBC2925),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(5),
-                                          topRight: Radius.circular(5),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Kế hoạch xuất xe',
-                                        style: TextStyle(
-                                          fontFamily: 'Comfortaa',
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                    const Divider(
-                                      height: 1,
-                                      color: AppConfig.primaryColor,
-                                    ),
-                                    Container(
-                                      child: Column(
-                                        children: [
-                                          Item(
-                                            title: 'Phương thức vận chuyển: ',
-                                            value: _data?.tenPhuongThucVanChuyen,
-                                          ),
-                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          Item(
-                                            title: 'Nơi đi: ',
-                                            value: _data?.noidi,
-                                          ),
-                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          Item(
-                                            title: 'Nơi đến: ',
-                                            value: _data?.noiden,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
                                     color: _Isred == true ? Colors.red : Colors.grey,
                                     width: _Isred == true ? 5 : 2,
                                   ),
@@ -1327,14 +1419,26 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                                           topRight: Radius.circular(5),
                                         ),
                                       ),
-                                      child: const Text(
-                                        'Thông tin lái xe ra cổng',
-                                        style: TextStyle(
-                                          fontFamily: 'Comfortaa',
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                        ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Text(
+                                            'Thông tin lái xe ra cổng',
+                                            style: TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.visibility),
+                                            color: Colors.blue,
+                                            onPressed: () {
+                                              nextScreen(context, LSRaCongPage());
+                                            },
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     const Divider(
@@ -1350,19 +1454,35 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                                             Container(
                                               width: 120,
                                               height: 120,
-                                              child: _data?.hinhAnhUrl != null
-                                                  ? Image.network(
-                                                      _data?.hinhAnhUrl ?? "",
-                                                      fit: BoxFit.contain,
-                                                    )
-                                                  : Image.network(
-                                                      AppConfig.defaultImage,
-                                                      fit: BoxFit.contain,
-                                                    ),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  // Hiển thị hộp thoại để phóng to ảnh
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return Dialog(
+                                                        child: InteractiveViewer(
+                                                          panEnabled: true, // Cho phép kéo ảnh
+                                                          minScale: 1.0, // Tỉ lệ thu nhỏ tối thiểu
+                                                          maxScale: 4.0, // Tỉ lệ phóng to tối đa
+                                                          child: Image.network(
+                                                            _data?.hinhAnhKH ?? _datalist?.hinhAnhUrl ?? AppConfig.defaultImage,
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Image.network(
+                                                  _data?.hinhAnhKH ?? _datalist?.hinhAnhUrl ?? AppConfig.defaultImage,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
                                             ),
                                             ItemTaiXe(
                                               title: 'Mã tài xế: ',
-                                              value: _data?.maNhanVien,
+                                              value: _data?.maNhanVien ?? _datalist?.maNhanVien,
                                             ),
                                           ],
                                         ),
@@ -1371,24 +1491,28 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               ItemTaiXe(
+                                                title: 'Bên vận chuyển: ',
+                                                value: _data?.benVanChuyen ?? _datalist?.benVanChuyen,
+                                              ),
+                                              ItemTaiXe(
+                                                title: 'Biển số: ',
+                                                value: _data?.soXe ?? _datalist?.soXe,
+                                              ),
+                                              ItemTaiXe(
                                                 title: 'Tên tài xế: ',
-                                                value: _data?.tenNhanVien,
+                                                value: _data?.tenNhanVien ?? _datalist?.tenNhanVien,
                                               ),
                                               const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                               ItemTaiXe(
                                                 title: 'SDT: ',
-                                                value: _data?.sdt,
+                                                value: _data?.sdt ?? _datalist?.sdt,
                                               ),
-                                              // ItemTaiXe(
-                                              //   title: 'Nơi đi: ',
-                                              //   value: _data?.noiditaixe,
-                                              // ),
                                               Container(
                                                 height: 7.h,
                                                 child: Row(
                                                   children: [
                                                     Container(
-                                                      child: Text(
+                                                      child: const Text(
                                                         'Nơi đi: ',
                                                         style: TextStyle(
                                                           fontFamily: 'Comfortaa',
@@ -1403,9 +1527,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                                                       child: SingleChildScrollView(
                                                         scrollDirection: Axis.horizontal,
                                                         child: Text(
-                                                          _data?.noiditaixe ?? '',
+                                                          _data?.noiditaixe ?? _datalist?.noiditaixe ?? "",
                                                           textAlign: TextAlign.left,
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                             fontFamily: 'Comfortaa',
                                                             fontSize: 12,
                                                             fontWeight: FontWeight.w700,
@@ -1417,10 +1541,10 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                                                   ],
                                                 ),
                                               ),
-                                              _data?.noiden != null
+                                              (_data?.noiden != null || _datalist?.noiden != null)
                                                   ? ItemTaiXe(
                                                       title: 'Nơi đến: ',
-                                                      value: _data?.noiden,
+                                                      value: _data?.noiden ?? _datalist?.noiden,
                                                     )
                                                   : Container(
                                                       width: 56.w,
@@ -1566,6 +1690,176 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 4),
+                              _xeracongList != null && _xeracongList!.isNotEmpty
+                                  ? Container(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Tổng số xe thành phẩm: ${_xeracongList?.length.toString()}',
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              color: Colors.red,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal, // Lướt theo chiều ngang
+                                            child: Row(
+                                              children: _xeracongList!.map((xe) => buildXeCard(xe, context)).toList(), // Duyệt danh sách xe
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            width: 100.w,
+                                            decoration: const BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.centerLeft,
+                                                end: Alignment.centerRight,
+                                                colors: [
+                                                  Color(0xFFE96327),
+                                                  Color(0xFFBC2925),
+                                                ],
+                                              ),
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(5),
+                                                topRight: Radius.circular(5),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              'Thông tin xe ra cổng',
+                                              style: TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ),
+                                          const Divider(
+                                            height: 1,
+                                            color: AppConfig.primaryColor,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  height: 30.h,
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      ItemLX(
+                                                        value: _data?.tenSanPham ?? "",
+                                                      ),
+                                                      Item(
+                                                        value: _data?.soKhung ?? "",
+                                                      ),
+                                                      Item(value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 1, // Độ rộng của đường phân chia
+                                                height: 30.h, // Chiều cao tương đương với chiều cao của các cột
+                                                color: const Color(0xFFCCCCCC), // Màu của đường phân chia
+                                              ),
+                                              _data == null
+                                                  ? Expanded(
+                                                      child: Container(
+                                                        height: 30.h,
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Item(
+                                                              value: _data?.tenPhuongThucVanChuyen ?? "",
+                                                            ),
+                                                            Item(
+                                                              value: _data?.noidi ?? "",
+                                                            ),
+                                                            Item(
+                                                              value: _data?.noiden ?? "",
+                                                            ),
+                                                            Item(
+                                                              value: _data?.tenNhanVienKH ?? "",
+                                                            ),
+                                                            Item(
+                                                              value: _data?.maNhanVienKH ?? "",
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : _data?.noiden != null
+                                                      ? Expanded(
+                                                          child: Container(
+                                                            height: 30.h,
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Item(
+                                                                  value: _data?.tenPhuongThucVanChuyen ?? "",
+                                                                ),
+                                                                Item(
+                                                                  value: _data?.noidi ?? "",
+                                                                ),
+                                                                Item(
+                                                                  value: _data?.noiden ?? "",
+                                                                ),
+                                                                Item(
+                                                                  value: _data?.tenNhanVienKH ?? "",
+                                                                ),
+                                                                Item(
+                                                                  value: _data?.maNhanVienKH ?? "",
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : Expanded(
+                                                          child: Container(
+                                                            height: 30.h,
+                                                            child: AnimatedBuilder(
+                                                              animation: _controller, // Sử dụng chung controller cho cả hai animation
+                                                              builder: (context, child) {
+                                                                return Opacity(
+                                                                  opacity: _opacityAnimation.value, // Điều chỉnh độ mờ (nhấp nháy ẩn/hiện)
+                                                                  child: const Text(
+                                                                    'Xe này không có kế hoạch xuất kho',
+                                                                    style: TextStyle(
+                                                                      fontFamily: 'Comfortaa',
+                                                                      fontSize: 18,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      color: AppConfig.primaryColor, // Đổi màu chữ
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                              const SizedBox(height: 5),
+
                               ItemGhiChu(
                                 title: 'Ghi chú của bảo vệ: ',
                                 controller: _ghiChu,
@@ -1604,20 +1898,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                                               label: const Text(""),
                                             ),
                                             const SizedBox(width: 10),
-                                            // ElevatedButton.icon(
-                                            //   style: ElevatedButton.styleFrom(
-                                            //     backgroundColor:
-                                            //         Color(0xFF00B528),
-                                            //   ),
-                                            //   onPressed: (_loading ||
-                                            //           _allowUploadFile() ==
-                                            //               false)
-                                            //       ? null
-                                            //       : () => _uploadAnh(),
-                                            //   icon: const Icon(
-                                            //       Icons.cloud_upload),
-                                            //   label: const Text("Tải ảnh"),
-                                            // ),
                                           ],
                                         ),
                                       ),
@@ -1709,17 +1989,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(35.0),
                       ),
-                      minimumSize: Size(200, 50), // Kích thước tối thiểu của button
+                      minimumSize: Size(200, 50),
                     ),
-                    // onPressed: _data?.maNhanVien != null
-                    //     ? () async {
-                    //         if (!_loading && _allowUploadFile()) {
-                    //           await _uploadAnh(); // Thực hiện hành động upload ảnh
-                    //         }
-                    //         _showConfirmationDialogXacNhan(context);
-                    //       }
-                    //     : null,
-                    onPressed: _data?.maNhanVien != null ? () => _showConfirmationDialogXacNhan(context) : null,
+                    onPressed: (_data?.maNhanVien != null || _datalist?.maNhanVien != null) ? () => _showConfirmationDialogXacNhan(context) : null,
                     child: const Text(
                       'Xác nhận',
                       style: TextStyle(
@@ -1743,16 +2015,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                   ),
                   color: Colors.red,
                   controller: _btnController,
-                  // onPressed: _data?.soKhung != null
-                  //     ? () async {
-                  //         if (!_loading && _allowUploadFile()) {
-                  //           await _uploadAnh();
-                  //         }
-                  //         _showConfirmationDialogTuChoi(
-                  //             context);
-                  //       }
-                  //     : null,
-                  onPressed: _data?.soKhung != null ? () => _showConfirmationDialogTuChoi(context) : null,
+                  onPressed: (_data?.soKhung != null || _datalist?.soXe != null) ? () => _showConfirmationDialogTuChoi(context) : null,
                 ),
               )
             ],
@@ -1774,46 +2037,278 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
   }
 }
 
-class Item extends StatelessWidget {
-  final String title;
+Widget buildXeCard(XeRaCongModel? xe, BuildContext context) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 4),
+    width: 100.w,
+    decoration: BoxDecoration(
+      border: Border.all(
+        color: xe == null
+            ? Colors.grey // Mặc định nếu chưa có dữ liệu
+            : xe.isCheck == true
+                ? Colors.green // Nếu isCheck == true thì xanh lá
+                : Colors.red, // Nếu isCheck == false thì màu đỏ
+        width: xe != null ? 10 : 2,
+      ),
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 100.w,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Color(0xFFE96327),
+                Color(0xFFBC2925),
+              ],
+            ),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(5),
+              topRight: Radius.circular(5),
+            ),
+          ),
+          child: const Text(
+            'Thông tin xe ra cổng',
+            style: TextStyle(
+              fontFamily: 'Comfortaa',
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        const Divider(
+          height: 1,
+          color: AppConfig.primaryColor,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 30.h,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ItemLX(
+                      value: xe?.tenSanPham ?? "",
+                    ),
+                    Item(
+                      value: xe?.soKhung ?? "",
+                    ),
+                    Item(value: xe != null ? (xe?.tenMau != null && xe?.maMau != null ? "${xe?.tenMau} (${xe?.maMau})" : "") : ""),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: 1, // Độ rộng của đường phân chia
+              height: 30.h, // Chiều cao tương đương với chiều cao của các cột
+              color: const Color(0xFFCCCCCC), // Màu của đường phân chia
+            ),
+            Expanded(
+              child: Container(
+                height: 30.h,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Item(
+                      value: xe?.tenPhuongThucVanChuyen ?? "",
+                    ),
+                    Item(
+                      value: xe?.noidi ?? "",
+                    ),
+                    Item(
+                      value: xe?.noiden ?? "",
+                    ),
+                    xe?.maNhanVienKH != null
+                        ? Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Container(
+                              //   width: 11.h,
+                              //   height: 13.h,
+                              //   child: (xe?.hinhAnhKH != null)
+                              //       ? Image.network(
+                              //           xe?.hinhAnhKH ?? "",
+                              //           fit: BoxFit.contain,
+                              //         )
+                              //       : Image.network(
+                              //           AppConfig.defaultImage,
+                              //           fit: BoxFit.contain,
+                              //         ),
+                              // ),
+                              Container(
+                                width: 11.h,
+                                height: 13.h,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    // Hiển thị hộp thoại để phóng to ảnh
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          child: InteractiveViewer(
+                                            panEnabled: true, // Cho phép kéo ảnh
+                                            minScale: 1.0, // Tỉ lệ thu nhỏ tối thiểu
+                                            maxScale: 4.0, // Tỉ lệ phóng to tối đa
+                                            child: Image.network(
+                                              xe?.hinhAnhKH ?? AppConfig.defaultImage,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Image.network(
+                                    xe?.hinhAnhKH ?? AppConfig.defaultImage,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                ItemLXKH(
+                                  value: xe?.tenNhanVienKH ?? "",
+                                ),
+                                ItemLXKH(
+                                  value: xe?.maNhanVienKH ?? "",
+                                ),
+                              ]),
+                            ],
+                          )
+                        : Icon(
+                            Icons.close,
+                            color: Colors.red, // Bạn có thể đổi thành màu cảnh báo khác như Colors.yellow
+                            size: 13.h, // Kích thước biểu tượng
+                          ),
+                    // Icon(
+                    //       Icons.warning,
+                    //       color: Colors.orange,
+                    //       size: 30.0,
+                    //     ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+class ItemLX extends StatelessWidget {
   final String? value;
 
-  const Item({
+  const ItemLX({
     Key? key,
-    required this.title,
     this.value,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 7.h,
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      child: Center(
-        child: Row(
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontFamily: 'Comfortaa',
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF818180),
-              ),
+      height: 6.h,
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.70),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Center(
+          child: SelectableText(
+            value ?? "",
+            style: const TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: AppConfig.primaryColor,
             ),
-            Text(
-              value ?? "",
-              style: TextStyle(
-                fontFamily: 'Comfortaa',
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: AppConfig.primaryColor,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
+  }
+}
+
+class Item extends StatelessWidget {
+  final String? value;
+
+  const Item({
+    Key? key,
+    this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 5.h,
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Center(
+          child: SelectableText(
+            value ?? "",
+            style: const TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: AppConfig.primaryColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ItemLXKH extends StatelessWidget {
+  final String? value;
+
+  const ItemLXKH({
+    Key? key,
+    this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 5.h,
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.30),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Center(
+          child: SelectableText(
+            value ?? "",
+            style: const TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: AppConfig.primaryColor,
+            ),
+          ),
+        ),
+      ),
+    );
+    // Container(
+    //   height: 5.h,
+    //   child: Center(
+    //     child: Row(
+    //       children: [
+    //         Text(
+    //           value ?? "",
+    //           style: const TextStyle(
+    //             fontFamily: 'Comfortaa',
+    //             fontSize: 12,
+    //             fontWeight: FontWeight.w700,
+    //             color: AppConfig.primaryColor,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }
 
@@ -1830,12 +2325,12 @@ class ItemTaiXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 7.h,
+      height: 6.h,
       child: Row(
         children: [
-          Text(
+          SelectableText(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -1844,7 +2339,7 @@ class ItemTaiXe extends StatelessWidget {
           ),
           Text(
             value ?? "",
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -1873,7 +2368,7 @@ class ItemTaiXeNoiDen extends StatelessWidget {
       height: 7.h,
       child: Row(
         children: [
-          Text(
+          SelectableText(
             title,
             style: TextStyle(
               fontFamily: 'Comfortaa',
@@ -1926,7 +2421,7 @@ class ItemNoiden extends StatelessWidget {
       child: Center(
         child: Row(
           children: [
-            Text(
+            SelectableText(
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
@@ -1976,7 +2471,7 @@ class ItemGhiChu extends StatelessWidget {
       child: Center(
         child: Row(
           children: [
-            Text(
+            SelectableText(
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',

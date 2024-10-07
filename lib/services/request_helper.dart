@@ -89,19 +89,19 @@ class RequestHelper {
     await _getInfo();
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      http.MultipartRequest request = http.MultipartRequest("POST",
-          Uri.parse('${sp.getString('apiUrl')}/api/upload/UpLoadLichSu'));
+      http.MultipartRequest request = http.MultipartRequest("POST", Uri.parse('${sp.getString('apiUrl')}/api/upload/UpLoadLichSu'));
       request.headers.addAll(_setHeaders());
-      http.MultipartFile multipartFile =
-          await http.MultipartFile.fromPath('file', file.path);
+      http.MultipartFile multipartFile = await http.MultipartFile.fromPath('file', file.path);
       request.files.add(multipartFile);
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
+      } else {
+        throw Exception('Upload failed with status code: ${response.body}');
       }
     } catch (e) {
-      return null;
+      print('Error: ${e.toString()}');
     }
   }
 
@@ -109,11 +109,9 @@ class RequestHelper {
     await _getInfo();
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      http.MultipartRequest request = http.MultipartRequest("POST",
-          Uri.parse('${sp.getString('apiUrl')}/api/upload/UpLoadAvatar'));
+      http.MultipartRequest request = http.MultipartRequest("POST", Uri.parse('${sp.getString('apiUrl')}/api/upload/UpLoadAvatar'));
       request.headers.addAll(_setHeaders());
-      http.MultipartFile multipartFile =
-          await http.MultipartFile.fromPath('file', file.path);
+      http.MultipartFile multipartFile = await http.MultipartFile.fromPath('file', file.path);
       request.files.add(multipartFile);
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
@@ -127,15 +125,13 @@ class RequestHelper {
 
   postData(endpoint, data) async {
     await _getInfo();
-    var response = await http.post(Uri.parse(API + endpoint),
-        body: jsonEncode(data), headers: _setHeaders());
+    var response = await http.post(Uri.parse(API + endpoint), body: jsonEncode(data), headers: _setHeaders());
     return response;
   }
 
   getData(endpoint) async {
     await _getInfo();
-    var response =
-        await http.get(Uri.parse(API + endpoint), headers: _setHeaders());
+    var response = await http.get(Uri.parse(API + endpoint), headers: _setHeaders());
     return response;
   }
 
