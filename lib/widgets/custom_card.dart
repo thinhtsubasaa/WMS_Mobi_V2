@@ -17,7 +17,8 @@ class CustomCard extends StatefulWidget {
   State<CustomCard> createState() => _CustomCardState();
 }
 
-class _CustomCardState extends State<CustomCard> with SingleTickerProviderStateMixin {
+class _CustomCardState extends State<CustomCard>
+    with SingleTickerProviderStateMixin {
   late UserBloc? _ub;
 
   @override
@@ -51,7 +52,7 @@ class _CustomCardState extends State<CustomCard> with SingleTickerProviderStateM
               'A-WMS',
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 21.sp,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -66,7 +67,6 @@ class _CustomCardState extends State<CustomCard> with SingleTickerProviderStateM
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
-                      size: 40,
                     ),
                   ),
                 ),
@@ -77,7 +77,7 @@ class _CustomCardState extends State<CustomCard> with SingleTickerProviderStateM
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'Comfortaa',
-                      fontSize: 11.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -135,7 +135,6 @@ class _CustomCardState extends State<CustomCard> with SingleTickerProviderStateM
                     icon: Icon(
                       Icons.arrow_drop_down,
                       color: Colors.white,
-                      size: 40,
                     ),
                   ),
                 ),
@@ -155,7 +154,8 @@ class CustomCardBms extends StatefulWidget {
   State<CustomCardBms> createState() => _CustomCardBmsState();
 }
 
-class _CustomCardBmsState extends State<CustomCardBms> with SingleTickerProviderStateMixin {
+class _CustomCardBmsState extends State<CustomCardBms>
+    with SingleTickerProviderStateMixin {
   late UserBloc? _ub;
 
   @override

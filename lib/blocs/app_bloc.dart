@@ -7,8 +7,8 @@ import '../models/scan.dart';
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
-  // String _apiUrl = "https://10.17.41.182:5001";
-  String _apiUrl = "https://apiwms.thilogi.vn";
+  String _apiUrl = "https://10.17.41.182:5001";
+  // String _apiUrl = "https://apiwms.thilogi.vn";
 
   String get apiUrl => _apiUrl;
 

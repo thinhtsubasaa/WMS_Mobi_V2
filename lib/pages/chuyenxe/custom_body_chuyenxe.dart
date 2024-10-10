@@ -721,6 +721,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     _data?.ngayNhapKhoView = _bl.dieuchuyen?.ngayNhapKhoView;
     _data?.tenTaiXe = _bl.dieuchuyen?.tenTaiXe;
     _data?.ghiChu = _ghiChu.text;
+    _data?.donVi = _bl.dieuchuyen?.donVi;
 
     _data?.thoiGianKetThuc = _bl.dieuchuyen?.thoiGianKetThuc;
 
@@ -844,6 +845,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     _data?.ghiChu = _ghiChu.text;
     _data?.thoiGianBatDau = _bl.dieuchuyen?.thoiGianBatDau;
     _data?.hinhAnh == imageUrlsString;
+    _data?.donVi = _bl.dieuchuyen?.donVi;
 
     // Get location here
     Geolocator.getCurrentPosition(
@@ -1424,13 +1426,23 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                                   Container(
                                     child: Column(
                                       children: [
+                                        Item(
+                                          title: 'Số khung: ',
+                                          value: _data?.soKhung,
+                                        ),
+                                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                        Item(
+                                          title: 'Đơn vị vận chuyển: ',
+                                          value: _data?.donVi,
+                                        ),
+                                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                         Container(
                                           height: 7.h,
                                           child: Row(
                                             children: [
                                               Container(
                                                 padding: EdgeInsets.only(left: 10),
-                                                child: Text(
+                                                child: const Text(
                                                   'Loại xe: ',
                                                   style: TextStyle(
                                                     fontFamily: 'Comfortaa',
@@ -1458,11 +1470,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                        Item(
-                                          title: 'Số khung: ',
-                                          value: _data?.soKhung,
                                         ),
                                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                         Item(

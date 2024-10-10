@@ -493,9 +493,6 @@ class _PopUpState extends State<PopUp> with SingleTickerProviderStateMixin, Chan
               ),
             ),
             _buildButtons(context),
-            SizedBox(
-              height: 40,
-            )
           ],
         ),
       ),

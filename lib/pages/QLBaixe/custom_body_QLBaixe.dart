@@ -255,7 +255,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 32.w,
+      width: 35.w,
       child: Column(
         children: [
           Container(
@@ -284,7 +284,7 @@ Widget CustomButtonRutXe(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 32.w,
+      width: 35.w,
       child: Column(
         children: [
           Container(

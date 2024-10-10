@@ -28,6 +28,7 @@ class DieuChuyenModel {
   String? thoiGianBatDau;
   String? thoiGianKetThuc;
   String? nguoiPhuTrach;
+  String? donVi;
   bool? dangDiChuyen;
 
   DieuChuyenModel(
@@ -60,41 +61,42 @@ class DieuChuyenModel {
       this.thoiGianKetThuc,
       this.dangDiChuyen,
       this.nguoiPhuTrach,
+      this.donVi,
       this.hinhAnh});
 
   factory DieuChuyenModel.fromJson(Map<String, dynamic> json) {
     return DieuChuyenModel(
-      key: json["key"],
-      id: json["id"],
-      soKhung: json["soKhung"],
-      maSanPham: json["maSanPham"],
-      tenSanPham: json["tenSanPham"],
-      soMay: json["soMay"],
-      maMau: json["maMau"],
-      tenMau: json["tenMau"],
-      tenKho: json["tenKho"],
-      maViTri: json["maViTri"],
-      tenViTri: json["tenViTr"],
-      mauSon: json["mauSon"],
-      ngayNhapKhoView: json["ngayNhapKhoView"],
-      tenTaiXe: json["tenTaiXe"],
-      ghiChu: json["ghiChu"],
-      maKho: json["maKho"],
-      khoDen_Id: json["khoDen_Id"],
-      baiXe_Id: json["baiXe_Id"],
-      viTri_Id: json["viTri_Id"],
-      tenBaiXe: json["tenBaiXe"],
-      taiXe_Id: json["taiXe_Id"],
-      lat: json["lat"],
-      long: json["long"],
-      viTri: json["viTri"],
-      toaDo: json["toaDo"],
-      thoiGianBatDau: json["thoiGianBatDau"],
-      thoiGianKetThuc: json["thoiGianKetThuc"],
-      dangDiChuyen: json["dangDiChuyen"],
-      nguoiPhuTrach: json["nguoiPhuTrach"],
-      hinhAnh: json["hinhAnh"],
-    );
+        key: json["key"],
+        id: json["id"],
+        soKhung: json["soKhung"],
+        maSanPham: json["maSanPham"],
+        tenSanPham: json["tenSanPham"],
+        soMay: json["soMay"],
+        maMau: json["maMau"],
+        tenMau: json["tenMau"],
+        tenKho: json["tenKho"],
+        maViTri: json["maViTri"],
+        tenViTri: json["tenViTr"],
+        mauSon: json["mauSon"],
+        ngayNhapKhoView: json["ngayNhapKhoView"],
+        tenTaiXe: json["tenTaiXe"],
+        ghiChu: json["ghiChu"],
+        maKho: json["maKho"],
+        khoDen_Id: json["khoDen_Id"],
+        baiXe_Id: json["baiXe_Id"],
+        viTri_Id: json["viTri_Id"],
+        tenBaiXe: json["tenBaiXe"],
+        taiXe_Id: json["taiXe_Id"],
+        lat: json["lat"],
+        long: json["long"],
+        viTri: json["viTri"],
+        toaDo: json["toaDo"],
+        thoiGianBatDau: json["thoiGianBatDau"],
+        thoiGianKetThuc: json["thoiGianKetThuc"],
+        dangDiChuyen: json["dangDiChuyen"],
+        nguoiPhuTrach: json["nguoiPhuTrach"],
+        hinhAnh: json["hinhAnh"],
+        donVi: json["donVi"]);
   }
   Map<String, dynamic> toJson() => {
         'key': key,
@@ -120,6 +122,7 @@ class DieuChuyenModel {
         "long": long,
         "viTri": viTri,
         "toaDo": toaDo,
-        "hinhAnh": hinhAnh
+        "hinhAnh": hinhAnh,
+        "donVi": donVi,
       };
 }

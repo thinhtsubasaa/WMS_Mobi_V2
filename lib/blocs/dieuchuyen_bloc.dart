@@ -30,8 +30,7 @@ class DieuChuyenBloc extends ChangeNotifier {
     _isLoading = true;
     _dieuchuyen = null;
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetSoKhungDieuchuyenmobi?SoKhung=$qrcode');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetSoKhungDieuchuyenmobi?SoKhung=$qrcode');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
@@ -63,6 +62,7 @@ class DieuChuyenBloc extends ChangeNotifier {
             thoiGianKetThuc: decodedData['thoiGianKetThuc'],
             dangDiChuyen: decodedData['dangDiChuyen'],
             hinhAnh: decodedData['hinhAnh'],
+            donVi: decodedData['donVi'],
           );
         }
       } else {

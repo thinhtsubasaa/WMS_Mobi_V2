@@ -622,6 +622,7 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
           BaiXeId ?? "",
           maNhanVienController.text,
         );
+        _dn = [];
       }, // Gọi hàm tải lại dữ liệu
       child: Container(
         child: Column(
@@ -1221,7 +1222,7 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
                                           height: 4,
                                         ),
                                         Text(
-                                          'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ""}',
+                                          'Tổng số xe đã thực hiện: ${_dn != null && _dn!.isNotEmpty ? _dn?.where((xe) => xe.isCheck == true).length.toString() : "0"}/${_dn != null ? _dn?.length.toString() : "0"}',
                                           style: const TextStyle(
                                             fontFamily: 'Comfortaa',
                                             fontSize: 16,

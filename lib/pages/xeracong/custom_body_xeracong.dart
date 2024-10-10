@@ -15,6 +15,7 @@ import 'package:Thilogi/utils/delete_dialog.dart';
 import 'package:Thilogi/widgets/custom_title.dart';
 import 'package:Thilogi/widgets/loading_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -609,9 +610,11 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                 _datalist?.soXe = xeracong?.soXe;
                 _datalist?.benVanChuyen = xeracong?.benVanChuyen;
                 _datalist?.isCheck == xeracong?.isCheck;
+                _datalist?.ptvc = xeracong?.ptvc;
 
                 _loading = false;
                 _listData = _xeracongList;
+                print("DoiTac: ${_datalist?.ptvc}");
                 print("MaNhanVienList: ${_datalist?.maNhanVien}");
                 print("NoiDenList: ${_datalist?.noiden}");
                 print("PTVC: ${_datalist?.tenPhuongThucVanChuyen}");
@@ -1452,8 +1455,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                         Column(
                                           children: [
                                             Container(
-                                              width: 120,
-                                              height: 120,
+                                              height: 13.h,
+                                              width: 20.w,
                                               child: GestureDetector(
                                                 onTap: () {
                                                   // Hiển thị hộp thoại để phóng to ảnh
@@ -1466,7 +1469,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                                           minScale: 1.0, // Tỉ lệ thu nhỏ tối thiểu
                                                           maxScale: 4.0, // Tỉ lệ phóng to tối đa
                                                           child: Image.network(
-                                                            _data?.hinhAnhKH ?? _datalist?.hinhAnhUrl ?? AppConfig.defaultImage,
+                                                            _data?.hinhAnhUrl ?? _datalist?.hinhAnhUrl ?? AppConfig.defaultImage,
                                                             fit: BoxFit.contain,
                                                           ),
                                                         ),
@@ -1475,14 +1478,10 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                                   );
                                                 },
                                                 child: Image.network(
-                                                  _data?.hinhAnhKH ?? _datalist?.hinhAnhUrl ?? AppConfig.defaultImage,
+                                                  _data?.hinhAnhUrl ?? _datalist?.hinhAnhUrl ?? AppConfig.defaultImage,
                                                   fit: BoxFit.contain,
                                                 ),
                                               ),
-                                            ),
-                                            ItemTaiXe(
-                                              title: 'Mã tài xế: ',
-                                              value: _data?.maNhanVien ?? _datalist?.maNhanVien,
                                             ),
                                           ],
                                         ),
@@ -1492,7 +1491,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                             children: [
                                               ItemTaiXe(
                                                 title: 'Bên vận chuyển: ',
-                                                value: _data?.benVanChuyen ?? _datalist?.benVanChuyen,
+                                                value: _data?.benVanChuyen ?? _datalist?.ptvc,
                                               ),
                                               ItemTaiXe(
                                                 title: 'Biển số: ',
@@ -1502,44 +1501,18 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                                 title: 'Tên tài xế: ',
                                                 value: _data?.tenNhanVien ?? _datalist?.tenNhanVien,
                                               ),
+                                              ItemTaiXe(
+                                                title: 'Mã tài xế: ',
+                                                value: _data?.maNhanVien ?? _datalist?.maNhanVien,
+                                              ),
                                               const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                               ItemTaiXe(
-                                                title: 'SDT: ',
+                                                title: 'SĐT: ',
                                                 value: _data?.sdt ?? _datalist?.sdt,
                                               ),
-                                              Container(
-                                                height: 7.h,
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      child: const Text(
-                                                        'Nơi đi: ',
-                                                        style: TextStyle(
-                                                          fontFamily: 'Comfortaa',
-                                                          fontSize: 11,
-                                                          fontWeight: FontWeight.w700,
-                                                          color: Color(0xFF818180),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.43),
-                                                      child: SingleChildScrollView(
-                                                        scrollDirection: Axis.horizontal,
-                                                        child: Text(
-                                                          _data?.noiditaixe ?? _datalist?.noiditaixe ?? "",
-                                                          textAlign: TextAlign.left,
-                                                          style: const TextStyle(
-                                                            fontFamily: 'Comfortaa',
-                                                            fontSize: 12,
-                                                            fontWeight: FontWeight.w700,
-                                                            color: AppConfig.primaryColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                              ItemTaiXe(
+                                                title: 'Nơi đi: ',
+                                                value: _data?.noiditaixe ?? _datalist?.noiditaixe ?? "",
                                               ),
                                               (_data?.noiden != null || _datalist?.noiden != null)
                                                   ? ItemTaiXe(
@@ -1697,7 +1670,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Tổng số xe thành phẩm: ${_xeracongList?.length.toString()}',
+                                            'Tổng số xe thành phẩm:${_xeracongList?.where((xe) => xe.isCheck == true).length.toString()}/${_xeracongList?.length.toString()}',
                                             style: const TextStyle(
                                               fontFamily: 'Comfortaa',
                                               color: Colors.red,
@@ -1707,8 +1680,15 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                           ),
                                           SingleChildScrollView(
                                             scrollDirection: Axis.horizontal, // Lướt theo chiều ngang
+                                            // child: Row(
+                                            //   children: _xeracongList!.map((xe) => buildXeCard(xe, context)).toList(), // Duyệt danh sách xe
+                                            // ),
                                             child: Row(
-                                              children: _xeracongList!.map((xe) => buildXeCard(xe, context)).toList(), // Duyệt danh sách xe
+                                              children: _xeracongList!.asMap().entries.map((entry) {
+                                                int index = entry.key + 1; // Lấy số thứ tự từ 1
+                                                XeRaCongModel xe = entry.value; // Lấy đối tượng xe
+                                                return buildXeCard(xe, context, index); // Truyền số thứ tự vào buildXeCard
+                                              }).toList(),
                                             ),
                                           ),
                                         ],
@@ -1754,102 +1734,101 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                             height: 1,
                                             color: AppConfig.primaryColor,
                                           ),
-                                          Row(
+                                          Column(
                                             children: [
-                                              Expanded(
-                                                child: Container(
-                                                  height: 30.h,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      ItemLX(
-                                                        value: _data?.tenSanPham ?? "",
-                                                      ),
-                                                      Item(
-                                                        value: _data?.soKhung ?? "",
-                                                      ),
-                                                      Item(value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
-                                                    ],
-                                                  ),
+                                              Container(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    ItemLX(
+                                                      title: 'Loại xe: ',
+                                                      value: _data?.tenSanPham ?? "",
+                                                    ),
+                                                    Item(
+                                                      title: 'Số khung: ',
+                                                      value: _data?.soKhung ?? "",
+                                                    ),
+                                                    Item(title: 'Màu xe: ', value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
+                                                  ],
                                                 ),
                                               ),
-                                              Container(
-                                                width: 1, // Độ rộng của đường phân chia
-                                                height: 30.h, // Chiều cao tương đương với chiều cao của các cột
-                                                color: const Color(0xFFCCCCCC), // Màu của đường phân chia
+                                              const Divider(
+                                                height: 1,
+                                                color: AppConfig.primaryColor,
                                               ),
                                               _data == null
-                                                  ? Expanded(
-                                                      child: Container(
-                                                        height: 30.h,
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Item(
-                                                              value: _data?.tenPhuongThucVanChuyen ?? "",
-                                                            ),
-                                                            Item(
-                                                              value: _data?.noidi ?? "",
-                                                            ),
-                                                            Item(
-                                                              value: _data?.noiden ?? "",
-                                                            ),
-                                                            Item(
-                                                              value: _data?.tenNhanVienKH ?? "",
-                                                            ),
-                                                            Item(
-                                                              value: _data?.maNhanVienKH ?? "",
-                                                            ),
-                                                          ],
-                                                        ),
+                                                  ? Container(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Item(
+                                                            title: 'Phương thức vận chuyển: ',
+                                                            value: _data?.tenPhuongThucVanChuyen ?? "",
+                                                          ),
+                                                          Item(
+                                                            title: 'Nơi đi: ',
+                                                            value: _data?.noidi ?? "",
+                                                          ),
+                                                          Item(
+                                                            title: 'Nơi đến: ',
+                                                            value: _data?.noiden ?? "",
+                                                          ),
+                                                          Item(
+                                                            title: 'Tên tài xế: ',
+                                                            value: _data?.tenNhanVienKH ?? "",
+                                                          ),
+                                                          Item(
+                                                            title: 'MSNV: ',
+                                                            value: _data?.maNhanVienKH ?? "",
+                                                          ),
+                                                        ],
                                                       ),
                                                     )
                                                   : _data?.noiden != null
-                                                      ? Expanded(
-                                                          child: Container(
-                                                            height: 30.h,
-                                                            child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Item(
-                                                                  value: _data?.tenPhuongThucVanChuyen ?? "",
-                                                                ),
-                                                                Item(
-                                                                  value: _data?.noidi ?? "",
-                                                                ),
-                                                                Item(
-                                                                  value: _data?.noiden ?? "",
-                                                                ),
-                                                                Item(
-                                                                  value: _data?.tenNhanVienKH ?? "",
-                                                                ),
-                                                                Item(
-                                                                  value: _data?.maNhanVienKH ?? "",
-                                                                ),
-                                                              ],
-                                                            ),
+                                                      ? Container(
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Item(
+                                                                title: 'Phương thức vận chuyển: ',
+                                                                value: _data?.tenPhuongThucVanChuyen ?? "",
+                                                              ),
+                                                              Item(
+                                                                title: 'Nơi đi: ',
+                                                                value: _data?.noidi ?? "",
+                                                              ),
+                                                              Item(
+                                                                title: 'Nơi đến: ',
+                                                                value: _data?.noiden ?? "",
+                                                              ),
+                                                              Item(
+                                                                title: 'Tên tài xế: ',
+                                                                value: _data?.tenNhanVienKH ?? "",
+                                                              ),
+                                                              Item(
+                                                                title: 'MSNV: ',
+                                                                value: _data?.maNhanVienKH ?? "",
+                                                              ),
+                                                            ],
                                                           ),
                                                         )
-                                                      : Expanded(
-                                                          child: Container(
-                                                            height: 30.h,
-                                                            child: AnimatedBuilder(
-                                                              animation: _controller, // Sử dụng chung controller cho cả hai animation
-                                                              builder: (context, child) {
-                                                                return Opacity(
-                                                                  opacity: _opacityAnimation.value, // Điều chỉnh độ mờ (nhấp nháy ẩn/hiện)
-                                                                  child: const Text(
-                                                                    'Xe này không có kế hoạch xuất kho',
-                                                                    style: TextStyle(
-                                                                      fontFamily: 'Comfortaa',
-                                                                      fontSize: 18,
-                                                                      fontWeight: FontWeight.w700,
-                                                                      color: AppConfig.primaryColor, // Đổi màu chữ
-                                                                    ),
+                                                      : Container(
+                                                          child: AnimatedBuilder(
+                                                            animation: _controller, // Sử dụng chung controller cho cả hai animation
+                                                            builder: (context, child) {
+                                                              return Opacity(
+                                                                opacity: _opacityAnimation.value, // Điều chỉnh độ mờ (nhấp nháy ẩn/hiện)
+                                                                child: const Text(
+                                                                  'Xe này không có kế hoạch xuất kho',
+                                                                  style: TextStyle(
+                                                                    fontFamily: 'Comfortaa',
+                                                                    fontSize: 18,
+                                                                    fontWeight: FontWeight.w700,
+                                                                    color: AppConfig.primaryColor, // Đổi màu chữ
                                                                   ),
-                                                                );
-                                                              },
-                                                            ),
+                                                                ),
+                                                              );
+                                                            },
                                                           ),
                                                         ),
                                             ],
@@ -2037,7 +2016,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
   }
 }
 
-Widget buildXeCard(XeRaCongModel? xe, BuildContext context) {
+Widget buildXeCard(XeRaCongModel? xe, BuildContext context, int index) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 4),
     width: 100.w,
@@ -2071,127 +2050,128 @@ Widget buildXeCard(XeRaCongModel? xe, BuildContext context) {
               topRight: Radius.circular(5),
             ),
           ),
-          child: const Text(
-            'Thông tin xe ra cổng',
-            style: TextStyle(
-              fontFamily: 'Comfortaa',
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Thông tin xe ra cổng',
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                '$index',
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
         ),
         const Divider(
           height: 1,
           color: AppConfig.primaryColor,
         ),
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Container(
-                height: 30.h,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ItemLX(
-                      value: xe?.tenSanPham ?? "",
-                    ),
-                    Item(
-                      value: xe?.soKhung ?? "",
-                    ),
-                    Item(value: xe != null ? (xe?.tenMau != null && xe?.maMau != null ? "${xe?.tenMau} (${xe?.maMau})" : "") : ""),
-                  ],
-                ),
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Item(
+                    title: 'Số khung: ',
+                    value: xe?.soKhung ?? "",
+                  ),
+                  ItemLX(
+                    title: 'Loại xe: ',
+                    value: xe?.tenSanPham ?? "",
+                  ),
+                  Item(title: 'Màu xe: ', value: xe != null ? (xe?.tenMau != null && xe?.maMau != null ? "${xe?.tenMau} (${xe?.maMau})" : "") : ""),
+                ],
               ),
             ),
-            Container(
-              width: 1, // Độ rộng của đường phân chia
-              height: 30.h, // Chiều cao tương đương với chiều cao của các cột
-              color: const Color(0xFFCCCCCC), // Màu của đường phân chia
+            const Divider(
+              height: 1,
+              color: AppConfig.primaryColor,
             ),
-            Expanded(
-              child: Container(
-                height: 30.h,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Item(
-                      value: xe?.tenPhuongThucVanChuyen ?? "",
-                    ),
-                    Item(
-                      value: xe?.noidi ?? "",
-                    ),
-                    Item(
-                      value: xe?.noiden ?? "",
-                    ),
-                    xe?.maNhanVienKH != null
-                        ? Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Container(
-                              //   width: 11.h,
-                              //   height: 13.h,
-                              //   child: (xe?.hinhAnhKH != null)
-                              //       ? Image.network(
-                              //           xe?.hinhAnhKH ?? "",
-                              //           fit: BoxFit.contain,
-                              //         )
-                              //       : Image.network(
-                              //           AppConfig.defaultImage,
-                              //           fit: BoxFit.contain,
-                              //         ),
-                              // ),
-                              Container(
-                                width: 11.h,
-                                height: 13.h,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    // Hiển thị hộp thoại để phóng to ảnh
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog(
-                                          child: InteractiveViewer(
-                                            panEnabled: true, // Cho phép kéo ảnh
-                                            minScale: 1.0, // Tỉ lệ thu nhỏ tối thiểu
-                                            maxScale: 4.0, // Tỉ lệ phóng to tối đa
-                                            child: Image.network(
-                                              xe?.hinhAnhKH ?? AppConfig.defaultImage,
-                                              fit: BoxFit.contain,
-                                            ),
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Item(
+                    title: 'Bên vận chuyển: ',
+                    value: xe?.benVanChuyen ?? "",
+                  ),
+                  Item(
+                    title: 'Phương thức vận chuyển: ',
+                    value: xe?.tenPhuongThucVanChuyen ?? "",
+                  ),
+                  Item(
+                    title: 'Nơi đi: ',
+                    value: xe?.noidi ?? "",
+                  ),
+                  Item(
+                    title: 'Nơi đến: ',
+                    value: xe?.noiden ?? "",
+                  ),
+                  xe?.maNhanVienKH != null
+                      ? Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 11.h,
+                              height: 13.h,
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Hiển thị hộp thoại để phóng to ảnh
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return Dialog(
+                                        child: InteractiveViewer(
+                                          panEnabled: true, // Cho phép kéo ảnh
+                                          minScale: 1.0, // Tỉ lệ thu nhỏ tối thiểu
+                                          maxScale: 4.0, // Tỉ lệ phóng to tối đa
+                                          child: Image.network(
+                                            xe?.hinhAnhKH ?? AppConfig.defaultImage,
+                                            fit: BoxFit.contain,
                                           ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Image.network(
-                                    xe?.hinhAnhKH ?? AppConfig.defaultImage,
-                                    fit: BoxFit.contain,
-                                  ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Image.network(
+                                  xe?.hinhAnhKH ?? AppConfig.defaultImage,
+                                  fit: BoxFit.contain,
                                 ),
                               ),
-                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                ItemLXKH(
-                                  value: xe?.tenNhanVienKH ?? "",
-                                ),
-                                ItemLXKH(
-                                  value: xe?.maNhanVienKH ?? "",
-                                ),
-                              ]),
-                            ],
-                          )
-                        : Icon(
-                            Icons.close,
-                            color: Colors.red, // Bạn có thể đổi thành màu cảnh báo khác như Colors.yellow
-                            size: 13.h, // Kích thước biểu tượng
-                          ),
-                    // Icon(
-                    //       Icons.warning,
-                    //       color: Colors.orange,
-                    //       size: 30.0,
-                    //     ),
-                  ],
-                ),
+                            ),
+                            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              ItemLXKH(
+                                title: 'Tên tài xế: ',
+                                value: xe?.tenNhanVienKH ?? "",
+                              ),
+                              ItemLXKH(
+                                title: 'MSNV: ',
+                                value: xe?.maNhanVienKH ?? "",
+                              ),
+                            ]),
+                          ],
+                        )
+                      : Icon(
+                          Icons.close,
+                          color: Colors.red, // Bạn có thể đổi thành màu cảnh báo khác như Colors.yellow
+                          size: 13.h, // Kích thước biểu tượng
+                        ),
+                ],
               ),
             ),
           ],
@@ -2202,10 +2182,12 @@ Widget buildXeCard(XeRaCongModel? xe, BuildContext context) {
 }
 
 class ItemLX extends StatelessWidget {
+  final String title;
   final String? value;
 
   const ItemLX({
     Key? key,
+    required this.title,
     this.value,
   }) : super(key: key);
 
@@ -2213,19 +2195,28 @@ class ItemLX extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 6.h,
-      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.70),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Center(
-          child: SelectableText(
-            value ?? "",
-            style: const TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: AppConfig.primaryColor,
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
             ),
-          ),
+            SelectableText(
+              value ?? "",
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -2233,10 +2224,12 @@ class ItemLX extends StatelessWidget {
 }
 
 class Item extends StatelessWidget {
+  final String title;
   final String? value;
 
   const Item({
     Key? key,
+    required this.title,
     this.value,
   }) : super(key: key);
 
@@ -2244,19 +2237,28 @@ class Item extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 5.h,
-      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Center(
-          child: SelectableText(
-            value ?? "",
-            style: const TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: AppConfig.primaryColor,
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
             ),
-          ),
+            SelectableText(
+              value ?? "",
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -2264,10 +2266,12 @@ class Item extends StatelessWidget {
 }
 
 class ItemLXKH extends StatelessWidget {
+  final String title;
   final String? value;
 
   const ItemLXKH({
     Key? key,
+    required this.title,
     this.value,
   }) : super(key: key);
 
@@ -2275,19 +2279,28 @@ class ItemLXKH extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 5.h,
-      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.30),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Center(
-          child: SelectableText(
-            value ?? "",
-            style: const TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: AppConfig.primaryColor,
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
             ),
-          ),
+            SelectableText(
+              value ?? "",
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -2325,7 +2338,7 @@ class ItemTaiXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 6.h,
+      height: 5.h,
       child: Row(
         children: [
           SelectableText(
